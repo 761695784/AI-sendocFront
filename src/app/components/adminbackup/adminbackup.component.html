@@ -1,0 +1,280 @@
+<app-sideheaders></app-sideheaders>
+<div class="layout-wrapper">
+  <div class="layout-right">
+    <div class="page-content">
+
+      <!-- Header -->
+      <div class="page-header">
+        <div class="page-header-left">
+          <div class="page-header-icon">
+            <i class="fas fa-database"></i>
+          </div>
+          <div>
+            <h1>Gestion des sauvegardes</h1>
+            <p>Gérez et supervisez les sauvegardes automatiques de DocTrack</p>
+          </div>
+        </div>
+        <div class="page-header-right">
+          <button class="btn-backup" (click)="runBackup()" [disabled]="isRunning">
+            <i class="fas" [ngClass]="isRunning ? 'fa-spinner fa-spin' : 'fa-play-circle'"></i>
+            {{ isRunning ? 'Sauvegarde en cours...' : 'Lancer une sauvegarde' }}
+          </button>
+        </div>
+      </div>
+
+      <!-- Stats -->
+      <div class="stats-row" *ngIf="!isLoading">
+        <div class="stat-card">
+          <div class="stat-icon purple">
+            <i class="fas fa-database"></i>
+          </div>
+          <div class="stat-info">
+            <span class="stat-num">{{ totalBackups }}</span>
+            <span class="stat-label">Total sauvegardes</span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon green" *ngIf="isHealthy; else unhealthy">
+            <i class="fas fa-check-circle"></i>
+          </div>
+          <ng-template #unhealthy>
+            <div class="stat-icon red">
+              <i class="fas fa-exclamation-circle"></i>
+            </div>
+          </ng-template>
+          <div class="stat-info">
+            <span class="stat-num" [ngClass]="isHealthy ? 'text-green' : 'text-red'">
+              {{ isHealthy ? 'Sain' : 'Alerte' }}
+            </span>
+            <span class="stat-label">État du système</span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon orange">
+            <i class="fas fa-hdd"></i>
+          </div>
+          <div class="stat-info">
+            <span class="stat-num">{{ totalSizeMb }} MB</span>
+            <span class="stat-label">Espace utilisé</span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon blue">
+            <i class="fas fa-clock"></i>
+          </div>
+          <div class="stat-info">
+            <span class="stat-num">{{ lastBackupDate || '—' }}</span>
+            <span class="stat-label">Dernière sauvegarde</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Info planification -->
+      <div class="schedule-card">
+        <div class="schedule-title">
+          <i class="fas fa-calendar-alt"></i>
+          <h3>Planification automatique</h3>
+        </div>
+        <div class="schedule-grid">
+          <div class="schedule-item">
+            <div class="schedule-time">01h00</div>
+            <div class="schedule-desc">
+              <strong>Nettoyage</strong>
+              <span>Suppression des anciennes sauvegardes</span>
+            </div>
+            <div class="schedule-badge clean">Auto</div>
+          </div>
+          <div class="schedule-item">
+            <div class="schedule-time">02h00</div>
+            <div class="schedule-desc">
+              <strong>Sauvegarde complète</strong>
+              <span>Base de données + fichiers</span>
+            </div>
+            <div class="schedule-badge backup">Auto</div>
+          </div>
+          <div class="schedule-item">
+            <div class="schedule-time">03h00</div>
+            <div class="schedule-desc">
+              <strong>Monitoring</strong>
+              <span>Vérification de la santé</span>
+            </div>
+            <div class="schedule-badge monitor">Auto</div>
+          </div>
+          <div class="schedule-item">
+            <div class="schedule-time">Hebdo</div>
+            <div class="schedule-desc">
+              <strong>Logs d'activité</strong>
+              <span>Nettoyage des logs (+90 jours)</span>
+            </div>
+            <div class="schedule-badge logs">Auto</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Actions rapides -->
+      <div class="actions-card">
+        <h3 class="actions-title">
+          <i class="fas fa-bolt"></i> Actions rapides
+        </h3>
+        <div class="actions-grid">
+          <button class="action-btn purple"
+                  (click)="runBackup()"
+                  [disabled]="isRunning">
+            <i class="fas fa-save"></i>
+            <span>Sauvegarder maintenant</span>
+            <small>Lance une sauvegarde complète</small>
+          </button>
+          <button class="action-btn green"
+                  (click)="checkStatus()"
+                  [disabled]="isCheckingStatus">
+            <i class="fas fa-heartbeat"></i>
+            <span>Vérifier la santé</span>
+            <small>Contrôle l'état des sauvegardes</small>
+          </button>
+          <button class="action-btn orange"
+                  (click)="cleanBackups()"
+                  [disabled]="isCleaning">
+            <i class="fas fa-broom"></i>
+            <span>Nettoyer</span>
+            <small>Supprime les vieilles sauvegardes</small>
+          </button>
+          <button class="action-btn blue"
+                  (click)="loadBackups()">
+            <i class="fas fa-sync-alt"></i>
+            <span>Actualiser la liste</span>
+            <small>Recharge les sauvegardes</small>
+          </button>
+        </div>
+      </div>
+
+      <!-- Message feedback -->
+      <div class="feedback-msg success" *ngIf="successMsg">
+        <i class="fas fa-check-circle"></i>
+        <div>
+          <strong>Succès</strong>
+          <p>{{ successMsg }}</p>
+        </div>
+        <button class="feedback-close"
+                (click)="successMsg = ''"
+                aria-label="Fermer">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+
+      <div class="feedback-msg error" *ngIf="errorMsg">
+        <i class="fas fa-exclamation-circle"></i>
+        <div>
+          <strong>Erreur</strong>
+          <p>{{ errorMsg }}</p>
+        </div>
+        <button class="feedback-close"
+                (click)="errorMsg = ''"
+                aria-label="Fermer">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+
+      <!-- Status monitoring -->
+      <div class="status-card" *ngIf="statusOutput">
+        <div class="status-header">
+          <i class="fas fa-heartbeat"></i>
+          <h3>Résultat du monitoring</h3>
+        </div>
+        <div class="status-output">{{ statusOutput }}</div>
+      </div>
+
+      <!-- Loader -->
+      <div class="loader-center" *ngIf="isLoading">
+        <l-ring-2 size="36" stroke="4" stroke-length="0.55"
+          bg-opacity="0.1" speed="0.8" color="#31287C">
+        </l-ring-2>
+        <span>Chargement des sauvegardes...</span>
+      </div>
+
+      <!-- Empty state -->
+      <div class="empty-state" *ngIf="!isLoading && backups.length === 0">
+        <div class="empty-icon"><i class="fas fa-database"></i></div>
+        <h3>Aucune sauvegarde trouvée</h3>
+        <p>Lancez votre première sauvegarde en cliquant sur le bouton ci-dessus.</p>
+      </div>
+
+      <!-- Liste des backups -->
+      <div class="table-card" *ngIf="!isLoading && backups.length > 0">
+        <div class="table-header">
+          <span class="table-count">
+            <strong>{{ backups.length }}</strong> sauvegarde(s) disponible(s)
+          </span>
+        </div>
+
+        <div class="table-wrap">
+          <table class="backup-table">
+            <thead>
+              <tr>
+                <th>Nom du fichier</th>
+                <th>Taille</th>
+                <th>Date de création</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let backup of backups; let i = index"
+                  class="backup-row"
+                  [style.animation-delay]="i * 0.04 + 's'">
+
+                <!-- Nom -->
+                <td>
+                  <div class="file-cell">
+                    <div class="file-icon">
+                      <i class="fas fa-file-archive"></i>
+                    </div>
+                    <div>
+                      <span class="file-name">{{ backup.name }}</span>
+                      <span class="file-badge">
+                        <i class="fas fa-lock"></i> ZIP
+                      </span>
+                    </div>
+                  </div>
+                </td>
+
+                <!-- Taille -->
+                <td>
+                  <div class="size-cell">
+                    <span class="size-main">{{ backup.size_mb }} MB</span>
+                    <span class="size-bytes">{{ formatBytes(backup.size_bytes) }}</span>
+                  </div>
+                </td>
+
+                <!-- Date -->
+                <td>
+                  <div class="date-cell">
+                    <span class="date-main">{{ backup.created_at | date:'dd/MM/yyyy' }}</span>
+                    <span class="date-time">{{ backup.created_at | date:'HH:mm:ss' }}</span>
+                  </div>
+                </td>
+
+                <!-- Actions -->
+                <td>
+                  <div class="actions-cell">
+                    <button class="btn-dl"
+                            (click)="downloadBackup(backup.name)"
+                            [disabled]="isDownloading === backup.name"
+                            aria-label="Télécharger cette sauvegarde">
+                      <i class="fas"
+                         [ngClass]="isDownloading === backup.name
+                           ? 'fa-spinner fa-spin'
+                           : 'fa-download'">
+                      </i>
+                      {{ isDownloading === backup.name ? 'Téléchargement...' : 'Télécharger' }}
+                    </button>
+                  </div>
+                </td>
+
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>

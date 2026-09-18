@@ -1,0 +1,115 @@
+<app-sideheaders></app-sideheaders>
+
+<div class="page-content">
+
+  <div *ngIf="isLoading" class="loader-overlay">
+    <l-ring-2 size="40" stroke="5" stroke-length="0.55"
+      bg-opacity="0.1" speed="0.8" color="#F6A500">
+    </l-ring-2>
+  </div>
+
+  <div class="profile-layout">
+
+    <!-- Carte profil gauche -->
+    <div class="profile-card">
+      <div class="profile-avatar">
+        {{ profileForm.get('FirstName')?.value?.charAt(0) }}{{ profileForm.get('LastName')?.value?.charAt(0) }}
+      </div>
+      <div class="profile-name">
+        {{ profileForm.get('FirstName')?.value }} {{ profileForm.get('LastName')?.value }}
+      </div>
+      <div class="profile-email">{{ profileForm.get('email')?.value }}</div>
+      <div class="profile-role-badge">Administrateur</div>
+
+      <div class="profile-meta">
+        <div class="meta-item">
+          <i class="fas fa-map-marker-alt"></i>
+          <span>{{ profileForm.get('Adress')?.value || '—' }}</span>
+        </div>
+        <div class="meta-item">
+          <i class="fas fa-phone"></i>
+          <span>{{ profileForm.get('Phone')?.value || '—' }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Formulaire droite -->
+    <div class="form-card">
+      <div class="form-card-header">
+        <i class="fas fa-user-edit"></i>
+        <span>Modifier mon profil</span>
+      </div>
+
+      <form [formGroup]="profileForm" (ngSubmit)="onSubmit()">
+
+        <div class="form-section-title">Informations personnelles</div>
+
+        <div class="form-row">
+          <div class="field-group">
+            <label for="LastName">Nom</label>
+            <input type="text" id="LastName" formControlName="LastName" placeholder="Votre nom">
+          </div>
+          <div class="field-group">
+            <label for="FirstName">Prénom</label>
+            <input type="text" id="FirstName" formControlName="FirstName" placeholder="Votre prénom">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="field-group">
+            <label for="email">Email</label>
+            <input type="email" id="email" formControlName="email" placeholder="votre@email.com">
+          </div>
+          <div class="field-group">
+            <label for="Phone">Téléphone</label>
+            <input type="tel" id="Phone" formControlName="Phone" placeholder="+221 XX XXX XX XX">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="field-group full">
+            <label for="Adress">Adresse</label>
+            <input type="text" id="Adress" formControlName="Adress" placeholder="Votre adresse">
+          </div>
+        </div>
+
+        <div class="form-divider"></div>
+        <div class="form-section-title">Changer le mot de passe</div>
+
+        <div class="form-row">
+          <div class="field-group full">
+            <label for="oldPassword">Ancien mot de passe</label>
+            <input type="password" id="oldPassword"
+                   formControlName="oldPassword" placeholder="••••••••">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="field-group">
+            <label for="newPassword">Nouveau mot de passe</label>
+            <input type="password" id="newPassword"
+                   formControlName="newPassword" placeholder="••••••••">
+          </div>
+          <div class="field-group">
+            <label for="newPasswordConfirm">Confirmation</label>
+            <input type="password" id="newPasswordConfirm"
+                   formControlName="newPasswordConfirm" placeholder="••••••••">
+            <small class="error-text"
+                   *ngIf="profileForm.hasError('passwordMismatch')">
+              Les mots de passe ne correspondent pas.
+            </small>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn-save" [disabled]="isLoading">
+            <i class="fas fa-save"></i>
+            {{ isLoading ? 'Enregistrement...' : 'Enregistrer les modifications' }}
+          </button>
+        </div>
+
+      </form>
+    </div>
+
+  </div>
+</div>

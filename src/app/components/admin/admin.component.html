@@ -1,0 +1,130 @@
+<app-sideheaders></app-sideheaders>
+
+<div class="page-content">
+
+  <!-- Stats cards -->
+  <div class="stats-container">
+    <div class="stat-box bleu">
+      <div class="stat-icon"><img src="/assets/perte.png" alt=""></div>
+      <div class="stat-info">
+        <span class="stat-number">{{ declarationsCount }}</span>
+        <span class="stat-label">Déclarations de pertes</span>
+      </div>
+    </div>
+    <div class="stat-box jaune">
+      <div class="stat-icon"><img src="/assets/pub.png" alt=""></div>
+      <div class="stat-info">
+        <span class="stat-number">{{ publicationsCount }}</span>
+        <span class="stat-label">Documents Publiés</span>
+      </div>
+    </div>
+    <div class="stat-box bleu">
+      <div class="stat-icon"><img src="/assets/demande.png" alt=""></div>
+      <div class="stat-info">
+        <span class="stat-number">{{ restitutionCount }}</span>
+        <span class="stat-label">Demandes de restitutions</span>
+      </div>
+    </div>
+    <div class="stat-box jaune">
+      <div class="stat-icon"><img src="/assets/mail.png" alt=""></div>
+      <div class="stat-info">
+        <span class="stat-number">{{ emailsSentCount }}</span>
+        <span class="stat-label">Emails envoyés</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Graphiques -->
+  <div class="graph-section">
+    <div class="graph-card">
+      <app-publication-type-chart></app-publication-type-chart>
+      <h3 class="graph-title">Nombre de publications par type de Document</h3>
+    </div>
+    <div class="graph-card">
+      <app-email-activity-chart></app-email-activity-chart>
+      <h3 class="graph-title">Nombre de Mails envoyés par type de mail</h3>
+    </div>
+  </div>
+
+  <!-- Bouton historique -->
+  <div class="action-bar">
+    <button class="btn-history" (click)="showRestitutionHistory()">
+      <i class="fas" [ngClass]="isShowingRestitutionHistory ? 'fa-list' : 'fa-history'"></i>
+      {{ isShowingRestitutionHistory ? 'Afficher tous les Emails' : 'Historiques des Restitutions' }}
+    </button>
+  </div>
+
+  <!-- Section emails -->
+  <div class="section-header">
+    <div class="section-title-wrap">
+      <div class="section-icon"><i class="fas fa-envelope"></i></div>
+      <div>
+        <h2 class="section-title">Liste de tous les emails envoyés</h2>
+        <p class="section-subtitle">Historique complet des emails envoyés via DocTrack</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tableau -->
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Destinataire</th>
+          <th>Objet</th>
+          <th>Document</th>
+          <th>Demandeur</th>
+          <th>Publicateur</th>
+          <th>Déclarant</th>
+          <th>Contenu</th>
+          <th>Date</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let emailLog of paginatedEmailLogs">
+          <td data-label="ID">
+            <span class="id-badge">#{{ emailLog.id }}</span>
+          </td>
+          <td data-label="Destinataire">
+            <span class="email-chip">{{ emailLog.to }}</span>
+          </td>
+          <td data-label="Objet">
+            <span class="subject-badge"
+              [ngClass]="emailLog.subject?.includes('restitution') ? 'badge-orange' : 'badge-purple'">
+              {{ emailLog.subject }}
+            </span>
+          </td>
+          <td data-label="Document">
+            <span class="muted">{{ emailLog.document_id || 'Masqué' }}</span>
+          </td>
+          <td data-label="Demandeur">
+            <span class="muted">{{ emailLog.requester_user_id || '—' }}</span>
+          </td>
+          <td data-label="Publicateur">
+            <span class="muted">{{ emailLog.publisher_user_id || '—' }}</span>
+          </td>
+          <td data-label="Déclarant">
+            <span class="muted">{{ emailLog.declarant_user_id || '—' }}</span>
+          </td>
+          <td data-label="Contenu" class="body-cell">{{ emailLog.body }}</td>
+          <td data-label="Date">
+            <span class="date-chip">{{ emailLog.created_at | date:'dd/MM/yy' }}</span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Pagination -->
+  <div class="pagination-controls">
+    <button (click)="pageChanged(currentPage - 1)" [disabled]="currentPage === 1">
+      <i class="fas fa-chevron-left"></i> Précédent
+    </button>
+    <span>Page {{ currentPage }} sur {{ totalPages }}</span>
+    <button (click)="pageChanged(currentPage + 1)" [disabled]="currentPage === totalPages">
+      Suivant <i class="fas fa-chevron-right"></i>
+    </button>
+  </div>
+
+</div>

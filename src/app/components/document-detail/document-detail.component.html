@@ -1,0 +1,183 @@
+<app-navbar></app-navbar>
+
+<div class="page-wrapper">
+
+  <div *ngIf="isLoading" class="loader-overlay">
+    <l-ring-2 size="40" stroke="5" stroke-length="0.55"
+      bg-opacity="0.1" speed="0.8" color="#F6A500">
+    </l-ring-2>
+  </div>
+
+  <div class="container" *ngIf="documentDetails">
+
+    <!-- Breadcrumb -->
+    <div class="breadcrumb">
+      <a href="/liste"><i class="fas fa-arrow-left"></i> Retour aux publications</a>
+    </div>
+
+    <!-- Card principale -->
+    <div class="doc-card">
+
+      <div class="doc-layout">
+
+        <!-- Colonne gauche : image -->
+        <div class="doc-image-col">
+          <div class="doc-image-wrap">
+            <img *ngIf="documentDetails.image_blurred || documentDetails.image"
+                 [src]="documentDetails.image_blurred || documentDetails.image"
+                 alt="Document"
+                 class="doc-image"
+                 loading="lazy"
+                 oncontextmenu="return false;" />
+            <!-- <div class="blur-overlay"></div> -->
+
+            <!-- Badge statut -->
+            <div class="doc-status-badge"
+                 [ngClass]="documentDetails.statut === 'récupéré' ? 'badge-green' : 'badge-orange'">
+              <i class="fas" [ngClass]="documentDetails.statut === 'récupéré' ? 'fa-check-circle' : 'fa-clock'"></i>
+              {{ documentDetails.statut === 'récupéré' ? 'Récupéré' : 'En attente' }}
+            </div>
+
+            <!-- Badge type -->
+            <div class="doc-type-badge">
+              {{ documentDetails.document_type.TypeName }}
+            </div>
+          </div>
+        </div>
+
+        <!-- Colonne droite : infos -->
+        <div class="doc-info-col">
+
+          <!-- Alerte restitution -->
+          <div class="restitution-alert"
+               *ngIf="documentDetails.statut !== 'récupéré'">
+            <div class="alert-icon">
+              <i class="fas fa-hand-holding"></i>
+            </div>
+            <div class="alert-text">
+              <strong>Ce document vous appartient ?</strong>
+              <p>Cliquez sur <em>Restituer</em> pour envoyer votre demande et obtenir le contact du publicateur.</p>
+            </div>
+          </div>
+
+          <!-- Infos document -->
+          <div class="doc-meta">
+
+            <div class="meta-row publisher">
+              <i class="fas fa-user-circle"></i>
+              <span>Publié par
+                <strong>{{ documentDetails.user.FirstName }} {{ documentDetails.user.LastName }}</strong>
+                · {{ documentDetails.created_at | date:'dd/MM/yyyy, HH:mm' }}
+              </span>
+            </div>
+
+            <div class="meta-divider"></div>
+
+            <div class="meta-row">
+              <div class="meta-item">
+                <span class="meta-label">Type de document</span>
+                <span class="meta-value">{{ documentDetails.document_type.TypeName }}</span>
+              </div>
+            </div>
+            <div class="meta-row">
+              <div class="meta-item">
+                <span class="meta-label">Prénom propriétaire</span>
+                <span class="meta-value highlight">{{ documentDetails.OwnerFirstName }}</span>
+              </div>
+              <div class="meta-item">
+                <span class="meta-label">Nom propriétaire</span>
+                <span class="meta-value highlight">{{ documentDetails.OwnerLastName }}</span>
+              </div>
+            </div>
+            <div class="meta-row">
+              <div class="meta-item">
+                <span class="meta-label">
+                  <i class="fas fa-map-marker-alt"></i> Lieu
+                </span>
+                <span class="meta-value">{{ documentDetails.Location }}</span>
+              </div>
+              <div class="meta-item" *ngIf="documentDetails.identification">
+                <span class="meta-label">Identification</span>
+                <span class="meta-value">{{ documentDetails.identification }}</span>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Bouton restituer -->
+          <div class="doc-actions"
+               *ngIf="!isOwner && documentDetails.statut !== 'récupéré'">
+            <button class="btn-restituer"
+                    (click)="requestRestitution()"
+                    [disabled]="isRestitutionRequested">
+              <i class="fas fa-hand-holding"></i>
+              {{ isRestitutionRequested ? 'Demande envoyée ✓' : 'Demander la restitution' }}
+            </button>
+          </div>
+
+          <!-- Message récupéré -->
+          <div class="recovered-badge" *ngIf="documentDetails.statut === 'récupéré'">
+            <i class="fas fa-check-circle"></i>
+            <span>Ce document a été récupéré par son propriétaire</span>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Section commentaires -->
+    <div class="comments-card">
+
+      <div class="comments-header">
+        <div class="comments-title">
+          <i class="fas fa-comments"></i>
+          <h3>Commentaires
+            <span class="comments-count">{{ commentaires.length }}</span>
+          </h3>
+        </div>
+      </div>
+
+      <!-- Liste commentaires -->
+      <div class="comments-list">
+        <div class="empty-comments" *ngIf="commentaires.length === 0">
+          <i class="fas fa-comment-slash"></i>
+          <p>Aucun commentaire pour le moment. Soyez le premier !</p>
+        </div>
+
+        <div class="comment-item" *ngFor="let commentaire of commentaires">
+          <div class="comment-avatar">
+            {{ commentaire.user.FirstName.charAt(0) }}{{ commentaire.user.LastName.charAt(0) }}
+          </div>
+          <div class="comment-body">
+            <div class="comment-meta">
+              <strong>{{ commentaire.user.FirstName }} {{ commentaire.user.LastName }}</strong>
+              <span class="comment-date">{{ commentaire.created_at | date:'dd/MM/yyyy' }}</span>
+            </div>
+            <p class="comment-text">{{ commentaire.contenu }}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Formulaire commentaire -->
+      <div class="comment-form">
+        <div class="comment-input-wrap">
+          <i class="fas fa-pen comment-input-icon"></i>
+          <input class="comment-input"
+                 [(ngModel)]="newComment"
+                 placeholder="Écrire un commentaire..."
+                 (keyup.enter)="addCommentaire()">
+        </div>
+        <button class="btn-comment" (click)="addCommentaire()"
+                [disabled]="isLoading || !newComment.trim()">
+          <i class="fas fa-paper-plane"></i>
+          {{ isLoading ? 'Envoi...' : 'Envoyer' }}
+        </button>
+      </div>
+
+    </div>
+
+  </div>
+</div>
+
+<app-footer></app-footer>

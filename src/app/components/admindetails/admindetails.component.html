@@ -1,0 +1,179 @@
+<app-sideheaders></app-sideheaders>
+
+<div class="page-content">
+
+  <div *ngIf="isLoading" class="loader-overlay">
+    <l-ring-2 size="40" stroke="5" stroke-length="0.55"
+      bg-opacity="0.1" speed="0.8" color="#F6A500">
+    </l-ring-2>
+  </div>
+
+  <div *ngIf="documentDetails" class="detail-layout">
+
+    <!-- Colonne gauche : image -->
+    <div class="image-col">
+      <div class="image-card">
+
+        <!-- Badges -->
+        <div class="img-badges">
+          <span class="badge-type">
+            <i class="fas fa-id-card"></i>
+            {{ documentDetails.document_type.TypeName }}
+          </span>
+          <span class="badge-statut"
+                [ngClass]="documentDetails.statut === 'récupéré' ? 'badge-green' : 'badge-orange'">
+            <i class="fas" [ngClass]="documentDetails.statut === 'récupéré' ? 'fa-check-circle' : 'fa-clock'"></i>
+            {{ documentDetails.statut === 'récupéré' ? 'Récupéré' : 'En attente' }}
+          </span>
+        </div>
+
+        <!-- Image floutée -->
+        <div class="img-wrap">
+          <img
+            *ngIf="documentDetails.image_blurred || documentDetails.image"
+            [src]="documentDetails.image_blurred || documentDetails.image"
+            alt="Document"
+            class="doc-image"
+            oncontextmenu="return false;"
+            loading="lazy">
+          <div class="img-overlay"></div>
+        </div>
+
+        <!-- Info protection -->
+        <div class="img-protection">
+          <i class="fas fa-shield-alt"></i>
+          <span>Image protégée — données sensibles masquées</span>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Colonne droite : infos + commentaires -->
+    <div class="info-col">
+
+      <!-- Card infos document -->
+      <div class="info-card">
+        <div class="info-card-header">
+          <div class="info-card-icon">
+            <i class="fas fa-file-alt"></i>
+          </div>
+          <div>
+            <h2>Détails du document</h2>
+            <p>Publié le {{ documentDetails.created_at | date:'dd/MM/yyyy à HH:mm' }}</p>
+          </div>
+        </div>
+
+        <!-- Publicateur -->
+        <div class="publisher-row">
+          <div class="publisher-avatar">
+            {{ documentDetails.user.FirstName.charAt(0) }}{{ documentDetails.user.LastName.charAt(0) }}
+          </div>
+          <div class="publisher-info">
+            <span class="publisher-label">Publié par</span>
+            <strong>{{ documentDetails.user.FirstName }} {{ documentDetails.user.LastName }}</strong>
+            <span class="publisher-phone">
+              <i class="fas fa-phone"></i>
+              {{ documentDetails.user.Phone }}
+            </span>
+          </div>
+        </div>
+
+        <div class="info-divider"></div>
+
+        <!-- Méta données -->
+        <div class="meta-grid">
+          <div class="meta-item">
+            <span class="meta-label">Prénom dans le doc</span>
+            <span class="meta-value highlight">{{ documentDetails.OwnerFirstName }}</span>
+          </div>
+          <div class="meta-item">
+            <span class="meta-label">Nom dans le doc</span>
+            <span class="meta-value highlight">{{ documentDetails.OwnerLastName }}</span>
+          </div>
+          <div class="meta-item">
+            <span class="meta-label">
+              <i class="fas fa-map-marker-alt"></i> Lieu de trouvaille
+            </span>
+            <span class="meta-value">{{ documentDetails.Location }}</span>
+          </div>
+          <div class="meta-item" *ngIf="documentDetails.identification">
+            <span class="meta-label">Identification</span>
+            <span class="meta-value">{{ documentDetails.identification }}</span>
+          </div>
+        </div>
+
+        <!-- Statut visuel -->
+        <div class="statut-row"
+             [ngClass]="documentDetails.statut === 'récupéré' ? 'statut-green' : 'statut-orange'">
+          <i class="fas"
+             [ngClass]="documentDetails.statut === 'récupéré' ? 'fa-check-circle' : 'fa-clock'">
+          </i>
+          <span>
+            {{ documentDetails.statut === 'récupéré'
+              ? 'Ce document a été récupéré par son propriétaire'
+              : 'Ce document est en attente de récupération' }}
+          </span>
+        </div>
+
+      </div>
+
+      <!-- Card commentaires -->
+      <div class="comments-card">
+
+        <div class="comments-header">
+          <div class="comments-title">
+            <i class="fas fa-comments"></i>
+            <h3>Commentaires
+              <span class="comments-count">{{ commentaires.length }}</span>
+            </h3>
+          </div>
+        </div>
+
+        <!-- Liste commentaires -->
+        <div class="comments-list">
+
+          <div class="empty-comments" *ngIf="commentaires.length === 0">
+            <i class="fas fa-comment-slash"></i>
+            <p>Aucun commentaire pour le moment.</p>
+          </div>
+
+          <div class="comment-item"
+               *ngFor="let commentaire of commentaires">
+            <div class="comment-avatar">
+              {{ commentaire.user.FirstName.charAt(0) }}{{ commentaire.user.LastName.charAt(0) }}
+            </div>
+            <div class="comment-body">
+              <div class="comment-meta">
+                <strong>{{ commentaire.user.FirstName }} {{ commentaire.user.LastName }}</strong>
+                <span class="comment-date">{{ commentaire.created_at | date:'dd/MM/yyyy' }}</span>
+              </div>
+              <p class="comment-text">{{ commentaire.contenu }}</p>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Formulaire -->
+        <div class="comment-form">
+          <div class="comment-input-wrap">
+            <i class="fas fa-pen comment-icon"></i>
+            <input
+              class="comment-input"
+              [(ngModel)]="newComment"
+              placeholder="Écrire un commentaire..."
+              (keyup.enter)="addCommentaire()">
+          </div>
+          <button class="btn-comment"
+                  (click)="addCommentaire()"
+                  [disabled]="isLoading || !newComment.trim()">
+            <i class="fas fa-paper-plane"></i>
+            {{ isLoading ? 'Envoi...' : 'Envoyer' }}
+          </button>
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+</div>

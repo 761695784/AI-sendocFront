@@ -1,0 +1,74 @@
+<div class="page-wrapper">
+
+  <!-- Non connecté -->
+  <div class="not-connected" *ngIf="!user">
+    <div class="not-connected-card">
+      <div class="not-connected-icon">
+        <i class="fas fa-lock"></i>
+      </div>
+      <h3>Accès restreint</h3>
+      <p>Vous devez être connecté pour accéder à votre QR Code.</p>
+      <a routerLink="/connexion" class="btn-connect">
+        <i class="fas fa-sign-in-alt"></i> Se connecter
+      </a>
+    </div>
+  </div>
+
+  <!-- QR Code card -->
+  <div class="qr-card" *ngIf="user">
+
+    <div *ngIf="isLoading" class="loader-overlay">
+      <l-ring-2 size="40" stroke="5" stroke-length="0.55"
+        bg-opacity="0.1" speed="0.8" color="#F6A500">
+      </l-ring-2>
+    </div>
+
+    <!-- Bouton fermer -->
+    <button class="btn-close" (click)="navigateToModify()"
+            aria-label="Fermer">
+      <i class="fas fa-times"></i>
+    </button>
+
+    <!-- Header -->
+    <div class="qr-header">
+      <div class="qr-logo">
+        <i class="fas fa-qrcode"></i>
+      </div>
+      <h2>Votre QR Code</h2>
+      <p class="qr-validity">
+        <i class="fas fa-clock"></i>
+        Valide jusqu'au
+        <strong>{{ user.qr_code_expires_at | date:'dd MMM yyyy' }}</strong>
+      </p>
+    </div>
+
+    <!-- QR Code image -->
+    <div class="qr-image-wrap qr-code-print">
+      <img [src]="qrCodeUrl" alt="Votre QR Code DocTrack"
+           *ngIf="qrCodeUrl" />
+      <div class="qr-placeholder" *ngIf="!qrCodeUrl">
+        <i class="fas fa-spinner fa-spin"></i>
+        <span>Chargement...</span>
+      </div>
+    </div>
+
+    <!-- Info -->
+    <div class="qr-info">
+      <i class="fas fa-info-circle"></i>
+      <span>Imprimez et plastifiez ce QR code pour le porter avec vous</span>
+    </div>
+
+    <!-- Boutons -->
+    <div class="button-group">
+      <button class="btn-print print-button" (click)="printQrCode()">
+        <i class="fas fa-print"></i>
+        Imprimer
+      </button>
+      <button class="btn-renew renew-button" (click)="renewQRCode()">
+        <i class="fas fa-sync-alt"></i>
+        Renouveler
+      </button>
+    </div>
+
+  </div>
+</div>

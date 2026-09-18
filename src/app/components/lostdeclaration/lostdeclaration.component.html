@@ -1,0 +1,160 @@
+<app-navbar></app-navbar>
+
+<div class="page-wrapper">
+
+  <!-- Hero header -->
+  <div class="page-hero">
+    <div class="hero-content">
+      <div class="hero-badge">
+        <i class="fas fa-file-alt"></i>
+        Espace personnel
+      </div>
+      <h1>Mes Déclarations de Perte</h1>
+      <p>Consultez et gérez l'historique de vos déclarations. Retrouvez vos certificats officiels et suivez l'état de vos dossiers.</p>
+      <div class="hero-actions">
+        <a href="/declarer" class="btn-declare">
+          <i class="fas fa-plus-circle"></i>
+          Nouvelle déclaration
+        </a>
+        <button class="btn-trash" (click)="toggleTrashedView()">
+          <i class="fas fa-trash-alt"></i>
+          {{ showTrashedDeclarations ? 'Mes déclarations' : 'Corbeille' }}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+
+    <!-- Vue corbeille -->
+    <div *ngIf="showTrashedDeclarations">
+      <div class="section-header">
+        <div class="section-title-wrap">
+          <div class="section-icon red">
+            <i class="fas fa-trash-alt"></i>
+          </div>
+          <div>
+            <h2 class="section-title">Déclarations supprimées</h2>
+            <p class="section-subtitle">Ces déclarations peuvent être restaurées</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="empty-state" *ngIf="trashedDeclarations.length === 0">
+        <div class="empty-icon">🗑️</div>
+        <h3>Corbeille vide</h3>
+        <p>Aucune déclaration supprimée pour le moment.</p>
+      </div>
+
+      <div class="grid-container">
+        <div class="card trashed" *ngFor="let declaration of trashedDeclarations">
+          <div class="card-image-wrap">
+            <img src="/assets/declaration.webp" alt="Déclaration" />
+            <div class="card-image-overlay"></div>
+            <div class="card-badge badge-red">Supprimée</div>
+          </div>
+          <div class="card-content">
+            <h3 class="card-title">{{ declaration.Title }}</h3>
+            <div class="card-meta">
+              <span class="meta-label">Supprimée le</span>
+              <span class="meta-value">{{ declaration.deleted_at | date:'dd MMM yyyy' }}</span>
+            </div>
+            <div class="card-meta">
+              <span class="meta-label">Prénom</span>
+              <span class="meta-value highlight">{{ declaration.FirstNameInDoc }}</span>
+            </div>
+            <div class="card-meta">
+              <span class="meta-label">Nom</span>
+              <span class="meta-value highlight">{{ declaration.LastNameInDoc }}</span>
+            </div>
+            <div class="card-actions">
+              <button class="btn-restore" (click)="restoreDeclaration(declaration.uuid)">
+                <i class="fas fa-undo"></i> Restaurer
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Vue normale -->
+    <div *ngIf="!showTrashedDeclarations">
+      <div class="section-header">
+        <div class="section-title-wrap">
+          <div class="section-icon">
+            <i class="fas fa-file-alt"></i>
+          </div>
+          <div>
+            <h2 class="section-title">Mes déclarations actives</h2>
+            <p class="section-subtitle">{{ declarations.length }} déclaration(s) enregistrée(s)</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="empty-state" *ngIf="declarations.length === 0">
+        <div class="empty-icon">📋</div>
+        <h3>Aucune déclaration</h3>
+        <p>Vous n'avez pas encore effectué de déclaration de perte.</p>
+        <a routerLink="/lost" class="btn-declare-empty">
+          <i class="fas fa-plus-circle"></i> Faire une déclaration
+        </a>
+      </div>
+
+      <div class="grid-container">
+        <div class="card" *ngFor="let declaration of declarations; let i = index"
+             [style.animation-delay]="i * 0.05 + 's'">
+
+          <div class="card-image-wrap">
+            <img src="/assets/declaration.webp" alt="Déclaration" />
+            <div class="card-image-overlay"></div>
+            <div class="card-badge badge-blue">{{ declaration.document_type?.TypeName }}</div>
+            <div class="card-cert-badge" *ngIf="declaration.certificat?.uuid">
+              <i class="fas fa-certificate"></i> Certifié
+            </div>
+          </div>
+
+          <div class="card-content">
+            <h3 class="card-title">{{ declaration.Title }}</h3>
+
+            <div class="card-meta">
+              <span class="meta-label">Déclarant</span>
+              <span class="meta-value">
+                {{ declaration.user?.FirstName }} {{ declaration.user?.LastName }}
+              </span>
+            </div>
+            <div class="card-meta">
+              <span class="meta-label">Date</span>
+              <span class="meta-value">{{ declaration.created_at | date:'dd MMM yyyy' }}</span>
+            </div>
+
+            <div class="card-divider"></div>
+
+            <div class="card-meta">
+              <span class="meta-label">Prénom</span>
+              <span class="meta-value highlight">{{ declaration.FirstNameInDoc }}</span>
+            </div>
+            <div class="card-meta">
+              <span class="meta-label">Nom</span>
+              <span class="meta-value highlight">{{ declaration.LastNameInDoc }}</span>
+            </div>
+
+            <div class="card-actions">
+              <button class="btn-delete" (click)="deleteDeclaration(declaration.uuid)">
+                <i class="fas fa-trash-alt"></i> Supprimer
+              </button>
+              <button
+                *ngIf="declaration.certificat?.uuid"
+                class="btn-view"
+                (click)="viewCertificate(declaration.certificat.uuid)">
+                <i class="fas fa-eye"></i> Certificat
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<app-footer></app-footer>

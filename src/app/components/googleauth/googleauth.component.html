@@ -1,0 +1,31 @@
+<app-navbar></app-navbar>
+<section class="Formulaire">
+  <div class="container" id="form">
+    <div class="form-container">
+      <h2>Finaliser votre inscription</h2>
+      <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+        <div class="label-container">
+          <div>
+            <label for="Adress" class="required">Adresse</label>
+            <input type="text" id="Adress" formControlName="Adress" placeholder="Saisir l'adresse" required>
+            <div *ngIf="registerForm.get('Adress')?.invalid && (registerForm.get('Adress')?.touched || registerForm.get('Adress')?.dirty)">
+              <small class="error">{{ getErrorMessage('Adress') }}</small>
+            </div>
+          </div>
+          <div>
+            <label for="Phone" class="required">Numéro de téléphone</label>
+            <input type="tel" id="Phone" formControlName="Phone" placeholder="Entrer votre numero sous format +221" required>
+            <div *ngIf="registerForm.get('Phone')?.invalid && (registerForm.get('Phone')?.touched || registerForm.get('Phone')?.dirty)">
+              <small class="error">{{ getErrorMessage('Phone') }}</small>
+            </div>
+          </div>
+        </div>
+        <button type="submit">Valider</button>
+      </form>
+    </div>
+  </div>
+
+  <div class="carteImage">
+    <img src="/assets/Drapeau_national1.png" alt="CBAO" class="carte" />
+  </div>
+</section>

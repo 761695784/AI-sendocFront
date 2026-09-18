@@ -1,0 +1,350 @@
+<app-navbar></app-navbar>
+
+<div class="page-wrapper">
+
+  <!-- ── Hero ── -->
+  <div class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-content">
+      <div class="hero-badge">
+        <i class="fas fa-shield-alt"></i>
+        Plateforme nationale — République du Sénégal
+      </div>
+      <h1>Vous avez perdu un document important ?<br>
+        <span>Nous sommes là pour vous aider.</span>
+      </h1>
+      <p>Publiez ou recherchez des documents perdus et retrouvés en toute simplicité.
+        <strong>DocTrack</strong>, votre solution rapide et sécurisée.
+      </p>
+
+      <!-- Barre de recherche -->
+      <div class="search-bar">
+        <div class="search-input-wrap">
+          <i class="fas fa-search search-icon"></i>
+          <input type="text"
+                 [(ngModel)]="searchTerm"
+                 (input)="filterDocuments()"
+                 placeholder="Recherchez un document trouvé (nom, type, lieu...)">
+        </div>
+        <button class="search-btn" (click)="filterDocuments()">
+          <i class="fas fa-search"></i> Rechercher
+        </button>
+      </div>
+
+      <!-- Boutons CTA -->
+      <div class="hero-actions">
+        <a href="/declarer" class="btn-hero-primary">
+          <i class="fas fa-file-alt"></i> Déclarer une perte
+        </a>
+        <a href="/publier" class="btn-hero-secondary">
+          <i class="fas fa-upload"></i> Publier un document
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Résultats de recherche ── -->
+  <div class="search-results-section" *ngIf="searchTerm.length > 0">
+    <div class="container">
+
+      <div class="search-header">
+        <i class="fas fa-search"></i>
+        <span>Résultats pour <strong>"{{ searchTerm }}"</strong></span>
+      </div>
+
+      <div class="no-results" *ngIf="filteredDocuments.length === 0">
+        <div class="no-results-icon"><i class="fas fa-folder-open"></i></div>
+        <h3>Aucun document trouvé</h3>
+        <p>Essayez avec d'autres mots-clés ou
+          <a href="/declarer">déclarez une perte</a>.
+        </p>
+      </div>
+
+      <div class="results-grid" *ngIf="filteredDocuments.length > 0">
+        <div class="result-card" *ngFor="let document of filteredDocuments; let i = index"
+             [style.animation-delay]="i * 0.05 + 's'">
+          <div class="result-card-img">
+            <img *ngIf="document.image_blurred || document.image" loading="lazy"
+                 [src]="document.image_blurred || document.image" alt="Document">
+            <!-- <div class="blur-overlay"></div> -->
+            <div class="result-type-badge">
+              {{ document.document_type.TypeName }}
+            </div>
+            <div class="result-status-badge"
+                 [ngClass]="document.statut === 'récupéré' ? 'badge-green' : 'badge-orange'">
+              {{ document.statut === 'récupéré' ? 'Récupéré' : 'En attente' }}
+            </div>
+          </div>
+          <div class="result-card-body">
+            <p class="result-publisher">
+              <i class="fas fa-user-circle"></i>
+              {{ document.user.FirstName }} {{ document.user.LastName }}
+              · {{ document.created_at | date:'dd/MM/yyyy' }}
+            </p>
+            <div class="result-meta">
+              <div class="result-meta-item">
+                <span class="result-meta-label">Prénom</span>
+                <span class="result-meta-value">{{ document.OwnerFirstName }}</span>
+              </div>
+              <div class="result-meta-item">
+                <span class="result-meta-label">Nom</span>
+                <span class="result-meta-value">{{ document.OwnerLastName }}</span>
+              </div>
+            </div>
+            <button class="btn-details" (click)="viewDetails(document.uuid)">
+              <i class="fas fa-eye"></i> Voir les détails
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Avantages ── -->
+  <div class="advantages-section">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-badge">
+          <i class="fas fa-star"></i> Pourquoi DocTrack ?
+        </div>
+        <h2>Bénéficiez des avantages de DocTrack</h2>
+        <p>Une plateforme simple, rapide et sécurisée pour gérer vos documents perdus</p>
+      </div>
+
+      <div class="advantages-grid">
+        <div class="advantage-card">
+          <div class="advantage-img-wrap">
+            <img loading="lazy" src="assets/avantage1.webp" alt="Rechercher">
+          </div>
+          <div class="advantage-num">01</div>
+          <h4>Rechercher</h4>
+          <p>Recherchez votre document perdu directement depuis la plateforme.</p>
+        </div>
+        <div class="advantage-card">
+          <div class="advantage-img-wrap">
+            <img loading="lazy" src="assets/avantage2.webp" alt="Déclarer">
+          </div>
+          <div class="advantage-num">02</div>
+          <h4>Déclarer</h4>
+          <p>Déclarez la perte de votre document et obtenez un certificat officiel.</p>
+        </div>
+        <div class="advantage-card">
+          <div class="advantage-img-wrap">
+            <img loading="lazy" src="assets/avantage3.webp" alt="Publier">
+          </div>
+          <div class="advantage-num">03</div>
+          <h4>Publier</h4>
+          <p>Publiez un document trouvé pour aider son propriétaire à le récupérer.</p>
+        </div>
+        <div class="advantage-card">
+          <div class="advantage-img-wrap">
+            <img loading="lazy" src="assets/avantage4.webp" alt="Récupérer">
+          </div>
+          <div class="advantage-num">04</div>
+          <h4>Récupérer</h4>
+          <p>Récupérez votre document directement auprès du trouveur en toute sécurité.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Statistiques ── -->
+  <div class="stats-section" id="stat">
+    <div class="container">
+      <div class="section-header light">
+        <div class="section-badge dark">
+          <i class="fas fa-chart-bar"></i> Nos chiffres
+        </div>
+        <h2>Nos Statistiques</h2>
+        <p>DocTrack mesure son succès à travers les résultats tangibles fournis aux citoyens</p>
+      </div>
+
+      <div class="stats-layout">
+        <div class="stats-image">
+          <img loading="lazy" src="/assets/Statistique.webp" alt="Statistiques DocTrack">
+        </div>
+        <div class="stats-content">
+          <div class="quote-card">
+            <div class="quote-icon"><i class="fas fa-quote-left"></i></div>
+            <blockquote>
+              Nos Statistiques Parlent d'Elles-Mêmes. Chez DocTrack, nous mesurons notre succès à travers les résultats tangibles que nous fournissons à nos utilisateurs.
+            </blockquote>
+          </div>
+          <div class="stats-numbers">
+            <div class="stat-box">
+              <span class="stat-num">+500</span>
+              <span class="stat-label">Documents publiés</span>
+            </div>
+            <div class="stat-box">
+              <span class="stat-num">+200</span>
+              <span class="stat-label">Documents restitués</span>
+            </div>
+            <div class="stat-box">
+              <span class="stat-num">+1000</span>
+              <span class="stat-label">Utilisateurs inscrits</span>
+            </div>
+            <div class="stat-box">
+              <span class="stat-num">+50</span>
+              <span class="stat-label">Localités couvertes</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Comment ça marche ── -->
+  <div class="howto-section" id="commentcamarche">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-badge">
+          <i class="fas fa-play-circle"></i> Tutoriels
+        </div>
+        <h2>Comment ça marche ?</h2>
+        <p>Découvrez en vidéo comment utiliser DocTrack étape par étape</p>
+      </div>
+
+      <!-- Étape 1 -->
+      <div class="howto-block">
+        <div class="howto-video">
+          <div class="video-wrap">
+            <iframe
+              src="https://www.youtube.com/embed/QGWwwUaVK6k?si=qR5LV_YluMANMmyF"
+              title="Publications et Déclarations"
+              frameborder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowfullscreen>
+            </iframe>
+          </div>
+        </div>
+        <div class="howto-text">
+          <div class="howto-num">01</div>
+          <h3>Publications et Déclarations</h3>
+          <div class="howto-divider"></div>
+          <p>Si un citoyen perd un document ou en trouve un, la vidéo ci-contre détaille le processus pour déclarer ou publier le document. Suivez les étapes simples pour une gestion rapide et sécurisée.</p>
+          <a href="/declarer" class="howto-btn">
+            <i class="fas fa-file-alt"></i> Faire une déclaration
+          </a>
+        </div>
+      </div>
+
+      <!-- Étape 2 -->
+      <div class="howto-block reverse">
+        <div class="howto-video">
+          <div class="video-wrap">
+            <iframe
+              src="https://www.youtube.com/embed/QGWwwUaVK6k?si=qR5LV_YluMANMmyF"
+              title="Recherche et Restitution"
+              frameborder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowfullscreen>
+            </iframe>
+          </div>
+        </div>
+        <div class="howto-text orange">
+          <div class="howto-num orange">02</div>
+          <h3>Recherche et Restitution</h3>
+          <div class="howto-divider orange"></div>
+          <p>Si un citoyen désire rechercher son document ou demander la restitution, la vidéo ci-contre détaille le processus de recherche et de demande de restitution. Suivez les étapes simples pour récupérer votre document.</p>
+          <a href="/liste" class="howto-btn orange">
+            <i class="fas fa-search"></i> Rechercher un document
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── Carte ── -->
+  <div class="map-section">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-badge">
+          <i class="fas fa-map-marker-alt"></i> Géolocalisation
+        </div>
+        <h2>Publications par Localités</h2>
+        <p>Visualisez la répartition géographique des documents publiés sur DocTrack</p>
+      </div>
+      <div class="map-wrap">
+        <app-map></app-map>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Témoignage ── -->
+  <div class="testimonial-section">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-badge dark">
+          <i class="fas fa-comment-dots"></i> Témoignages
+        </div>
+        <h2>Ce que disent nos utilisateurs</h2>
+      </div>
+
+      <div class="testimonial-card">
+        <div class="testimonial-quote">
+          <i class="fas fa-quote-left"></i>
+        </div>
+        <div class="testimonial-body">
+          <p>"Cette plateforme m'a vraiment aidé. Lorsque je fus venu au Sénégal pour mes vacances, j'ai perdu mon passeport. Grâce à DocTrack, j'ai pu faire ma déclaration, retrouver mon passeport et finalement rentrer en Europe."</p>
+          <div class="testimonial-author">
+            <div class="testimonial-avatar">CS</div>
+            <div>
+              <strong>Cheikh Serigne Saliou Talla</strong>
+              <span>Utilisateur DocTrack</span>
+            </div>
+          </div>
+        </div>
+        <div class="testimonial-img">
+          <img loading="lazy" src="/assets/Imagetemoin.webp" alt="Cheikh Serigne Saliou Talla">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Partenaires ── -->
+  <div class="partners-section">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-badge">
+          <i class="fas fa-handshake"></i> Partenaires
+        </div>
+        <h2>Nos Partenaires</h2>
+        <p>Ils nous font confiance et soutiennent la mission de DocTrack</p>
+      </div>
+
+      <div class="partners-track">
+        <div class="partners-slide">
+          <div class="partner-item">
+            <img loading="lazy" src="/assets/simplon.webp" alt="Simplon">
+          </div>
+          <div class="partner-item">
+            <img loading="lazy" src="/assets/societe-generale-logo.webp" alt="Société Générale">
+          </div>
+          <div class="partner-item">
+            <img loading="lazy" src="/assets/simplon.webp" alt="Simplon">
+          </div>
+          <div class="partner-item">
+            <img loading="lazy" src="/assets/societe-generale-logo.webp" alt="Société Générale">
+          </div>
+          <div class="partner-item">
+            <img loading="lazy" src="/assets/simplon.webp" alt="Simplon">
+          </div>
+          <div class="partner-item">
+            <img loading="lazy" src="/assets/societe-generale-logo.webp" alt="Société Générale">
+          </div>
+          <!-- Duplicate pour boucle infinie -->
+          <div class="partner-item">
+            <img loading="lazy" src="/assets/simplon.webp" alt="Simplon">
+          </div>
+          <div class="partner-item">
+            <img loading="lazy" src="/assets/societe-generale-logo.webp" alt="Société Générale">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<app-footer></app-footer>

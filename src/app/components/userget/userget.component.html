@@ -1,0 +1,93 @@
+<app-sideheaders></app-sideheaders>
+
+<div class="page-content">
+
+  <!-- Page header -->
+  <div class="page-header">
+    <div class="page-title-wrap">
+      <div class="page-title-icon">
+        <i class="fas fa-users"></i>
+      </div>
+      <div>
+        <h1 class="page-title">Utilisateurs</h1>
+        <p class="page-subtitle">{{ paginatedUsers.length }} utilisateur(s) affiché(s)</p>
+      </div>
+    </div>
+    <button class="add-user-btn" (click)="addUser()">
+      <i class="fas fa-user-plus"></i>
+      Nouvel utilisateur
+    </button>
+  </div>
+
+  <!-- Table -->
+  <div class="table-wrap">
+    <table class="user-table">
+      <thead>
+        <tr>
+          <th (click)="sortUsers('id')">ID <i class="fas fa-sort"></i></th>
+          <th (click)="sortUsers('LastName')">Nom <i class="fas fa-sort"></i></th>
+          <th (click)="sortUsers('FirstName')">Prénom <i class="fas fa-sort"></i></th>
+          <th (click)="sortUsers('email')">Email <i class="fas fa-sort"></i></th>
+          <th (click)="sortUsers('roles')">Rôle <i class="fas fa-sort"></i></th>
+          <th (click)="sortUsers('Adress')">Adresse <i class="fas fa-sort"></i></th>
+          <th (click)="sortUsers('Phone')">Téléphone <i class="fas fa-sort"></i></th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let user of paginatedUsers; let i = index">
+          <td data-label="ID">
+            <span class="id-badge">#{{ user.id }}</span>
+          </td>
+          <td data-label="Nom">
+            <div class="user-cell">
+            <div class="user-avatar">{{ user.FirstName.charAt(0) }}{{ user.LastName.charAt(0) }}</div>
+              <span class="user-name">{{ user.LastName }}</span>
+            </div>
+          </td>
+          <td data-label="Prénom">{{ user.FirstName }}</td>
+          <td data-label="Email">
+            <span class="email-chip">{{ user.email }}</span>
+          </td>
+          <td data-label="Rôle">
+            <span class="role-badge"
+              [ngClass]="user.roles.includes('Admin') ? 'role-admin' : 'role-user'">
+              <i class="fas" [ngClass]="user.roles.includes('Admin') ? 'fa-shield-alt' : 'fa-user'"></i>
+              {{ user.roles.join(', ') }}
+            </span>
+          </td>
+          <td data-label="Adresse">
+            <span class="muted">
+              <i class="fas fa-map-marker-alt" style="color:#F6A500; margin-right:4px;"></i>
+              {{ user.Adress }}
+            </span>
+          </td>
+          <td data-label="Téléphone">
+            <span class="phone-chip">{{ user.Phone }}</span>
+          </td>
+          <td data-label="Action">
+        <button class="delete-btn"
+                (click)="deleteUser(user.id)"
+                [disabled]="user.roles.includes('Admin')"
+                [title]="user.roles.includes('Admin') ? 'Impossible de supprimer un admin' : 'Supprimer'"
+                aria-label="Supprimer l'utilisateur">
+          <i class="fas fa-trash-alt"></i>
+        </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Pagination -->
+  <div class="pagination-controls">
+    <button (click)="pageChanged(currentPage - 1)" [disabled]="currentPage === 1">
+      <i class="fas fa-chevron-left"></i> Précédent
+    </button>
+    <span>Page {{ currentPage }} sur {{ totalPages }}</span>
+    <button (click)="pageChanged(currentPage + 1)" [disabled]="currentPage === totalPages">
+      Suivant <i class="fas fa-chevron-right"></i>
+    </button>
+  </div>
+
+</div>

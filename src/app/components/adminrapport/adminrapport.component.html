@@ -1,0 +1,272 @@
+<app-sideheaders></app-sideheaders>
+
+<div class="page-content">
+
+  <!-- ── Header ── -->
+  <div class="page-header">
+    <div class="page-header-left">
+      <div class="page-header-icon">
+        <i class="fas fa-file-chart-bar"></i>
+      </div>
+      <div>
+        <div class="page-breadcrumb">
+          <span>Administration</span>
+          <i class="fas fa-chevron-right"></i>
+          <span class="breadcrumb-active">Rapports institutionnels</span>
+        </div>
+        <h1>Rapports institutionnels</h1>
+        <p>Génération et gestion des rapports officiels nationaux DocTrack</p>
+      </div>
+    </div>
+    <div class="header-badge">
+      <i class="fas fa-shield-alt"></i>
+      Usage officiel restreint
+    </div>
+  </div>
+
+  <!-- ── Toasts ── -->
+  <div class="feedback-msg success" *ngIf="messageSucces">
+    <i class="fas fa-check-circle"></i>
+    <div>
+      <strong>Succès</strong>
+      <p>{{ messageSucces }}</p>
+    </div>
+    <button class="feedback-close" (click)="messageSucces = ''"
+            aria-label="Fermer">
+      <i class="fas fa-times"></i>
+    </button>
+  </div>
+
+  <div class="feedback-msg error" *ngIf="messageErreur">
+    <i class="fas fa-exclamation-circle"></i>
+    <div>
+      <strong>Erreur</strong>
+      <p>{{ messageErreur }}</p>
+    </div>
+    <button class="feedback-close" (click)="messageErreur = ''"
+            aria-label="Fermer">
+      <i class="fas fa-times"></i>
+    </button>
+  </div>
+
+  <!-- ── Panneau génération ── -->
+  <div class="gen-card">
+    <div class="gen-card-header">
+      <div class="gen-card-title">
+        <div class="gen-card-icon">
+          <i class="fas fa-file-invoice"></i>
+        </div>
+        <div>
+          <h2>Générer un nouveau rapport</h2>
+          <p>Sélectionnez la période et le type de rapport souhaité</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="gen-card-body">
+
+      <!-- Type -->
+      <div class="field-group">
+        <label class="field-label">Type de rapport</label>
+        <div class="toggle-group">
+          <button class="toggle-btn"
+                  [class.active]="typeRapport === 'mensuel'"
+                  (click)="typeRapport = 'mensuel'">
+            <i class="fas fa-calendar-day"></i> Mensuel
+          </button>
+          <button class="toggle-btn"
+                  [class.active]="typeRapport === 'annuel'"
+                  (click)="typeRapport = 'annuel'; moisSelectionne = null">
+            <i class="fas fa-calendar-alt"></i> Annuel
+          </button>
+        </div>
+      </div>
+
+      <div class="gen-form-row">
+
+        <!-- Année -->
+        <div class="field-group">
+          <label class="field-label">
+            <i class="fas fa-calendar"></i> Année
+          </label>
+          <select class="field-select" [(ngModel)]="anneeSelectionnee" title="Sélectionnez l'année pour le rapport">
+            <option *ngFor="let a of anneesDisponibles" [value]="a">{{ a }}</option>
+          </select>
+        </div>
+
+        <!-- Mois -->
+        <div class="field-group" *ngIf="typeRapport === 'mensuel'">
+          <label class="field-label">
+            <i class="fas fa-calendar-week"></i> Mois
+          </label>
+          <select class="field-select" [(ngModel)]="moisSelectionne" title="Sélectionnez le mois pour le rapport">
+            <option *ngFor="let m of moisDisponibles" [value]="m.valeur">
+              {{ m.label }}
+            </option>
+          </select>
+        </div>
+
+        <!-- Actions -->
+        <div class="field-group field-group--actions">
+          <label class="field-label">&nbsp;</label>
+          <div class="gen-actions">
+            <button class="btn-apercu"
+                    (click)="ouvrirApercu()"
+                    [disabled]="generationEnCours">
+              <i class="fas fa-eye"></i> Aperçu PDF
+            </button>
+            <button class="btn-generer"
+                    (click)="genererRapport()"
+                    [disabled]="generationEnCours">
+              <i class="fas" [ngClass]="generationEnCours ? 'fa-spinner fa-spin' : 'fa-cogs'"></i>
+              {{ generationEnCours ? 'Génération…' : 'Générer & Sauvegarder' }}
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Liste rapports ── -->
+  <div class="table-card">
+
+    <div class="table-card-header">
+      <div class="table-card-title">
+        <i class="fas fa-archive"></i>
+        Rapports sauvegardés
+        <span class="count-badge">{{ rapports.length }}</span>
+      </div>
+      <button class="btn-refresh"
+              (click)="chargerRapports()"
+              [disabled]="chargement"
+              aria-label="Actualiser la liste">
+        <i class="fas fa-sync-alt" [class.fa-spin]="chargement"></i>
+        Actualiser
+      </button>
+    </div>
+
+    <!-- Skeleton -->
+    <div class="skeleton-list" *ngIf="chargement">
+      <div class="skeleton-item" *ngFor="let i of [1,2,3]"></div>
+    </div>
+
+    <!-- Empty -->
+    <div class="empty-state" *ngIf="!chargement && rapports.length === 0">
+      <div class="empty-icon"><i class="fas fa-folder-open"></i></div>
+      <h3>Aucun rapport généré</h3>
+      <p>Utilisez le formulaire ci-dessus pour créer votre premier rapport institutionnel.</p>
+    </div>
+
+    <!-- Table -->
+    <div class="table-wrap" *ngIf="!chargement && rapports.length > 0">
+      <table class="rp-table">
+        <thead>
+          <tr>
+            <th>Référence</th>
+            <th>Période</th>
+            <th>Type</th>
+            <th>Généré le</th>
+            <th>Par</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let rapport of rapports; trackBy: trackByUuid"
+              class="rp-row"
+              [class.rp-row--active]="rapport.uuid === rapportActif">
+
+            <td>
+              <span class="ref-tag">
+                <i class="fas fa-hashtag"></i>
+                {{ rapport.uuid | slice:0:8 }}…
+              </span>
+            </td>
+
+            <td>
+              <span class="periode-label">{{ rapport.periode_label }}</span>
+            </td>
+
+            <td>
+              <span class="type-badge"
+                    [ngClass]="rapport.type === 'Mensuel' ? 'type-mensuel' : 'type-annuel'">
+                <i class="fas"
+                   [ngClass]="rapport.type === 'Mensuel'
+                     ? 'fa-calendar-day' : 'fa-calendar-alt'">
+                </i>
+                {{ rapport.type }}
+              </span>
+            </td>
+
+            <td>
+              <div class="date-cell">
+                <span class="date-main">{{ rapport.genere_le }}</span>
+              </div>
+            </td>
+
+            <td>
+              <span class="par-cell">{{ rapport.genere_par || '—' }}</span>
+            </td>
+
+            <td>
+              <div class="actions-cell">
+                <button class="action-btn action-voir"
+                        [disabled]="!rapport.pdf_existe"
+                        (click)="voirRapport(rapport)"
+                        title="Ouvrir le PDF"
+                        aria-label="Voir le rapport">
+                  <i class="fas fa-eye"></i>
+                </button>
+                <button class="action-btn action-dl"
+                        [disabled]="!rapport.pdf_existe"
+                        (click)="telechargerRapport(rapport)"
+                        title="Télécharger"
+                        aria-label="Télécharger le rapport">
+                  <i class="fas fa-download"></i>
+                </button>
+                <button class="action-btn action-regen"
+                        (click)="regenRapport(rapport)"
+                        title="Régénérer"
+                        aria-label="Régénérer ce rapport">
+                  <i class="fas fa-redo"></i>
+                </button>
+                <button class="action-btn action-del"
+                        (click)="confirmerSuppression(rapport)"
+                        title="Supprimer"
+                        aria-label="Supprimer ce rapport">
+                  <i class="fas fa-trash-alt"></i>
+                </button>
+              </div>
+            </td>
+
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ── Modal suppression ── -->
+  <div class="modal-overlay" *ngIf="rapportASupprimer"
+       (click)="rapportASupprimer = null">
+    <div class="modal-card" (click)="$event.stopPropagation()">
+      <div class="modal-icon-wrap">
+        <i class="fas fa-exclamation-triangle"></i>
+      </div>
+      <h3>Confirmer la suppression</h3>
+      <p>
+        Vous êtes sur le point de supprimer définitivement le rapport
+        <strong>{{ rapportASupprimer.periode_label }}</strong>.
+        Cette action est irréversible.
+      </p>
+      <div class="modal-actions">
+        <button class="btn-modal-cancel" (click)="rapportASupprimer = null">
+          <i class="fas fa-times"></i> Annuler
+        </button>
+        <button class="btn-modal-confirm" (click)="supprimerRapport()">
+          <i class="fas fa-trash-alt"></i> Supprimer
+        </button>
+      </div>
+    </div>
+  </div>
+
+</div>

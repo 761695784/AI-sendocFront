@@ -1,0 +1,184 @@
+<app-navbar></app-navbar>
+
+<div class="page-wrapper">
+
+  <!-- Hero -->
+  <div class="page-hero">
+    <div class="hero-content">
+      <div class="hero-badge">
+        <i class="fas fa-newspaper"></i>
+        Espace personnel
+      </div>
+      <h1>Mes Publications</h1>
+      <p>Gérez vos publications de documents trouvés. Mettez à jour le statut une fois la restitution effectuée, ou supprimez les publications obsolètes.</p>
+      <div class="hero-actions">
+        <a href="/publier" class="btn-publish">
+          <i class="fas fa-plus-circle"></i>
+          Nouvelle publication
+        </a>
+        <button class="btn-trash" (click)="showTrashedDocuments()">
+          <i class="fas fa-trash-alt"></i>
+          {{ showTrashed ? 'Mes publications' : 'Corbeille' }}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+
+    <!-- Vue corbeille -->
+    <div *ngIf="showTrashed">
+      <div class="section-header">
+        <div class="section-title-wrap">
+          <div class="section-icon red">
+            <i class="fas fa-trash-alt"></i>
+          </div>
+          <div>
+            <h2 class="section-title">Publications supprimées</h2>
+            <p class="section-subtitle">Ces publications peuvent être restaurées</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="empty-state" *ngIf="trashedPublications.length === 0">
+        <div class="empty-icon">🗑️</div>
+        <h3>Corbeille vide</h3>
+        <p>Aucune publication supprimée pour le moment.</p>
+      </div>
+
+      <div class="grid-container">
+        <div class="card trashed"
+             *ngFor="let pub of trashedPublications; let i = index"
+             [style.animation-delay]="i * 0.05 + 's'">
+          <div class="card-image-wrap">
+            <img loading="lazy"
+                 [src]="pub.image_blurred || '/assets/default-image.png'"
+                 alt="Document" />
+            <!-- <div class="card-image-overlay"></div> -->
+            <div class="card-badge badge-red">Supprimée</div>
+          </div>
+          <div class="card-content">
+            <div class="card-meta">
+              <span class="meta-label">Publié par</span>
+              <span class="meta-value">{{ pub.user.FirstName }} {{ pub.user.LastName }}</span>
+            </div>
+            <div class="card-meta">
+              <span class="meta-label">Date</span>
+              <span class="meta-value">{{ pub.created_at | date:'dd MMM yyyy' }}</span>
+            </div>
+            <div class="card-divider"></div>
+            <div class="card-meta">
+              <span class="meta-label">Prénom</span>
+              <span class="meta-value highlight">{{ pub.OwnerFirstName }}</span>
+            </div>
+            <div class="card-meta">
+              <span class="meta-label">Nom</span>
+              <span class="meta-value highlight">{{ pub.OwnerLastName }}</span>
+            </div>
+            <div class="card-actions">
+              <button class="btn-restore" (click)="restorePublication(pub.uuid)">
+                <i class="fas fa-undo"></i> Restaurer
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Vue normale -->
+    <div *ngIf="!showTrashed">
+      <div class="section-header">
+        <div class="section-title-wrap">
+          <div class="section-icon">
+            <i class="fas fa-newspaper"></i>
+          </div>
+          <div>
+            <h2 class="section-title">Mes publications actives</h2>
+            <p class="section-subtitle">{{ publications.length }} publication(s) en ligne</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="empty-state" *ngIf="publications.length === 0">
+        <div class="empty-icon">📰</div>
+        <h3>Aucune publication</h3>
+        <p>Vous n'avez pas encore publié de document trouvé.</p>
+        <a href="/publier" class="btn-action-empty">
+          <i class="fas fa-plus-circle"></i> Publier un document
+        </a>
+      </div>
+
+      <div class="grid-container">
+        <div class="card"
+             *ngFor="let publication of publications; let i = index"
+             [style.animation-delay]="i * 0.05 + 's'">
+
+          <div class="card-image-wrap">
+            <img loading="lazy"
+                 [src]="publication.image_blurred || '/assets/default-image.png'"
+                 alt="Document" />
+            <div class="card-image-overlay"></div>
+            <!-- <div class="blur-overlay"></div> -->
+            <!-- Badge type document -->
+            <div class="card-badge badge-blue">
+              {{ publication.document_type.TypeName }}
+            </div>
+
+            <!-- Badge statut -->
+            <div class="card-status-badge"
+                 [ngClass]="publication.statut === 'récupéré' ? 'badge-green' : 'badge-orange'">
+              {{ publication.statut === 'récupéré' ? 'Récupéré' : 'Non récupéré' }}
+            </div>
+          </div>
+
+          <div class="card-content">
+            <div class="card-meta">
+              <span class="meta-label">Publié par</span>
+              <span class="meta-value">
+                {{ publication.user.FirstName }} {{ publication.user.LastName }}
+              </span>
+            </div>
+            <div class="card-meta">
+              <span class="meta-label">Date</span>
+              <span class="meta-value">{{ publication.created_at | date:'dd MMM yyyy' }}</span>
+            </div>
+            <div class="card-meta">
+              <span class="meta-label">Téléphone</span>
+              <span class="meta-value">{{ publication.user.Phone }}</span>
+            </div>
+
+            <div class="card-divider"></div>
+
+            <div class="card-meta">
+              <span class="meta-label">Prénom</span>
+              <span class="meta-value highlight">{{ publication.OwnerFirstName }}</span>
+            </div>
+            <div class="card-meta">
+              <span class="meta-label">Nom</span>
+              <span class="meta-value highlight">{{ publication.OwnerLastName }}</span>
+            </div>
+
+            <div class="card-actions">
+              <button class="btn-delete"
+                      (click)="deletePublication(publication.uuid)">
+                <i class="fas fa-trash-alt"></i> Supprimer
+              </button>
+              <button class="btn-status"
+                      (click)="toggleStatus(publication)"
+                      [ngClass]="publication.statut === 'récupéré' ? 'btn-status-green' : 'btn-status-orange'"
+                      title="Cliquer pour changer le statut">
+                <i class="fas"
+                   [ngClass]="publication.statut === 'récupéré' ? 'fa-check-circle' : 'fa-times-circle'">
+                </i>
+                {{ publication.statut === 'récupéré' ? 'Récupéré' : 'Non récupéré' }}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<app-footer></app-footer>

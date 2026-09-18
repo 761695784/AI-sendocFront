@@ -1,0 +1,84 @@
+<app-sideheaders></app-sideheaders>
+
+<div class="page-content">
+
+  <!-- Page header -->
+  <div class="page-header">
+    <div class="page-title-wrap">
+      <div class="page-title-icon">
+        <i class="fas fa-chart-bar"></i>
+      </div>
+      <div>
+        <h1 class="page-title">Statistiques</h1>
+        <p class="page-subtitle">Vue d'ensemble des données DocTrack</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Ligne 1 : Publications + Emails -->
+  <div class="graph-grid">
+    <div class="graph-card">
+      <div class="graph-card-header">
+        <span class="graph-card-icon"><i class="fas fa-newspaper"></i></span>
+        <span class="graph-card-title">Publications par type de document</span>
+      </div>
+      <div class="graph-body">
+        <app-publication-type-chart></app-publication-type-chart>
+      </div>
+    </div>
+    <div class="graph-card">
+      <div class="graph-card-header">
+        <span class="graph-card-icon orange"><i class="fas fa-envelope"></i></span>
+        <span class="graph-card-title">Mails envoyés par type</span>
+      </div>
+      <div class="graph-body">
+        <app-email-activity-chart></app-email-activity-chart>
+      </div>
+    </div>
+  </div>
+
+  <!-- Ligne 2 : Statuts + Restitutions -->
+  <div class="graph-grid">
+    <div class="graph-card">
+      <div class="graph-card-header">
+        <span class="graph-card-icon"><i class="fas fa-check-circle"></i></span>
+        <span class="graph-card-title">Documents récupérés vs non récupérés</span>
+      </div>
+      <div class="graph-body">
+        <app-status-bar-chart></app-status-bar-chart>
+      </div>
+    </div>
+    <div class="graph-card">
+      <div class="graph-card-header">
+        <span class="graph-card-icon orange"><i class="fas fa-handshake"></i></span>
+        <span class="graph-card-title">Demandes de restitution vs publications restantes</span>
+      </div>
+      <div class="graph-body">
+        <app-restitution-chart></app-restitution-chart>
+      </div>
+    </div>
+  </div>
+
+  <!-- Carte -->
+  <div class="graph-card full-width">
+    <div class="graph-card-header">
+      <span class="graph-card-icon"><i class="fas fa-map-marker-alt"></i></span>
+      <span class="graph-card-title">Publications par localités</span>
+    </div>
+    <div class="graph-body">
+      <app-map></app-map>
+    </div>
+  </div>
+
+  <!-- Evolution -->
+  <div class="graph-card full-width">
+    <div class="graph-card-header">
+      <span class="graph-card-icon orange"><i class="fas fa-chart-line"></i></span>
+      <span class="graph-card-title">Évolution des activités</span>
+    </div>
+    <div class="graph-body">
+      <app-evolution-chart></app-evolution-chart>
+    </div>
+  </div>
+
+</div>

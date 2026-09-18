@@ -1,0 +1,448 @@
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body { font-family: 'Poppins', Arial, sans-serif; }
+
+.page-wrapper {
+  min-height: 100vh;
+  background: #f4f3fb;
+  padding-top: 64px;
+}
+
+/* Loader */
+.loader-overlay {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(23,23,23,0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+/* ── Layout ── */
+.auth-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  min-height: calc(100vh - 64px);
+}
+
+/* ── Panneau gauche ── */
+.auth-left {
+  background: linear-gradient(160deg, #31287C 0%, #1a1650 45%, #0f0d35 100%);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 52px 48px 36px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Cercle décoratif haut droite */
+.auth-left::before {
+  content: '';
+  position: absolute;
+  top: -140px; right: -140px;
+  width: 420px; height: 420px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(246,165,0,0.10) 0%,
+    transparent 65%
+  );
+  pointer-events: none;
+}
+
+/* Cercle décoratif bas gauche */
+.auth-left::after {
+  content: '';
+  position: absolute;
+  bottom: -120px; left: -120px;
+  width: 380px; height: 380px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(255,255,255,0.05) 0%,
+    transparent 65%
+  );
+  pointer-events: none;
+}
+
+.auth-left-content {
+  position: relative;
+  z-index: 1;
+}
+
+/* Logo */
+.auth-logo {
+  width: 64px;
+  height: 64px;
+  border-radius: 16px;
+  object-fit: cover;
+  margin-bottom: 20px;
+  border: 2px solid rgba(246,165,0,0.25);
+  padding: 3px;
+  background: rgba(255,255,255,0.06);
+}
+
+/* Ligne orange décorative */
+.auth-left-divider {
+  width: 44px;
+  height: 4px;
+  background: linear-gradient(to right, #F6A500, rgba(246,165,0,0.3));
+  border-radius: 2px;
+  margin-bottom: 22px;
+}
+
+.auth-left-content h2 {
+  font-size: 1.7rem;
+  font-weight: 800;
+  color: #fff;
+  margin-bottom: 10px;
+  line-height: 1.25;
+  letter-spacing: -0.3px;
+}
+
+.auth-left-content > p {
+  font-size: 0.88rem;
+  color: rgba(255,255,255,0.52);
+  line-height: 1.75;
+  margin-bottom: 36px;
+  max-width: 340px;
+}
+
+/* Features */
+.auth-features {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.feature-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  font-size: 13px;
+  color: rgba(255,255,255,0.72);
+  padding: 11px 14px;
+  border-radius: 10px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.06);
+  transition: background 0.2s, border-color 0.2s;
+  cursor: default;
+}
+
+.feature-item:hover {
+  background: rgba(255,255,255,0.08);
+  border-color: rgba(246,165,0,0.2);
+}
+
+.feature-icon {
+  width: 32px; height: 32px;
+  border-radius: 8px;
+  background: rgba(246,165,0,0.14);
+  color: #F6A500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  flex-shrink: 0;
+}
+
+/* Badge institutionnel */
+.auth-institution {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px 18px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.09);
+  border-left: 3px solid #F6A500;
+  border-radius: 10px;
+  margin-top: 32px;
+}
+
+.auth-institution i {
+  color: #F6A500;
+  font-size: 15px;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.auth-institution span {
+  font-size: 11px;
+  color: rgba(255,255,255,0.48);
+  line-height: 1.6;
+}
+
+/* Drapeau filigrane */
+.auth-flag {
+  width: 260px;
+  opacity: 0.05;
+  position: absolute;
+  bottom: -10px;
+  right: -10px;
+  z-index: 0;
+  filter: grayscale(100%) brightness(3);
+  transform: rotate(-8deg);
+  pointer-events: none;
+}
+
+/* ── Panneau droit ── */
+.auth-right {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 32px;
+  background: #f4f3fb;
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 420px;
+  background: #fff;
+  border-radius: 20px;
+  box-shadow: 0 4px 24px rgba(49,40,124,0.1);
+  border: 1px solid rgba(49,40,124,0.06);
+  padding: 36px 32px;
+}
+
+.auth-card-header {
+  text-align: center;
+  margin-bottom: 28px;
+}
+
+.auth-card-icon {
+  width: 56px; height: 56px;
+  border-radius: 16px;
+  background: #31287C;
+  color: #F6A500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  margin: 0 auto 16px;
+}
+
+.auth-card-header h1 {
+  font-size: 22px;
+  font-weight: 800;
+  color: #31287C;
+  margin-bottom: 6px;
+}
+
+.auth-card-header p {
+  font-size: 13px;
+  color: #aaa;
+}
+
+/* Champs */
+.field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 18px;
+}
+
+label {
+  font-size: 12px;
+  font-weight: 700;
+  color: #555;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+label i { color: #31287C; font-size: 11px; }
+
+input[type="email"],
+input[type="password"],
+input[type="text"] {
+  width: 100%;
+  height: 46px;
+  padding: 0 14px;
+  border: 2px solid #e8e6f5;
+  border-radius: 10px;
+  font-size: 14px;
+  color: #333;
+  background: #faf9ff;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+input:hover { border-color: #c5c0e8; }
+
+input:focus {
+  border-color: #31287C;
+  background: #fff;
+  box-shadow: 0 0 0 3px rgba(49,40,124,0.08);
+}
+
+input.input-error { border-color: #e53935; }
+
+/* Toggle mot de passe */
+.password-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.password-wrap input { padding-right: 44px; }
+
+.toggle-pw {
+  position: absolute;
+  right: 12px;
+  width: auto !important;
+  height: auto !important;
+  background: none !important;
+  border: none !important;
+  color: #aaa;
+  cursor: pointer;
+  padding: 4px;
+  font-size: 14px;
+  margin: 0 !important;
+  transition: color 0.15s;
+}
+
+.toggle-pw:hover { color: #31287C; background: none !important; }
+
+/* Liens */
+.auth-links {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 20px;
+}
+
+.forgot-link {
+  font-size: 12px;
+  color: #31287C;
+  text-decoration: none;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  transition: color 0.15s;
+}
+
+.forgot-link:hover { color: #F6A500; }
+
+/* Message blocage */
+.lockout-message {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #fff5f5;
+  border: 1px solid #ffcdd2;
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 13px;
+  color: #e53935;
+  margin-bottom: 16px;
+}
+
+.lockout-message i { flex-shrink: 0; }
+
+/* Bouton connexion */
+.btn-submit {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  height: 46px;
+  background: #31287C;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 15px;
+  font-weight: 700;
+  transition: background 0.2s, transform 0.15s;
+}
+
+.btn-submit:hover:not(:disabled) {
+  background: #F6A500;
+  color: #31287C;
+  transform: translateY(-1px);
+}
+
+.btn-submit:disabled {
+  background: #ddd;
+  color: #aaa;
+  cursor: not-allowed;
+}
+
+/* Divider */
+.divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 16px 0;
+}
+
+.divider::before,
+.divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: #e8e6f5;
+}
+
+.divider span {
+  font-size: 12px;
+  color: #aaa;
+  font-weight: 600;
+}
+
+/* Bouton Google */
+.btn-google {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  height: 46px;
+  background: #fff;
+  color: #333;
+  border: 2px solid #e8e6f5;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.btn-google i { color: #ea4335; font-size: 16px; }
+
+.btn-google:hover:not(:disabled) {
+  border-color: #31287C;
+  background: #faf9ff;
+}
+
+.btn-google:disabled { opacity: 0.5; cursor: not-allowed; }
+
+/* Lien inscription */
+.signup-link {
+  text-align: center;
+  font-size: 13px;
+  color: #888;
+  margin-top: 20px;
+}
+
+.signup-link a {
+  color: #31287C;
+  font-weight: 700;
+  text-decoration: none;
+  transition: color 0.15s;
+}
+
+.signup-link a:hover { color: #F6A500; }
+
+/* ── Responsive ── */
+@media (max-width: 900px) {
+  .auth-layout { grid-template-columns: 1fr; }
+  .auth-left { display: none; }
+  .auth-right { padding: 24px 16px; }
+}

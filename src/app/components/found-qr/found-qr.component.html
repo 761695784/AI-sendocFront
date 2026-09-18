@@ -1,0 +1,89 @@
+<div class="page-wrapper">
+
+  <!-- Fond décoratif -->
+  <div class="bg-decoration">
+    <div class="bg-circle bg-circle-1"></div>
+    <div class="bg-circle bg-circle-2"></div>
+    <div class="bg-circle bg-circle-3"></div>
+  </div>
+
+  <div class="found-card">
+
+    <!-- Bouton fermer -->
+    <button class="btn-close" (click)="navigateToHome()"
+            aria-label="Fermer">
+      <i class="fas fa-times"></i>
+    </button>
+
+    <!-- Header -->
+    <div class="card-header">
+      <a routerLink="/" class="card-logo-wrap">
+        <img src="/assets/logoo2.png" alt="DocTrack" class="card-logo">
+      </a>
+      <div class="card-badge">
+        <i class="fas fa-map-marker-alt"></i>
+        Document trouvé
+      </div>
+      <h2>Document Retrouvé !</h2>
+      <p>Entrez votre numéro de téléphone pour que le propriétaire puisse vous contacter et récupérer son document.</p>
+    </div>
+
+    <!-- Info box -->
+    <div class="info-box">
+      <i class="fas fa-shield-alt"></i>
+      <span>Votre numéro sera transmis uniquement au propriétaire du document</span>
+    </div>
+
+    <!-- Formulaire -->
+    <form (ngSubmit)="submitPhone()" #phoneForm="ngForm">
+
+      <div class="field-group">
+        <label for="finderPhone" class="required">
+          <i class="fas fa-phone"></i> Numéro de téléphone
+        </label>
+        <div class="input-wrap">
+          <span class="input-prefix">🇸🇳</span>
+          <input type="tel"
+                 id="finderPhone"
+                 [(ngModel)]="finderPhone"
+                 name="finderPhone"
+                 placeholder="+221 77 123 45 67"
+                 required
+                 pattern="^\+221(33|70|75|76|77|78)[0-9]{7}$"
+                 #phoneInput="ngModel"
+                 [disabled]="isLoading"
+                 [class.input-error]="phoneInput.invalid && (phoneInput.touched || phoneInput.dirty)">
+        </div>
+        <div *ngIf="phoneInput.invalid && (phoneInput.touched || phoneInput.dirty)">
+          <small class="error-text" *ngIf="phoneInput.errors?.['required']">
+            <i class="fas fa-exclamation-circle"></i> Ce champ est requis
+          </small>
+          <small class="error-text" *ngIf="phoneInput.errors?.['pattern']">
+            <i class="fas fa-exclamation-circle"></i> Format invalide. Ex: +221771234567
+          </small>
+        </div>
+      </div>
+
+      <button type="submit" class="btn-submit"
+              [disabled]="isLoading || !phoneForm.valid">
+        <ng-container *ngIf="!isLoading">
+          <i class="fas fa-paper-plane"></i>
+          Valider et notifier le propriétaire
+        </ng-container>
+        <ng-container *ngIf="isLoading">
+          <div class="spinner-border" role="status"></div>
+          Envoi en cours...
+        </ng-container>
+      </button>
+
+    </form>
+
+    <!-- Footer -->
+    <p class="card-footer-text">
+      <i class="fas fa-lock"></i>
+      Vos données sont protégées et ne seront pas stockées
+    </p>
+
+  </div>
+
+</div>

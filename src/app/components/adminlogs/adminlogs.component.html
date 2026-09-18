@@ -1,0 +1,280 @@
+<app-sideheaders></app-sideheaders>
+<div class="layout-wrapper">
+  <div class="layout-right">
+    <div class="page-content">
+
+      <!-- Header -->
+      <div class="page-header">
+        <div class="page-header-left">
+          <div class="page-header-icon">
+            <i class="fas fa-history"></i>
+          </div>
+          <div>
+            <h1>Journal d'activité</h1>
+            <p>Traçabilité complète de toutes les actions effectuées sur DocTrack</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Filtres -->
+      <div class="filters-card">
+        <div class="filters-row">
+
+          <div class="filter-group">
+            <label><i class="fas fa-filter"></i> Type de sujet</label>
+            <div class="filter-tabs">
+              <button class="filter-tab"
+                      [class.active]="activeFilter === 'all'"
+                      (click)="setFilter('all')">
+                <i class="fas fa-list"></i> Tous
+                <span class="filter-count">{{ totalLogs }}</span>
+              </button>
+              <button class="filter-tab"
+                      [class.active]="activeFilter === 'documents'"
+                      (click)="setFilter('documents')">
+                <i class="fas fa-file-alt"></i> Documents
+              </button>
+              <button class="filter-tab"
+                      [class.active]="activeFilter === 'declarations'"
+                      (click)="setFilter('declarations')">
+                <i class="fas fa-clipboard-list"></i> Déclarations
+              </button>
+              <button class="filter-tab"
+                      [class.active]="activeFilter === 'users'"
+                      (click)="setFilter('users')">
+                <i class="fas fa-users"></i> Utilisateurs
+              </button>
+            </div>
+          </div>
+
+          <div class="filter-group">
+            <label><i class="fas fa-search"></i> Rechercher</label>
+            <div class="search-wrap">
+              <i class="fas fa-search search-ico"></i>
+              <input type="text"
+                     [(ngModel)]="searchTerm"
+                     (input)="filterLogs()"
+                     placeholder="Rechercher par description, utilisateur...">
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Loader -->
+      <div class="loader-center" *ngIf="isLoading">
+        <l-ring-2 size="36" stroke="4" stroke-length="0.55"
+          bg-opacity="0.1" speed="0.8" color="#31287C">
+        </l-ring-2>
+        <span>Chargement des logs...</span>
+      </div>
+
+      <!-- Empty state -->
+      <div class="empty-state" *ngIf="!isLoading && filteredLogs.length === 0">
+        <div class="empty-icon"><i class="fas fa-history"></i></div>
+        <h3>Aucune activité trouvée</h3>
+        <p>Aucun log ne correspond à vos critères de recherche.</p>
+      </div>
+
+      <!-- Table des logs -->
+      <div class="logs-card" *ngIf="!isLoading && filteredLogs.length > 0">
+        <div class="logs-table-wrap">
+          <table class="logs-table">
+            <thead>
+              <tr>
+                <th>Action</th>
+                <th>Utilisateur</th>
+                <th>Sujet</th>
+                <th>Propriétés</th>
+                <th>Date & Heure</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let log of filteredLogs; let i = index"
+                  [style.animation-delay]="i * 0.03 + 's'"
+                  class="log-row"
+                  (click)="openDetail(log)">
+
+                <!-- Action -->
+                <td>
+                  <div class="action-wrap">
+                    <div class="action-icon" [ngClass]="getActionClass(log.description)">
+                      <i class="fas" [ngClass]="getActionIcon(log.description)"></i>
+                    </div>
+                    <div>
+                      <span class="action-desc">{{ log.description }}</span>
+                      <span class="event-badge" *ngIf="log.event" [ngClass]="getEventClass(log.event)">
+                        {{ log.event }}
+                      </span>
+                    </div>
+                  </div>
+                </td>
+
+                <!-- Utilisateur -->
+                <td>
+                  <div class="user-wrap" *ngIf="log.causer; else noUser">
+                    <div class="user-avatar">
+                      {{ log.causer.FirstName?.charAt(0) }}{{ log.causer.LastName?.charAt(0) }}
+                    </div>
+                    <div>
+                      <span class="user-name">
+                        {{ log.causer.FirstName }} {{ log.causer.LastName }}
+                      </span>
+                      <span class="user-email">{{ log.causer.email }}</span>
+                    </div>
+                  </div>
+                  <ng-template #noUser>
+                    <span class="text-muted">Système</span>
+                  </ng-template>
+                </td>
+
+                <!-- Sujet -->
+                <td>
+                  <div class="subject-wrap" *ngIf="log.subject_type; else noSubject">
+                    <span class="subject-badge" [ngClass]="getSubjectClass(log.subject_type)">
+                      <i class="fas" [ngClass]="getSubjectIcon(log.subject_type)"></i>
+                      {{ getSubjectLabel(log.subject_type) }}
+                    </span>
+                    <span class="subject-id" *ngIf="log.subject">
+                      #{{ log.subject_id }}
+                    </span>
+                  </div>
+                  <ng-template #noSubject>
+                    <span class="text-muted">—</span>
+                  </ng-template>
+                </td>
+
+                <!-- Propriétés -->
+                <td>
+                  <div class="props-wrap">
+                    <span class="prop-chip"
+                          *ngFor="let prop of getTopProps(log.properties) | slice:0:2">
+                      <strong>{{ prop.key }}</strong>: {{ prop.value }}
+                    </span>
+                    <span class="prop-more"
+                          *ngIf="getTopProps(log.properties).length > 2">
+                      +{{ getTopProps(log.properties).length - 2 }} autres
+                    </span>
+                  </div>
+                </td>
+
+                <!-- Date -->
+                <td>
+                  <div class="date-wrap">
+                    <span class="date-main">{{ log.created_at | date:'dd/MM/yyyy' }}</span>
+                    <span class="date-time">{{ log.created_at | date:'HH:mm:ss' }}</span>
+                  </div>
+                </td>
+
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Pagination -->
+        <div class="pagination-wrap">
+          <span class="pagination-info">
+            Page {{ currentPage }} / {{ lastPage }} —
+            <strong>{{ totalLogs }}</strong> log(s) au total
+          </span>
+          <div class="pagination-btns">
+            <button class="page-btn"
+                    [disabled]="currentPage === 1"
+                    (click)="changePage(currentPage - 1)"
+                    aria-label="Page précédente">
+              <i class="fas fa-chevron-left"></i>
+            </button>
+            <button class="page-btn active">{{ currentPage }}</button>
+            <button class="page-btn"
+                    [disabled]="currentPage === lastPage"
+                    (click)="changePage(currentPage + 1)"
+                    aria-label="Page suivante">
+              <i class="fas fa-chevron-right"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Modal détail -->
+      <div class="modal-overlay" *ngIf="selectedLog" (click)="closeDetail()">
+        <div class="modal-card" (click)="$event.stopPropagation()">
+
+          <div class="modal-header">
+            <div class="modal-title">
+              <div class="action-icon lg" [ngClass]="getActionClass(selectedLog.description)">
+                <i class="fas" [ngClass]="getActionIcon(selectedLog.description)"></i>
+              </div>
+              <div>
+                <h3>{{ selectedLog.description }}</h3>
+                <span>{{ selectedLog.created_at | date:'dd/MM/yyyy à HH:mm:ss' }}</span>
+              </div>
+            </div>
+            <button class="modal-close" (click)="closeDetail()" aria-label="Fermer">
+              <i class="fas fa-times"></i>
+            </button>
+          </div>
+
+          <div class="modal-body">
+
+            <!-- Utilisateur -->
+            <div class="modal-section" *ngIf="selectedLog.causer">
+              <h4><i class="fas fa-user"></i> Utilisateur</h4>
+              <div class="modal-row">
+                <div class="user-avatar lg">
+                  {{ selectedLog.causer.FirstName?.charAt(0) }}{{ selectedLog.causer.LastName?.charAt(0) }}
+                </div>
+                <div class="modal-user-info">
+                  <strong>{{ selectedLog.causer.FirstName }} {{ selectedLog.causer.LastName }}</strong>
+                  <span>{{ selectedLog.causer.email }}</span>
+                  <span>{{ selectedLog.causer.Phone }}</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Sujet -->
+            <div class="modal-section" *ngIf="selectedLog.subject">
+              <h4><i class="fas fa-file-alt"></i> Sujet concerné</h4>
+              <div class="modal-props">
+                <div class="modal-prop" *ngFor="let prop of getSubjectProps(selectedLog.subject)">
+                  <span class="mp-key">{{ prop.key }}</span>
+                  <span class="mp-val">{{ prop.value }}</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Propriétés du log -->
+            <div class="modal-section"
+                 *ngIf="getTopProps(selectedLog.properties).length > 0">
+              <h4><i class="fas fa-tags"></i> Données enregistrées</h4>
+              <div class="modal-props">
+                <div class="modal-prop"
+                     *ngFor="let prop of getTopProps(selectedLog.properties)">
+                  <span class="mp-key">{{ prop.key }}</span>
+                  <span class="mp-val">{{ prop.value }}</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- IP / User agent si connexion -->
+            <div class="modal-section"
+                 *ngIf="selectedLog.properties?.ip">
+              <h4><i class="fas fa-network-wired"></i> Informations réseau</h4>
+              <div class="modal-props">
+                <div class="modal-prop">
+                  <span class="mp-key">Adresse IP</span>
+                  <span class="mp-val">{{ selectedLog.properties.ip }}</span>
+                </div>
+                <div class="modal-prop" *ngIf="selectedLog.properties.user_agent">
+                  <span class="mp-key">User Agent</span>
+                  <span class="mp-val small">{{ selectedLog.properties.user_agent }}</span>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>

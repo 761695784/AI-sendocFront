@@ -1,0 +1,183 @@
+<app-navbar></app-navbar>
+
+<div class="page-wrapper">
+
+  <!-- Loader -->
+  <div *ngIf="isLoading" class="loader-overlay">
+    <l-ring-2 size="40" stroke="5" stroke-length="0.55"
+      bg-opacity="0.1" speed="0.8" color="#F6A500">
+    </l-ring-2>
+  </div>
+
+  <!-- Hero -->
+  <div class="page-hero">
+    <div class="hero-content">
+      <div class="hero-badge">
+        <i class="fas fa-upload"></i>
+        Publication de document
+      </div>
+      <h1>Publier un document trouvé</h1>
+      <p>Vous avez trouvé un document ? Publiez-le sur DocTrack pour aider son propriétaire à le récupérer rapidement et en toute sécurité.</p>
+    </div>
+  </div>
+
+  <!-- Formulaire -->
+  <div class="container">
+    <div class="form-layout">
+
+      <!-- Colonne gauche : formulaire -->
+      <div class="form-card">
+        <div class="form-card-header">
+          <i class="fas fa-file-upload"></i>
+          <span>Informations du document</span>
+        </div>
+
+        <form [formGroup]="publishForm" (ngSubmit)="onSubmit()">
+
+          <!-- Image -->
+          <div class="form-section-title">Document à publier</div>
+
+          <div class="field-group">
+            <label for="image" class="required">
+              <i class="fas fa-image"></i> Photo du document
+            </label>
+            <div class="file-drop" (click)="fileInput.click()">
+              <i class="fas fa-cloud-upload-alt file-drop-icon"></i>
+              <span class="file-drop-text">Cliquer pour sélectionner une image</span>
+              <span class="file-drop-hint">JPG, PNG, PDF — max 5 Mo</span>
+              <input #fileInput type="file" id="image"
+                     (change)="onFileChange($event)" hidden>
+            </div>
+            <small class="error-text" *ngIf="fileError">{{ fileError }}</small>
+            <small class="error-text"
+                   *ngIf="publishForm.get('image')?.invalid && publishForm.get('image')?.touched">
+              {{ getErrorMessage('image') }}
+            </small>
+          </div>
+
+          <div class="form-divider"></div>
+          <div class="form-section-title">Identité du propriétaire</div>
+
+          <div class="form-row">
+            <div class="field-group">
+              <label for="OwnerLastName" class="required">Nom</label>
+              <input type="text" id="OwnerLastName"
+                     formControlName="OwnerLastName"
+                     placeholder="Nom du propriétaire">
+              <small class="error-text"
+                     *ngIf="publishForm.get('OwnerLastName')?.invalid && publishForm.get('OwnerLastName')?.touched">
+                {{ getErrorMessage('OwnerLastName') }}
+              </small>
+            </div>
+            <div class="field-group">
+              <label for="OwnerFirstName" class="required">Prénom</label>
+              <input type="text" id="OwnerFirstName"
+                     formControlName="OwnerFirstName"
+                     placeholder="Prénom du propriétaire">
+              <small class="error-text"
+                     *ngIf="publishForm.get('OwnerFirstName')?.invalid && publishForm.get('OwnerFirstName')?.touched">
+                {{ getErrorMessage('OwnerFirstName') }}
+              </small>
+            </div>
+          </div>
+
+          <div class="form-divider"></div>
+          <div class="form-section-title">Détails du document</div>
+
+          <div class="form-row">
+            <div class="field-group">
+              <label for="DocIdentification">
+                <i class="fas fa-id-card"></i> Numéro d'identification
+              </label>
+              <input type="text" id="DocIdentification"
+                     formControlName="DocIdentification"
+                     placeholder="Optionnel">
+            </div>
+            <div class="field-group">
+              <label for="Location" class="required">
+                <i class="fas fa-map-marker-alt"></i> Lieu de trouvaille
+              </label>
+              <input type="text" id="Location"
+                     formControlName="Location"
+                     placeholder="Ex: Dakar, Plateau">
+              <small class="error-text"
+                     *ngIf="publishForm.get('Location')?.invalid && publishForm.get('Location')?.touched">
+                {{ getErrorMessage('Location') }}
+              </small>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="field-group">
+              <label for="documentType" class="required">
+                <i class="fas fa-folder-open"></i> Type de document
+              </label>
+              <select id="documentType" formControlName="documentType">
+                <option value="" disabled>Sélectionner un type</option>
+                <option *ngFor="let type of documentTypes" [value]="type.id">
+                  {{ type.name }}
+                </option>
+              </select>
+              <small class="error-text"
+                     *ngIf="publishForm.get('documentType')?.invalid && publishForm.get('documentType')?.touched">
+                {{ getErrorMessage('documentType') }}
+              </small>
+            </div>
+            <div class="field-group">
+              <label for="statut" class="required">
+                <i class="fas fa-info-circle"></i> Statut
+              </label>
+              <select id="statut" formControlName="statut">
+                <option value="non récupéré">Non récupéré (par défaut)</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" class="btn-submit" [disabled]="isLoading">
+              <i class="fas fa-paper-plane"></i>
+              {{ isLoading ? 'Publication en cours...' : 'Publier le document' }}
+            </button>
+          </div>
+
+        </form>
+      </div>
+
+      <!-- Colonne droite : image décorative + infos -->
+      <div class="info-card">
+        <img src="/assets/imageformpub.webp"
+             alt="Publication de document" class="info-image">
+        <div class="info-tips">
+          <h3 class="tips-title">
+            <i class="fas fa-lightbulb"></i> Conseils
+          </h3>
+          <ul class="tips-list">
+            <li>
+              <i class="fas fa-check-circle"></i>
+              Prenez une photo nette du document
+            </li>
+            <li>
+              <i class="fas fa-check-circle"></i>
+              Masquez les informations sensibles si nécessaire
+            </li>
+            <li>
+              <i class="fas fa-check-circle"></i>
+              Indiquez précisément le lieu de trouvaille
+            </li>
+            <li>
+              <i class="fas fa-check-circle"></i>
+              Vérifiez le type de document sélectionné
+            </li>
+          </ul>
+        </div>
+        <div class="info-note">
+          <i class="fas fa-shield-alt"></i>
+          <p>Vos coordonnées resteront confidentielles. DocTrack assure la mise en relation sécurisée entre le trouveur et le propriétaire.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<app-footer></app-footer>

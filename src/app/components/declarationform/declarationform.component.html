@@ -1,0 +1,190 @@
+<app-navbar></app-navbar>
+
+<div class="page-wrapper">
+
+  <!-- Loader -->
+  <div *ngIf="isLoading" class="loader-overlay">
+    <l-ring-2 size="40" stroke="5" stroke-length="0.55"
+      bg-opacity="0.1" speed="0.8" color="#F6A500">
+    </l-ring-2>
+  </div>
+
+  <!-- Hero -->
+  <div class="page-hero">
+    <div class="hero-content">
+      <div class="hero-badge">
+        <i class="fas fa-file-alt"></i>
+        Déclaration officielle
+      </div>
+      <h1>Déclarer une perte de document</h1>
+      <p>Remplissez ce formulaire pour déclarer la perte de votre document. Un certificat officiel vous sera délivré automatiquement après validation.</p>
+    </div>
+  </div>
+
+  <!-- Formulaire -->
+  <div class="container">
+    <div class="form-layout">
+
+      <!-- Formulaire -->
+      <div class="form-card">
+        <div class="form-card-header">
+          <i class="fas fa-file-signature"></i>
+          <span>Formulaire de déclaration</span>
+        </div>
+
+        <form [formGroup]="declarationForm" (ngSubmit)="onSubmit()">
+
+          <div class="form-section-title">Informations générales</div>
+
+          <div class="field-group">
+            <label for="Title" class="required">
+              <i class="fas fa-heading"></i> Titre de la déclaration
+            </label>
+            <input type="text" id="Title" formControlName="Title"
+                   placeholder="Ex : Perte de ma carte nationale d'identité">
+            <small class="error-text"
+                   *ngIf="declarationForm.get('Title')?.invalid && declarationForm.get('Title')?.touched">
+              {{ getErrorMessage('Title') }}
+            </small>
+          </div>
+
+          <div class="form-divider"></div>
+          <div class="form-section-title">Identité dans le document</div>
+
+          <div class="form-row">
+            <div class="field-group">
+              <label for="FirstNameInDoc" class="required">
+                <i class="fas fa-user"></i> Prénom exact
+              </label>
+              <input type="text" id="FirstNameInDoc"
+                     formControlName="FirstNameInDoc"
+                     placeholder="Tel qu'il apparaît sur le document">
+              <small class="error-text"
+                     *ngIf="declarationForm.get('FirstNameInDoc')?.invalid && declarationForm.get('FirstNameInDoc')?.touched">
+                {{ getErrorMessage('FirstNameInDoc') }}
+              </small>
+            </div>
+            <div class="field-group">
+              <label for="LastNameInDoc" class="required">
+                <i class="fas fa-user"></i> Nom exact
+              </label>
+              <input type="text" id="LastNameInDoc"
+                     formControlName="LastNameInDoc"
+                     placeholder="Tel qu'il apparaît sur le document">
+              <small class="error-text"
+                     *ngIf="declarationForm.get('LastNameInDoc')?.invalid && declarationForm.get('LastNameInDoc')?.touched">
+                {{ getErrorMessage('LastNameInDoc') }}
+              </small>
+            </div>
+          </div>
+
+          <div class="form-divider"></div>
+          <div class="form-section-title">Type et identification</div>
+
+          <div class="field-group">
+            <label for="documentType" class="required">
+              <i class="fas fa-folder-open"></i> Type de document
+            </label>
+            <select id="documentType" formControlName="documentType">
+              <option value="">Sélectionner un type</option>
+              <option *ngFor="let type of documentTypes" [value]="type.id">
+                {{ type.name }}
+              </option>
+            </select>
+            <small class="error-text"
+                   *ngIf="declarationForm.get('documentType')?.invalid && declarationForm.get('documentType')?.touched">
+              Le type de document est requis.
+            </small>
+          </div>
+
+          <div class="field-group">
+            <label for="DocIdentification">
+              <i class="fas fa-id-card"></i> Numéro d'identification
+              <span class="optional-badge">Optionnel</span>
+            </label>
+            <input type="text" id="DocIdentification"
+                   formControlName="DocIdentification"
+                   placeholder="Numéro figurant sur le document">
+            <small class="error-text"
+                   *ngIf="declarationForm.get('DocIdentification')?.invalid && declarationForm.get('DocIdentification')?.touched">
+              {{ getErrorMessage('DocIdentification') }}
+            </small>
+          </div>
+
+          <!-- Info certificat -->
+          <div class="cert-info">
+            <i class="fas fa-certificate"></i>
+            <div>
+              <strong>Certificat de perte automatique</strong>
+              <p>Un certificat officiel vous sera généré et mis à disposition après soumission de ce formulaire.</p>
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" class="btn-submit" [disabled]="isLoading">
+              <i class="fas fa-paper-plane"></i>
+              {{ isLoading ? 'Soumission en cours...' : 'Soumettre ma déclaration' }}
+            </button>
+          </div>
+
+        </form>
+      </div>
+
+      <!-- Colonne droite -->
+      <div class="info-card">
+        <img src="/assets/declarepub.webp"
+             alt="Déclaration de perte" class="info-image">
+
+        <div class="info-tips">
+          <h3 class="tips-title">
+            <i class="fas fa-lightbulb"></i> Informations importantes
+          </h3>
+          <ul class="tips-list">
+            <li>
+              <i class="fas fa-check-circle"></i>
+              Indiquez les informations exactes du document
+            </li>
+            <li>
+              <i class="fas fa-check-circle"></i>
+              Le prénom et nom doivent correspondre au document
+            </li>
+            <li>
+              <i class="fas fa-check-circle"></i>
+              Un certificat PDF vous sera remis immédiatement
+            </li>
+            <li>
+              <i class="fas fa-check-circle"></i>
+              Vous serez notifié si le document est retrouvé
+            </li>
+          </ul>
+        </div>
+
+        <div class="info-steps">
+          <h3 class="tips-title">
+            <i class="fas fa-list-ol"></i> Étapes suivantes
+          </h3>
+          <div class="step-item">
+            <div class="step-num">1</div>
+            <div class="step-text">Soumettez votre déclaration</div>
+          </div>
+          <div class="step-item">
+            <div class="step-num">2</div>
+            <div class="step-text">Téléchargez votre certificat</div>
+          </div>
+          <div class="step-item">
+            <div class="step-num">3</div>
+            <div class="step-text">Recevez une alerte si votre document est publié</div>
+          </div>
+        </div>
+
+        <div class="info-note">
+          <i class="fas fa-shield-alt"></i>
+          <p>Vos données personnelles sont protégées et traitées conformément à la réglementation en vigueur au Sénégal.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<app-footer></app-footer>

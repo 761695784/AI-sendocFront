@@ -1,0 +1,6 @@
+canvas {
+  width: 30vw; /* Utilisez vw pour une largeur relative à la largeur de la fenêtre */
+  height: 51vh; /* Utilisez vh pour une hauteur relative à la hauteur de la fenêtre */
+  max-width: 100%; /* Pour éviter que le canvas ne dépasse la largeur de la fenêtre */
+  max-height: 100%; /* Pour éviter que le canvas ne dépasse la hauteur de la fenêtre */
+}

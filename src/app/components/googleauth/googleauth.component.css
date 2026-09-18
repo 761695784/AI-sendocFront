@@ -1,0 +1,191 @@
+body {
+  font-family: Arial, sans-serif;
+  background-color: #F6A500;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.Formulaire {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 200px 200px 0 0;
+}
+
+.container {
+  background-color: white;
+  border-radius: 10px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  width: 100%;
+  justify-content: center;
+  max-width: 732px;
+  height: 513px;
+  margin: auto;
+  margin-top: 2rem;
+  font-family: 'Open Sans';
+  font-weight: bold;
+  margin-left: 10%;
+  position: absolute;
+
+}
+#form{
+  background-color: rgba(238, 230, 230, 0.3)
+}
+
+.form-container h2 {
+  text-align: center;
+  color: #31287C;
+  display: flex;
+  justify-content: center;
+  font-weight: bold;
+
+}
+
+.test {
+  margin: auto;
+  margin-left: 15%;
+}
+
+label {
+  display: block;
+  margin: 15px 14px 2px;
+  color: #31287C;
+}
+
+input {
+  width: 455px;
+  height: 56px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 12px;
+  box-sizing: border-box;
+  margin: 8px;
+}
+
+.question {
+  margin-left: 14px;
+}
+
+a {
+  color: #31287C;
+}
+
+button {
+  width: 229px;
+  height: 40px;
+  background-color: #31287C;
+  color: white;
+  border: none;
+  font-weight: bold;
+  border-radius: 7px;
+  cursor: pointer;
+  margin-top: 10px;
+  margin-left: 8rem;
+}
+
+button:hover {
+  background-color: #F6A500;
+}
+
+.carte {
+  margin-left: -8rem;
+}
+
+/* .label-container {
+  margin-left: 15%;
+} */
+.carteImage {
+  justify-content:center;
+  margin-left: 55%;
+  }
+
+  label.required::after {
+    content: '*';
+    color: red;
+    margin-left: 5px;
+    font-size: 16px;
+    font-weight: bold;
+  }
+  small {
+    color: red;
+    font-size: 14px;
+    margin-top: 5px;
+    margin-left: 20px;
+  }
+
+
+@media (max-width: 1024px) {
+  /* .Formulaire {
+    flex-direction: column;
+    align-items: center;
+    margin: 150px 0 0 0;
+  } */
+
+  /* .container {
+    width: 90%;
+    height: auto;
+    margin: 0;
+  } */
+
+  input, button {
+    width: 100%;
+    max-width: none;
+    margin-left: 0;
+  }
+
+  .test {
+    align-items: center;
+    margin-left: 0;
+  }
+
+  .carteImage {
+    margin-left: 25%;
+    }
+
+  .question {
+    text-align: center;
+  }
+
+  #form{
+    background-color: rgba(247, 244, 244, 0.801)
+  }
+
+}
+
+@media (max-width: 500px) {
+   .Formulaire {
+    flex-direction: column;
+    align-items: center;
+    margin: 150px 0 0 0;
+  }
+
+  .container {
+    width: 90%;
+    height: auto;
+    margin: 0;
+  }
+
+  input, button {
+    width: 100%;
+    max-width: none;
+    margin-left: 0;
+  }
+   .carteImage {
+    display: none;
+  }
+
+  #form{
+    background-color: rgba(255, 255, 255, 0.274)
+  }
+
+}
+
+/* button.close-btn {
+  background: none;
+  border: none;
+  color: #333;
+  font-size: 16px;
+  cursor: pointer;
+} */

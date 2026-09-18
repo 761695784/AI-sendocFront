@@ -1,0 +1,80 @@
+{
+  "name": "DocTrack",
+  "short_name": "DocTrack",
+  "description": "Plateforme nationale de declaration et restitution de documents perdus au Senegal",
+  "theme_color": "#31287C",
+  "background_color": "#31287C",
+  "display": "standalone",
+  "orientation": "portrait",
+  "scope": "./",
+  "start_url": "./",
+  "lang": "fr",
+  "icons": [
+    {
+      "src": "assets/logoo4.png",
+      "sizes": "72x72",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/logoo4.png",
+      "sizes": "96x96",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/logoo4.png",
+      "sizes": "128x128",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/logoo4.png",
+      "sizes": "144x144",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/logoo4.png",
+      "sizes": "152x152",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/logoo4.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/logoo4.png",
+      "sizes": "384x384",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/logoo4.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Nouvelle declaration",
+      "short_name": "Declarer",
+      "description": "Declarer une perte de document",
+      "url": "./lostform",
+      "icons": [{ "src": "assets/logoo4.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Publier un document trouve",
+      "short_name": "Publier",
+      "description": "Signaler un document retrouve",
+      "url": "./publishform",
+      "icons": [{ "src": "assets/logoo4.png", "sizes": "192x192" }]
+    }
+  ],
+  "categories": ["government", "utilities"],
+  "screenshots": []
+}

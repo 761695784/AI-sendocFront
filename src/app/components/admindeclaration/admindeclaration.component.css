@@ -1,0 +1,373 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body { font-family: Arial, sans-serif; }
+
+/* Zone de contenu */
+.page-content {
+  margin-left: 240px;
+  min-height: calc(100vh - 64px);
+  background: #f4f3fb;
+  padding: 32px 28px;
+}
+
+/* Page header */
+.page-header {
+  margin-bottom: 28px;
+}
+
+.page-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.page-title-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background: #31287C;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #F6A500;
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.page-title {
+  font-size: 22px;
+  font-weight: 700;
+  color: #31287C;
+  line-height: 1.2;
+}
+
+.page-subtitle {
+  font-size: 13px;
+  color: #888;
+  margin-top: 2px;
+}
+
+/* Etat vide */
+.empty-state {
+  text-align: center;
+  padding: 80px 20px;
+  background: #fff;
+  border-radius: 16px;
+  border: 2px dashed rgba(49, 40, 124, 0.15);
+}
+
+.empty-icon {
+  font-size: 48px;
+  margin-bottom: 16px;
+}
+
+.empty-state h3 {
+  font-size: 18px;
+  color: #31287C;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.empty-state p {
+  font-size: 14px;
+  color: #aaa;
+}
+
+/* Barre de recherche */
+.search-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #fff;
+  padding: 16px 20px;
+  border-radius: 14px;
+  box-shadow: 0 2px 12px rgba(49, 40, 124, 0.07);
+  margin-bottom: 28px;
+  flex-wrap: wrap;
+}
+
+.search-bar select {
+  background-color: #f4f3fb;
+  border: 2px solid #e8e6f5;
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 14px;
+  color: #31287C;
+  font-weight: 600;
+  cursor: pointer;
+  min-width: 180px;
+  transition: border-color 0.2s;
+}
+
+.search-bar select:focus {
+  outline: none;
+  border-color: #F6A500;
+}
+
+.search-bar input {
+  flex: 1;
+  padding: 10px 16px;
+  background-color: #f4f3fb;
+  border: 2px solid #e8e6f5;
+  border-radius: 8px;
+  font-size: 14px;
+  min-width: 200px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.search-bar input:hover {
+  border-color: #F6A500;
+}
+
+.search-bar input:focus {
+  outline: none;
+  border-color: #F6A500;
+  box-shadow: 0 0 0 3px rgba(246, 165, 0, 0.15);
+}
+
+.search-btn {
+  background-color: #31287C;
+  color: white;
+  padding: 10px 22px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 14px;
+  flex-shrink: 0;
+  transition: background-color 0.2s, transform 0.15s;
+}
+
+.search-btn:hover {
+  background-color: #F6A500;
+  color: #31287C;
+  transform: translateY(-1px);
+}
+
+
+/* Grid */
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+  gap: 20px;
+}
+
+/* Carte */
+.card {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 2px 12px rgba(49, 40, 124, 0.07);
+  overflow: hidden;
+  position: relative;
+  opacity: 0;
+  transform: translateY(16px);
+  animation: slideUp 0.4s ease forwards;
+  transition: transform 0.25s, box-shadow 0.25s;
+  border: 1px solid rgba(49, 40, 124, 0.06);
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 30px rgba(49, 40, 124, 0.13);
+}
+
+/* Badge */
+.card-badge {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  z-index: 2;
+  background: #31287C;
+  color: #F6A500;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 20px;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+}
+
+/* Image */
+.card-image-wrap {
+  position: relative;
+  height: 160px;
+  overflow: hidden;
+}
+
+.card-image-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+}
+
+.card:hover .card-image-wrap img {
+  transform: scale(1.05);
+}
+
+.card-image-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 60px;
+  background: linear-gradient(to top, rgba(49, 40, 124, 0.3), transparent);
+  pointer-events: none;
+}
+
+/* Contenu */
+.card-content {
+  padding: 16px;
+}
+
+.card-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: #31287C;
+  margin-bottom: 12px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Meta */
+.card-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+  gap: 8px;
+}
+
+.meta-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: #aaa;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  flex-shrink: 0;
+}
+
+.meta-value {
+  font-size: 13px;
+  color: #444;
+  font-weight: 500;
+  text-align: right;
+}
+
+.meta-value.highlight {
+  color: #31287C;
+  font-weight: 700;
+}
+
+/* Divider */
+.card-divider {
+  height: 1px;
+  background: #f0eeff;
+  margin: 10px 0;
+}
+
+/* Actions */
+.card-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid #f0eeff;
+}
+
+.btn-delete {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: white;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 13px;
+  background-color: #e53935;
+  transition: background-color 0.2s, transform 0.15s;
+}
+
+.btn-delete:hover {
+  background-color: #c62828;
+  transform: translateY(-1px);
+}
+
+.btn-delete:active { transform: scale(0.96); }
+
+.card-index {
+  font-size: 12px;
+  color: #ccc;
+  font-weight: 600;
+}
+
+/* Pagination */
+.pagination-controls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 40px 0 16px;
+  gap: 8px;
+}
+
+.pagination-controls button {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  background-color: #31287C;
+  color: white;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s, transform 0.15s;
+}
+
+.pagination-controls button:disabled {
+  background-color: #ddd;
+  color: #aaa;
+  cursor: not-allowed;
+}
+
+.pagination-controls button:hover:not(:disabled) {
+  background-color: #F6A500;
+  color: #31287C;
+  transform: scale(1.04);
+}
+
+.pagination-controls button:active { transform: scale(0.96); }
+
+.pagination-controls span {
+  font-size: 14px;
+  font-weight: 600;
+  color: #31287C;
+  padding: 0 12px;
+}
+
+/* Animations */
+@keyframes slideUp {
+  0%   { opacity: 0; transform: translateY(16px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .page-content {
+    margin-left: 70px;
+    padding: 20px 16px;
+  }
+
+  .grid-container {
+    grid-template-columns: 1fr;
+  }
+}
