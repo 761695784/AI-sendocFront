@@ -1,0 +1,106 @@
+@if (loading() && !org()) {
+  <app-loading />
+} @else if (error()) {
+  <app-error-state [message]="error()!"><button type="button" class="btn btn-sm btn-outline-danger" (click)="load()">Réessayer</button></app-error-state>
+} @else if (org(); as o) {
+  <app-page-header title="Membres" [subtitle]="o.name + (o.type ? ' · ' + o.type.name : '')">
+    @if (isOther()) { <a routerLink="/espace/structures" class="btn btn-outline-secondary">Retour aux structures</a> }
+    @if (canManage() && roles().length) {
+      <button type="button" class="btn btn-dt" (click)="showAdd.set(!showAdd())" [attr.aria-expanded]="showAdd()">
+        <i class="fas fa-user-plus me-1" aria-hidden="true"></i> Ajouter un membre
+      </button>
+    }
+  </app-page-header>
+
+  @if (showAdd()) {
+    <section class="dt-card">
+      <h2 class="dt-card__title mb-1">Nouveau membre de {{ o.name }}</h2>
+      <p class="small dt-muted">Chaque agent a son propre compte (jamais de compte partagé). S'il n'a pas encore de compte, il reçoit un email pour choisir son mot de passe.</p>
+      <form class="dt-form" [formGroup]="addForm" (ngSubmit)="add()" novalidate>
+        <div class="row g-2">
+          <div class="col-md-4"><label for="m-last" class="dt-required">Nom</label><input id="m-last" class="form-control" formControlName="LastName" autocomplete="off" />
+            @if (fieldError(addForm.controls.LastName, 'Le nom'); as e) { <small class="dt-error">{{ e }}</small> }</div>
+          <div class="col-md-4"><label for="m-first" class="dt-required">Prénom(s)</label><input id="m-first" class="form-control" formControlName="FirstName" autocomplete="off" />
+            @if (fieldError(addForm.controls.FirstName, 'Le prénom'); as e) { <small class="dt-error">{{ e }}</small> }</div>
+          <div class="col-md-4"><label for="m-role" class="dt-required">Rôle</label>
+            <select id="m-role" class="form-select" formControlName="role">
+              @for (r of roles(); track r) { <option [value]="r">{{ roleLabels[r] }}</option> }
+            </select></div>
+          <div class="col-md-4"><label for="m-email" class="dt-required">Email professionnel</label><input id="m-email" class="form-control" type="email" formControlName="email" autocomplete="off" />
+            @if (fieldError(addForm.controls.email, 'L’email'); as e) { <small class="dt-error">{{ e }}</small> }</div>
+          <div class="col-md-4"><label for="m-phone" class="dt-required">Téléphone</label><input id="m-phone" class="form-control" type="tel" formControlName="Phone" />
+            @if (fieldError(addForm.controls.Phone, 'Le téléphone'); as e) { <small class="dt-error">{{ e }}</small> }</div>
+          <div class="col-md-2"><label for="m-mat">Matricule</label><input id="m-mat" class="form-control dt-mono" formControlName="matricule" /></div>
+          <div class="col-md-2"><label for="m-pos">Fonction</label><input id="m-pos" class="form-control" formControlName="position" placeholder="Ex. chef de poste" /></div>
+        </div>
+        <div class="d-flex gap-2 mt-3">
+          <button type="submit" class="btn btn-dt" [disabled]="saving()">{{ saving() ? 'Ajout…' : 'Ajouter' }}</button>
+          <button type="button" class="btn btn-outline-secondary" (click)="showAdd.set(false)">Annuler</button>
+        </div>
+      </form>
+    </section>
+  }
+
+  <div class="d-flex justify-content-between align-items-center mb-2">
+    <span class="small dt-muted">{{ members().length }} membre(s){{ includeEnded() ? ', anciens compris' : ' actif(s)' }}</span>
+    <div class="form-check form-switch mb-0">
+      <input class="form-check-input" type="checkbox" role="switch" id="m-ended" [checked]="includeEnded()" (change)="toggleEnded()" />
+      <label class="form-check-label small" for="m-ended">Afficher les anciennes affectations</label>
+    </div>
+  </div>
+
+  @if (!members().length) {
+    <div class="dt-card"><app-empty-state icon="fa-users" title="Aucun membre" text="Ajoutez les agents et le responsable de cette structure." /></div>
+  } @else {
+    <div class="dt-card p-0 overflow-hidden">
+      <div class="table-responsive">
+        <table class="table align-middle mb-0">
+          <thead class="table-light"><tr><th>Nom</th><th>Rôle</th><th>Contact</th><th>Dernière connexion</th><th class="text-end">Actions</th></tr></thead>
+          <tbody>
+            @for (m of members(); track m.uuid) {
+              <tr [class.text-muted]="!m.is_active">
+                <td>
+                  <b>{{ m.user?.LastName }} {{ m.user?.FirstName }}</b>
+                  @if (isMe(m)) { <span class="badge text-bg-light border ms-1">vous</span> }
+                  <small class="d-block dt-muted">
+                    @if (m.matricule) { <span class="dt-mono">{{ m.matricule }}</span> }@if (m.matricule && m.position) { · }{{ m.position }}
+                  </small>
+                </td>
+                <td>
+                  {{ roleLabels[m.role] ?? m.role }}
+                  @if (!m.is_active) { <small class="d-block">fin le {{ m.ends_at | date: 'd MMM y' }}</small> }
+                  @else if (m.user?.status && m.user?.status !== 'active') { <app-status-badge [status]="m.user!.status" /> }
+                </td>
+                <td class="small">{{ m.user?.email }}<br /><span class="dt-muted">{{ m.user?.Phone }}</span></td>
+                <td class="small text-nowrap">{{ m.user?.last_login_at ? (m.user!.last_login_at | date: 'd MMM y, HH:mm') : 'jamais' }}</td>
+                <td class="text-end text-nowrap">
+                  @if (canManage() && m.is_active && !isMe(m)) {
+                    <button type="button" class="btn btn-sm btn-outline-secondary" (click)="startEdit(m)" [attr.aria-label]="'Modifier ' + m.user?.LastName">Modifier</button>
+                    <button type="button" class="btn btn-sm btn-outline-danger ms-1" (click)="end(m)" [attr.aria-label]="'Fin d’affectation ' + m.user?.LastName">Fin d'affectation</button>
+                  }
+                </td>
+              </tr>
+              @if (editing() === m.uuid) {
+                <tr class="table-light">
+                  <td colspan="5">
+                    <form class="dt-form d-flex flex-wrap align-items-end gap-2" [formGroup]="editForm" (ngSubmit)="saveEdit(m)">
+                      <div><label [for]="'e-role-' + m.uuid" class="small">Rôle</label>
+                        <select [id]="'e-role-' + m.uuid" class="form-select form-select-sm" formControlName="role">
+                          @if (!roles().includes(m.role)) { <option [value]="m.role">{{ roleLabels[m.role] }}</option> }
+                          @for (r of roles(); track r) { <option [value]="r">{{ roleLabels[r] }}</option> }
+                        </select></div>
+                      <div><label [for]="'e-mat-' + m.uuid" class="small">Matricule</label><input [id]="'e-mat-' + m.uuid" class="form-control form-control-sm dt-mono" formControlName="matricule" /></div>
+                      <div><label [for]="'e-pos-' + m.uuid" class="small">Fonction</label><input [id]="'e-pos-' + m.uuid" class="form-control form-control-sm" formControlName="position" /></div>
+                      <button type="submit" class="btn btn-sm btn-dt" [disabled]="saving()">Enregistrer</button>
+                      <button type="button" class="btn btn-sm btn-outline-secondary" (click)="editing.set(null)">Annuler</button>
+                    </form>
+                  </td>
+                </tr>
+              }
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+  }
+}

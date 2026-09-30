@@ -21,7 +21,7 @@ export const STAFF_MENU: StaffMenuSection[] = [
     title: '',
     items: [
       { path: '', label: 'Tableau de bord', icon: 'fa-tachometer-alt' },
-      { path: 'messages', label: 'Boîte de réception', icon: 'fa-inbox', sprint: 'S5' },
+      { path: 'messages', label: 'Boîte de réception', icon: 'fa-inbox' },
     ],
   },
   {
@@ -39,11 +39,12 @@ export const STAFF_MENU: StaffMenuSection[] = [
   {
     title: 'Pilotage',
     items: [
-      { path: 'statistiques', label: 'Statistiques et délais', icon: 'fa-chart-line', abilities: ['stats.view'], sprint: 'S5' },
-      { path: 'vigilance', label: 'Vigilance', icon: 'fa-shield-alt', abilities: ['vigilance.view'], sprint: 'S5' },
-      { path: 'rapports', label: 'Rapports', icon: 'fa-file-invoice', abilities: ['stats.view'], sprint: 'S5' },
-      { path: 'membres', label: 'Membres', icon: 'fa-users', abilities: ['members.view'], sprint: 'S5' },
-      { path: 'structures', label: 'Structures', icon: 'fa-sitemap', abilities: ['organizations.create_child'], sprint: 'S5' },
+      { path: 'statistiques', label: 'Statistiques et délais', icon: 'fa-chart-line', abilities: ['stats.view'] },
+      { path: 'vigilance', label: 'Vigilance', icon: 'fa-shield-alt', abilities: ['vigilance.view'] },
+      { path: 'rapports', label: 'Rapports', icon: 'fa-file-invoice', abilities: ['stats.view'] },
+      { path: 'membres', label: 'Membres', icon: 'fa-users', abilities: ['members.view'] },
+      { path: 'structures', label: 'Structures', icon: 'fa-sitemap', abilities: ['organizations.create_child'] },
+      { path: 'envois', label: 'Suivi des envois', icon: 'fa-paper-plane', abilities: ['audit.view'] },
     ],
   },
 ];

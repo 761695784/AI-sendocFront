@@ -23,6 +23,10 @@ export class ApiV2Client {
     return this.http.post<T>(apiV2(...path), body, { params: toParams(query) });
   }
 
+  patch<T>(path: Array<string | number>, body: unknown = {}): Observable<T> {
+    return this.http.patch<T>(apiV2(...path), body);
+  }
+
   delete<T>(path: Array<string | number>): Observable<T> {
     return this.http.delete<T>(apiV2(...path));
   }

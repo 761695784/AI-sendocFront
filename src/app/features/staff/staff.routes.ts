@@ -109,6 +109,61 @@ export const STAFF_ROUTES: Routes = [
         loadComponent: () => import('./charges/charges.component').then((m) => m.StaffChargesComponent),
       },
 
+      // ── Pilotage (S5) ──
+      {
+        path: 'messages',
+        title: 'Boîte de réception — DocTrack',
+        loadComponent: () => import('./messages/messages.component').then((m) => m.StaffMessagesComponent),
+      },
+      {
+        path: 'statistiques',
+        canActivate: [abilityGuard('stats.view')],
+        title: 'Statistiques et délais — DocTrack',
+        loadComponent: () => import('./stats/stats.component').then((m) => m.StaffStatsComponent),
+      },
+      {
+        path: 'vigilance',
+        canActivate: [abilityGuard('vigilance.view')],
+        title: 'Vigilance — DocTrack',
+        loadComponent: () => import('./vigilance/vigilance.component').then((m) => m.StaffVigilanceComponent),
+      },
+      {
+        path: 'vigilance/:uuid',
+        canActivate: [abilityGuard('vigilance.view')],
+        title: 'Alerte de vigilance — DocTrack',
+        loadComponent: () => import('./vigilance/vigilance.component').then((m) => m.StaffVigilanceDetailComponent),
+      },
+      {
+        path: 'rapports',
+        canActivate: [abilityGuard('stats.view')],
+        title: 'Rapports — DocTrack',
+        loadComponent: () => import('./reports/reports.component').then((m) => m.StaffReportsComponent),
+      },
+      {
+        path: 'rapports/:uuid',
+        canActivate: [abilityGuard('stats.view')],
+        title: 'Rapport — DocTrack',
+        loadComponent: () => import('./reports/reports.component').then((m) => m.StaffReportDetailComponent),
+      },
+      {
+        path: 'membres',
+        canActivate: [abilityGuard('members.view')],
+        title: 'Membres — DocTrack',
+        loadComponent: () => import('./members/members.component').then((m) => m.StaffMembersComponent),
+      },
+      {
+        path: 'structures',
+        canActivate: [abilityGuard('organizations.create_child')],
+        title: 'Structures — DocTrack',
+        loadComponent: () => import('./structures/structures.component').then((m) => m.StaffStructuresComponent),
+      },
+      {
+        path: 'envois',
+        canActivate: [abilityGuard('audit.view')],
+        title: 'Suivi des envois — DocTrack',
+        loadComponent: () => import('./deliveries/deliveries.component').then((m) => m.StaffDeliveriesComponent),
+      },
+
       // ── Sprints suivants : pages provisoires ──
       ...STAFF_UPCOMING.map((item) => ({
         path: item.path,

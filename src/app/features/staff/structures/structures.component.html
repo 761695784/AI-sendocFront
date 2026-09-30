@@ -1,0 +1,111 @@
+<app-page-header title="Structures" subtitle="Votre institution, ses directions et ses structures d'accueil (commissariats, brigades, mairies…)" />
+
+<form class="dt-toolbar d-flex flex-wrap gap-2 align-items-center mb-3" (submit)="$event.preventDefault(); load(1)">
+  <label for="org-q" class="visually-hidden">Rechercher</label>
+  <input id="org-q" name="q" class="form-control" style="max-width: 320px" placeholder="Nom ou code" [value]="search" (input)="search = $any($event.target).value" />
+  <button type="submit" class="btn btn-outline-secondary"><i class="fas fa-search" aria-hidden="true"></i> Rechercher</button>
+  @if (isSuperAdmin()) {
+    <div class="form-check ms-2">
+      <input class="form-check-input" type="checkbox" id="org-inactive" [checked]="showInactive" (change)="showInactive = !showInactive; load(1)" />
+      <label class="form-check-label small" for="org-inactive">Afficher les désactivées</label>
+    </div>
+  }
+</form>
+
+@if (mode(); as m) {
+  <section class="dt-card" id="org-form">
+    <h2 class="dt-card__title mb-1">{{ m.kind === 'create' ? 'Nouvelle organisation sous « ' + m.parent.name + ' »' : 'Modifier « ' + m.org.name + ' »' }}</h2>
+    <p class="small dt-muted">La position GPS permet d'attribuer automatiquement les retraits à la structure la plus proche du lieu où le document a été trouvé.</p>
+    <form class="dt-form" [formGroup]="form" (ngSubmit)="save()" novalidate>
+      <div class="row g-2">
+        <div class="col-md-4">
+          <label for="o-type" class="dt-required">Type</label>
+          <select id="o-type" class="form-select" formControlName="organization_type">
+            @for (t of formTypes(); track t.code) { <option [value]="t.code">{{ t.name }} — {{ levelLabels[t.level] ?? t.level }}</option> }
+          </select>
+        </div>
+        <div class="col-md-5"><label for="o-name" class="dt-required">Nom</label><input id="o-name" class="form-control" formControlName="name" placeholder="Ex. Commissariat de Pikine" />
+          @if (fieldError(form.controls.name, 'Le nom'); as e) { <small class="dt-error">{{ e }}</small> }</div>
+        <div class="col-md-3"><label for="o-code">Code</label><input id="o-code" class="form-control dt-mono" formControlName="code" placeholder="Ex. PN-PIK" /></div>
+        <div class="col-md-4">
+          <label for="o-terr">Département</label>
+          <select id="o-terr" class="form-select" formControlName="territory_code">
+            <option value="">—</option>
+            @for (t of departments(); track t.code) { <option [value]="t.code">{{ t.name }}{{ t.parent ? ' (' + t.parent.name + ')' : '' }}</option> }
+          </select>
+        </div>
+        <div class="col-md-8"><label for="o-addr">Adresse</label><input id="o-addr" class="form-control" formControlName="address" /></div>
+        <div class="col-md-4"><label for="o-phone">Téléphone</label><input id="o-phone" class="form-control" type="tel" formControlName="phone" />
+          @if (fieldError(form.controls.phone, 'Le téléphone'); as e) { <small class="dt-error">{{ e }}</small> }</div>
+        <div class="col-md-4"><label for="o-email">Email</label><input id="o-email" class="form-control" type="email" formControlName="email" />
+          @if (fieldError(form.controls.email, 'L’email'); as e) { <small class="dt-error">{{ e }}</small> }</div>
+        <div class="col-md-4 d-flex align-items-end">
+          <button type="button" class="btn btn-outline-secondary w-100" [disabled]="locating()" (click)="locate()">
+            <i class="fas fa-map-marker-alt me-1" aria-hidden="true"></i> {{ locating() ? 'Localisation…' : 'Utiliser ma position actuelle' }}
+          </button>
+        </div>
+        <div class="col-6 col-md-3"><label for="o-lat">Latitude</label><input id="o-lat" class="form-control dt-mono" type="number" step="0.000001" formControlName="latitude" placeholder="14.75" /></div>
+        <div class="col-6 col-md-3"><label for="o-lng">Longitude</label><input id="o-lng" class="form-control dt-mono" type="number" step="0.000001" formControlName="longitude" placeholder="-17.39" /></div>
+        <div class="col-md-6 d-flex align-items-end">
+          <div class="form-check mb-2">
+            <input class="form-check-input" type="checkbox" id="o-acc" formControlName="accepts_collections" />
+            <label class="form-check-label" for="o-acc">Peut aller récupérer des documents chez les trouveurs</label>
+          </div>
+        </div>
+      </div>
+      <div class="d-flex gap-2 mt-3">
+        <button type="submit" class="btn btn-dt" [disabled]="saving()">{{ saving() ? 'Enregistrement…' : (m.kind === 'create' ? 'Créer' : 'Enregistrer') }}</button>
+        <button type="button" class="btn btn-outline-secondary" (click)="mode.set(null)">Annuler</button>
+      </div>
+    </form>
+  </section>
+}
+
+@if (loading()) {
+  <app-loading />
+} @else if (error()) {
+  <app-error-state [message]="error()!"><button type="button" class="btn btn-sm btn-outline-danger" (click)="load(1)">Réessayer</button></app-error-state>
+} @else if (!page()?.data?.length) {
+  <div class="dt-card"><app-empty-state icon="fa-sitemap" title="Aucune organisation" text="Aucune organisation ne correspond à la recherche." /></div>
+} @else {
+  <div class="dt-card p-0 overflow-hidden">
+    <div class="table-responsive">
+      <table class="table align-middle mb-0">
+        <thead class="table-light"><tr><th>Organisation</th><th>Département</th><th class="text-end">Membres</th><th class="text-end">Actions</th></tr></thead>
+        <tbody>
+          @for (o of page()!.data; track o.uuid) {
+            <tr [class.org-row--off]="!o.is_active" [class.org-row--current]="o.uuid === activeUuid()">
+              <td>
+                <div class="org-name" [style.padding-left.rem]="indent(o) * 1.4">
+                  @if (indent(o) > 0) { <i class="fas fa-level-up-alt fa-rotate-90" aria-hidden="true"></i> }
+                  <div>
+                    <b>{{ o.name }}</b>
+                    @if (!o.is_active) { <span class="badge text-bg-secondary ms-1">désactivée</span> }
+                    @if (o.uuid === activeUuid()) { <span class="badge text-bg-light border ms-1">structure active</span> }
+                    <small class="d-block dt-muted">{{ o.type?.name }}@if (o.code) { · <span class="dt-mono">{{ o.code }}</span> }@if (o.type?.level === 'structure' && !o.latitude) { · <span class="text-warning-emphasis"><i class="fas fa-map-marker-alt" aria-hidden="true"></i> position GPS manquante</span> }</small>
+                  </div>
+                </div>
+              </td>
+              <td class="small">{{ o.territory?.name ?? '—' }}</td>
+              <td class="text-end"><a [routerLink]="['/espace/membres']" [queryParams]="{ organisation: o.uuid }">{{ o.members_count ?? 0 }}</a></td>
+              <td class="text-end text-nowrap">
+                @if (canAddChild(o)) {
+                  <button type="button" class="btn btn-sm btn-outline-primary" (click)="openCreate(o)" [attr.aria-label]="'Ajouter sous ' + o.name"><i class="fas fa-plus" aria-hidden="true"></i> Sous-structure</button>
+                }
+                @if (o.can?.update) {
+                  <button type="button" class="btn btn-sm btn-outline-secondary ms-1" (click)="openEdit(o)" [attr.aria-label]="'Modifier ' + o.name">Modifier</button>
+                }
+                @if (canToggle() && o.uuid !== activeUuid() && o.depth > baseDepth()) {
+                  <button type="button" class="btn btn-sm ms-1" [class.btn-outline-danger]="o.is_active" [class.btn-outline-success]="!o.is_active" [disabled]="busy() === o.uuid" (click)="toggle(o)">
+                    {{ o.is_active ? 'Désactiver' : 'Réactiver' }}
+                  </button>
+                }
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <app-paginator [page]="page()!.meta" (pageChange)="load($event)" />
+}

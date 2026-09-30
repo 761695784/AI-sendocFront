@@ -1,0 +1,214 @@
+<app-page-header title="Statistiques et délais" [subtitle]="'Périmètre : ' + scopeName() + (overview()?.scope?.structures ? ' · ' + overview()!.scope.structures + ' structure(s)' : '')" />
+
+<!-- Période : une seule ligne de filtres au-dessus de tout -->
+<div class="st-filters dt-card">
+  <div class="btn-group flex-wrap" role="group" aria-label="Période">
+    @for (p of periods; track p.key) {
+      <button type="button" class="btn btn-sm" [class.btn-dt]="period() === p.key" [class.btn-outline-secondary]="period() !== p.key"
+        [attr.aria-pressed]="period() === p.key" (click)="selectPeriod(p.key)">{{ p.label }}</button>
+    }
+  </div>
+  @if (period() === 'custom') {
+    <form class="d-flex flex-wrap align-items-end gap-2" (ngSubmit)="applyCustom()">
+      <div><label for="st-from" class="small">Du</label><input id="st-from" name="from" type="date" class="form-control form-control-sm" [(ngModel)]="customFrom" /></div>
+      <div><label for="st-to" class="small">Au</label><input id="st-to" name="to" type="date" class="form-control form-control-sm" [(ngModel)]="customTo" /></div>
+      <button type="submit" class="btn btn-sm btn-dt">Afficher</button>
+    </form>
+  }
+  @if (overview(); as o) {
+    <span class="st-period small dt-muted">Du {{ o.period.from | date: 'd MMM y' }} au {{ o.period.to | date: 'd MMM y' }}</span>
+  }
+</div>
+
+@if (loading()) {
+  <app-loading label="Calcul des indicateurs…" />
+} @else if (error()) {
+  <app-error-state [message]="error()!"><button type="button" class="btn btn-sm btn-outline-danger" (click)="loadAll()">Réessayer</button></app-error-state>
+} @else if (overview(); as o) {
+
+  <!-- ── Délais de réaction (engagements de service) ── -->
+  <h2 class="st-h">Délais de réaction</h2>
+  <section class="st-grid">
+    <article class="st-tile">
+      <span class="st-tile__label">Premier appel au trouveur (médiane)</span>
+      <strong>{{ hours(o.collections.median_first_contact_hours) }}</strong>
+      <ng-container *ngTemplateOutlet="tone; context: { $implicit: slaTone(o.collections.median_first_contact_hours, o.sla.first_contact_hours), goal: 'objectif ' + o.sla.first_contact_hours + ' h' }" />
+    </article>
+    <article class="st-tile">
+      <span class="st-tile__label">Trouveurs appelés dans le délai</span>
+      <strong>{{ o.collections.contacted_within_sla_pct === null ? '—' : (o.collections.contacted_within_sla_pct | number: '1.0-1') + ' %' }}</strong>
+      <ng-container *ngTemplateOutlet="tone; context: { $implicit: pctTone(o.collections.contacted_within_sla_pct), goal: 'objectif 90 %' }" />
+    </article>
+    <article class="st-tile">
+      <span class="st-tile__label">Récupération du document (médiane)</span>
+      <strong>{{ hours(o.collections.median_hours_to_collect) }}</strong>
+      <ng-container *ngTemplateOutlet="tone; context: { $implicit: slaTone(o.collections.median_hours_to_collect, o.sla.collection_hours), goal: 'objectif ' + o.sla.collection_hours + ' h' }" />
+    </article>
+    <article class="st-tile">
+      <span class="st-tile__label">Examen d'une correspondance (médiane)</span>
+      <strong>{{ hours(o.matches.median_review_hours) }}</strong>
+      <ng-container *ngTemplateOutlet="tone; context: { $implicit: slaTone(o.matches.median_review_hours, o.sla.review_hours), goal: 'objectif ' + o.sla.review_hours + ' h' }" />
+    </article>
+  </section>
+
+  <!-- ── À traiter maintenant ── -->
+  <h2 class="st-h">À traiter maintenant</h2>
+  <section class="st-grid">
+    <a class="st-tile st-tile--link" routerLink="/espace/retraits" [class.st-tile--alert]="o.collections.overdue_now > 0">
+      <span class="st-tile__label">Retraits sans appel en retard</span>
+      <strong>{{ o.collections.overdue_now | number }}</strong>
+      <small>sur {{ o.collections.open_now | number }} en cours</small>
+    </a>
+    <a class="st-tile st-tile--link" routerLink="/espace/correspondances" [class.st-tile--alert]="o.matches.overdue_reviews_now > 0">
+      <span class="st-tile__label">Correspondances à examiner</span>
+      <strong>{{ o.matches.pending_review_now | number }}</strong>
+      <small>dont {{ o.matches.overdue_reviews_now | number }} en retard</small>
+    </a>
+    <a class="st-tile st-tile--link" routerLink="/espace/documents">
+      <span class="st-tile__label">Documents sous garde</span>
+      <strong>{{ o.found_documents.in_custody_now | number }}</strong>
+      <small>{{ o.found_documents.custody_age.over_90_days | number }} depuis plus de 90 jours</small>
+    </a>
+    @if (o.collections.unassigned_now !== undefined) {
+      <article class="st-tile" [class.st-tile--alert]="o.collections.unassigned_now > 0">
+        <span class="st-tile__label">Retraits sans structure</span>
+        <strong>{{ o.collections.unassigned_now | number }}</strong>
+        <small>aucune structure proche disponible</small>
+      </article>
+    }
+  </section>
+
+  <!-- ── Activité de la période ── -->
+  <h2 class="st-h">Activité de la période</h2>
+  <section class="st-grid st-grid--dense">
+    <article class="st-tile"><span class="st-tile__label">Déclarations au guichet</span><strong>{{ o.declarations.counter | number }}</strong>
+      @if (o.declarations.cancelled) { <small>{{ o.declarations.cancelled }} annulée(s)</small> }</article>
+    @if (o.declarations.online !== null) {
+      <article class="st-tile"><span class="st-tile__label">Déclarations en ligne</span><strong>{{ o.declarations.online | number }}</strong></article>
+    }
+    <article class="st-tile"><span class="st-tile__label">Dépôts au guichet</span><strong>{{ o.found_documents.deposited_at_counter | number }}</strong></article>
+    <article class="st-tile"><span class="st-tile__label">Récupérés chez les trouveurs</span><strong>{{ o.found_documents.collected_from_finders | number }}</strong></article>
+    @if (o.found_documents.published_online !== null) {
+      <article class="st-tile"><span class="st-tile__label">Publiés par des citoyens</span><strong>{{ o.found_documents.published_online | number }}</strong></article>
+    }
+    <article class="st-tile"><span class="st-tile__label">Correspondances trouvées</span><strong>{{ o.matches.created | number }}</strong>
+      <small>{{ o.matches.auto_confirmed }} automatiques · {{ o.matches.confirmed_by_agents }} confirmées · {{ o.matches.rejected }} rejetées</small></article>
+    <article class="st-tile"><span class="st-tile__label">Restitutions</span><strong>{{ o.restitutions.completed | number }}</strong>
+      <small>{{ o.restitutions.by_proxy }} par procuration · {{ o.restitutions.name_derogations }} dérogation(s)</small></article>
+    <article class="st-tile"><span class="st-tile__label">Taux de restitution</span>
+      <strong>{{ o.found_documents.restitution_rate_pct === null ? '—' : (o.found_documents.restitution_rate_pct | number: '1.0-1') + ' %' }}</strong>
+      <small>des {{ o.found_documents.entered_custody }} documents entrés sous garde</small></article>
+    <article class="st-tile"><span class="st-tile__label">SMS envoyés</span><strong>{{ o.sms.sent | number }}</strong>
+      @if (o.sms.failed) { <small class="text-danger"><i class="fas fa-exclamation-triangle" aria-hidden="true"></i> {{ o.sms.failed }} en échec</small> }</article>
+  </section>
+
+  <!-- ── Évolution ── -->
+  <section class="dt-card mt-4">
+    <div class="st-chart-head">
+      <h2 class="dt-card__title mb-0">{{ metricLabel() }}</h2>
+      <div class="d-flex flex-wrap gap-2">
+        <label class="visually-hidden" for="st-metric">Indicateur</label>
+        <select id="st-metric" class="form-select form-select-sm w-auto" [ngModel]="metric()" (ngModelChange)="setMetric($event)">
+          @for (m of metrics; track m[0]) { <option [value]="m[0]">{{ m[1] }}</option> }
+        </select>
+        <div class="btn-group" role="group" aria-label="Regroupement">
+          <button type="button" class="btn btn-sm" [class.btn-dt]="interval() === 'day'" [class.btn-outline-secondary]="interval() !== 'day'" (click)="setInterval('day')">Jour</button>
+          <button type="button" class="btn btn-sm" [class.btn-dt]="interval() === 'week'" [class.btn-outline-secondary]="interval() !== 'week'" (click)="setInterval('week')">Semaine</button>
+          <button type="button" class="btn btn-sm" [class.btn-dt]="interval() === 'month'" [class.btn-outline-secondary]="interval() !== 'month'" (click)="setInterval('month')">Mois</button>
+        </div>
+      </div>
+    </div>
+    @if (seriesLoading()) {
+      <app-loading />
+    } @else {
+      <app-column-chart [points]="series()" [unit]="metricLabel().toLowerCase()" />
+    }
+  </section>
+
+  <!-- ── Retraits en retard ── -->
+  @if (overdue(); as od) {
+    <section class="dt-card mt-4 p-0 overflow-hidden">
+      <div class="p-3 pb-2">
+        <h2 class="dt-card__title mb-0">Retraits sans premier appel après {{ od.first_contact_hours }} h</h2>
+      </div>
+      @if (!od.data.length) {
+        <p class="px-3 pb-3 mb-0 text-success"><i class="fas fa-check-circle me-1" aria-hidden="true"></i> Aucun retrait en retard.</p>
+      } @else {
+        <div class="table-responsive">
+          <table class="table table-hover align-middle mb-0">
+            <thead class="table-light"><tr><th>Document</th><th>Structure</th><th>Lieu</th><th class="text-end">Attente</th></tr></thead>
+            <tbody>
+              @for (c of od.data; track c.uuid) {
+                <tr>
+                  <td>
+                    @if (c.priority) { <i class="fas fa-star text-warning me-1" title="Propriétaire identifié" aria-label="Prioritaire"></i> }
+                    <a [routerLink]="['/espace/retraits', c.uuid]">{{ c.document_type ?? 'Document' }}</a>
+                    <small class="d-block dt-muted dt-mono">{{ c.reference }}</small>
+                  </td>
+                  <td class="small">{{ c.structure?.name }}@if (c.escalated) { <span class="badge text-bg-danger ms-1">Signalé à la hiérarchie</span> }</td>
+                  <td class="small">{{ c.place ?? '—' }}</td>
+                  <td class="text-end text-nowrap"><b>{{ hours(c.hours_waiting) }}</b></td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+    </section>
+  }
+
+  <!-- ── Comparaison des structures ── -->
+  @if (showStructures()) {
+    <section class="dt-card mt-4 p-0 overflow-hidden">
+      <div class="p-3 pb-2 d-flex justify-content-between align-items-center flex-wrap gap-2">
+        <h2 class="dt-card__title mb-0">Comparaison des structures</h2>
+        <button type="button" class="btn btn-sm btn-outline-secondary" [disabled]="exporting()" (click)="exportCsv()">
+          <i class="fas fa-file-csv me-1" aria-hidden="true"></i> {{ exporting() ? 'Export…' : 'Exporter (Excel / CSV)' }}
+        </button>
+      </div>
+      <div class="table-responsive">
+        <table class="table table-sm table-hover align-middle mb-0 st-table">
+          <thead class="table-light">
+            <tr>
+              <th>Structure</th>
+              <th class="text-end">Retraits reçus</th>
+              <th class="text-end">1er appel (médiane)</th>
+              <th class="text-end">Dans le délai</th>
+              <th class="text-end">En retard</th>
+              <th class="text-end">Récupérés</th>
+              <th class="text-end">Sous garde</th>
+              <th class="text-end">À examiner</th>
+              <th class="text-end">Déclarations</th>
+              <th class="text-end">Restitutions</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (s of structures()!.data; track s.uuid) {
+              <tr [class.text-muted]="!s.is_active">
+                <td>{{ s.name }}@if (!s.is_active) { <span class="badge text-bg-secondary ms-1">désactivée</span> }<small class="d-block dt-muted">{{ s.parent }}</small></td>
+                <td class="text-end">{{ s.collections_assigned }}</td>
+                <td class="text-end">{{ hours(s.median_first_contact_hours) }}</td>
+                <td class="text-end">{{ s.contacted_within_sla_pct === null ? '—' : (s.contacted_within_sla_pct | number: '1.0-0') + ' %' }}</td>
+                <td class="text-end" [class.fw-bold]="s.collections_overdue_now > 0" [class.text-danger]="s.collections_overdue_now > 0">{{ s.collections_overdue_now }}</td>
+                <td class="text-end">{{ s.collected }}</td>
+                <td class="text-end">{{ s.in_custody_now }}</td>
+                <td class="text-end">{{ s.pending_reviews_now }}</td>
+                <td class="text-end">{{ s.counter_declarations }}</td>
+                <td class="text-end">{{ s.restitutions }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </section>
+  }
+}
+
+<ng-template #tone let-t let-goal="goal">
+  @switch (t) {
+    @case ('good') { <small class="st-tone st-tone--good"><i class="fas fa-check-circle" aria-hidden="true"></i> Respecté · {{ goal }}</small> }
+    @case ('warn') { <small class="st-tone st-tone--warn"><i class="fas fa-exclamation-triangle" aria-hidden="true"></i> À surveiller · {{ goal }}</small> }
+    @case ('bad') { <small class="st-tone st-tone--bad"><i class="fas fa-times-circle" aria-hidden="true"></i> Dépassé · {{ goal }}</small> }
+    @default { <small class="st-tone">Pas encore de mesure · {{ goal }}</small> }
+  }
+</ng-template>
