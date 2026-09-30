@@ -41,9 +41,22 @@
                 <div class="up-avatar">{{ userInitial }}</div>
                 <div>
                   <div class="up-name">{{ authService.getUserName() }}</div>
-                  <div class="up-role">Membre DocTrack</div>
+                  <div class="up-role">{{ roleLabel() }}</div>
                 </div>
               </div>
+              <a class="up-item" routerLink="/mon-espace" (click)="userDropdownOpen = false">
+                <i class="fas fa-th-large"></i> Mon espace
+              </a>
+              @if (session.isSuperAdmin()) {
+                <a class="up-item" routerLink="/admin" (click)="userDropdownOpen = false">
+                  <i class="fas fa-user-shield"></i> Administration
+                </a>
+              }
+              @if (session.isStaff()) {
+                <a class="up-item" routerLink="/espace" (click)="userDropdownOpen = false">
+                  <i class="fas fa-building"></i> Espace structure
+                </a>
+              }
               <a class="up-item" (click)="goToChangePassword()">
                 <i class="fas fa-user-edit"></i> Modifier mon profil
               </a>
@@ -87,6 +100,21 @@
         <a routerLink="/apropos" routerLinkActive="active"
         (click)="menuOpen=false">À propos</a>
       </li>
+      @if (authService.isAuthenticated()) {
+        <li>
+          <a routerLink="/mon-espace" (click)="menuOpen=false">Mon espace</a>
+        </li>
+      }
+      @if (session.isSuperAdmin()) {
+        <li>
+          <a routerLink="/admin" (click)="menuOpen=false">Administration</a>
+        </li>
+      }
+      @if (session.isStaff()) {
+        <li>
+          <a routerLink="/espace" (click)="menuOpen=false">Espace structure</a>
+        </li>
+      }
       @if (authService.isAuthenticated()) {
         <li>
           <a (click)="goToChangePassword(); menuOpen=false">Mon profil</a>

@@ -1,0 +1,109 @@
+<div class="dt-toolbar">
+  <h2>Mes déclarations de perte</h2>
+  <a routerLink="/declarer" class="btn btn-dt"><i class="fas fa-plus me-1" aria-hidden="true"></i> Déclarer une perte</a>
+</div>
+
+@if (loading()) {
+  <app-loading label="Chargement de vos déclarations…" />
+} @else if (error()) {
+  <app-error-state [message]="error()!">
+    <button type="button" class="btn btn-sm btn-outline-danger" (click)="load()">Réessayer</button>
+  </app-error-state>
+} @else if (items().length === 0) {
+  <div class="dt-card">
+    <app-empty-state icon="fa-file-alt" title="Aucune déclaration"
+      text="Vous avez perdu une pièce ? Déclarez-la : DocTrack vous prévient dès qu'un document correspondant est trouvé.">
+      <a routerLink="/declarer" class="btn btn-dt btn-sm mt-2">Déclarer une perte</a>
+    </app-empty-state>
+  </div>
+} @else {
+  @for (d of items(); track d.uuid) {
+    <article class="dt-card">
+      <div class="dt-card__head">
+        <div>
+          <h3 class="dt-card__title">{{ typeName(d) }} — {{ d.FirstNameInDoc }} {{ d.LastNameInDoc }}</h3>
+          <p class="dt-card__meta">
+            @if (d.reference) { <span class="dt-mono">{{ d.reference }}</span> · }
+            Déclarée le {{ d.created_at | date: 'd MMMM y' }}
+            {{ d.channel === 'counter' ? '· au guichet' : '· en ligne' }}
+          </p>
+        </div>
+        <app-status-badge [status]="d.status" />
+      </div>
+
+      @for (doc of d.found_documents; track doc.uuid) {
+        @switch (doc.next_step) {
+          @case ('counter') {
+            <div class="dt-callout dt-callout--success">
+              <i class="fas fa-landmark" aria-hidden="true"></i>
+              <div>
+                <strong>Bonne nouvelle : votre {{ doc.document_type ?? 'pièce' }} a été retrouvée.</strong>
+                Elle est conservée par <b>{{ doc.custody?.name }}</b>
+                @if (doc.custody?.address) { , {{ doc.custody?.address }} }
+                @if (doc.custody?.phone) { — tél. <a [href]="'tel:' + doc.custody?.phone">{{ doc.custody?.phone }}</a> }.
+                <br />Présentez-vous avec une pièce justificative (extrait de naissance, permis, passeport…) et la référence
+                <span class="dt-mono">{{ doc.reference }}</span>. Un proche peut venir avec une procuration.
+              </div>
+            </div>
+          }
+          @case ('direct') {
+            <div class="dt-callout dt-callout--success">
+              <i class="fas fa-user-check" aria-hidden="true"></i>
+              <div>
+                <strong>Votre {{ doc.document_type ?? 'pièce' }} a été trouvée par un citoyen.</strong>
+                @if (doc.restitution_request?.active) {
+                  Votre demande de restitution est
+                  {{ doc.restitution_request?.status === 'accepted' ? 'acceptée : vous avez reçu le numéro du trouveur par SMS.' : 'envoyée ; le trouveur a 48 h pour répondre.' }}
+                  <div class="mt-2">
+                    <button type="button" class="btn btn-sm btn-outline-success" (click)="goToRequests()">Suivre ma demande</button>
+                  </div>
+                } @else {
+                  Demandez-lui la restitution : il sera prévenu sans voir votre numéro.
+                  @if (doc.restitution_request) {
+                    <br /><small>Demande précédente : {{ doc.restitution_request.status === 'declined' ? 'refusée' : doc.restitution_request.status === 'expired' ? 'sans réponse' : 'close' }}. Une structure proche peut récupérer le document.</small>
+                  }
+                  <div class="mt-2">
+                    <button type="button" class="btn btn-sm btn-dt-gold" [disabled]="busy() === doc.uuid" (click)="askRestitution(doc)">
+                      <i class="fas fa-hand-holding me-1" aria-hidden="true"></i>
+                      {{ busy() === doc.uuid ? 'Envoi…' : 'Demander la restitution' }}
+                    </button>
+                  </div>
+                }
+              </div>
+            </div>
+          }
+          @case ('wait') {
+            <div class="dt-callout dt-callout--info">
+              <i class="fas fa-truck" aria-hidden="true"></i>
+              <div>
+                <strong>Votre {{ doc.document_type ?? 'pièce' }} a été retrouvée.</strong>
+                Une structure officielle est en train de la récupérer. Vous recevrez un SMS dès qu'elle sera disponible au guichet.
+              </div>
+            </div>
+          }
+          @case ('done') {
+            <div class="dt-callout dt-callout--info">
+              <i class="fas fa-check-circle" aria-hidden="true"></i>
+              <div><strong>Document restitué.</strong> Merci d'avoir utilisé DocTrack.</div>
+            </div>
+          }
+        }
+      }
+
+      @if (d.found_documents.length === 0 && d.status === 'registered') {
+        <p class="dt-muted small mt-3 mb-0">
+          <i class="fas fa-search me-1" aria-hidden="true"></i>
+          Recherche en cours : vous serez prévenu par SMS et e-mail dès qu'un document correspondant est trouvé.
+        </p>
+      }
+
+      @if (d.certificat?.uuid) {
+        <div class="mt-3">
+          <button type="button" class="btn btn-sm btn-outline-secondary" (click)="viewCertificate(d)">
+            <i class="fas fa-file-pdf me-1" aria-hidden="true"></i> Voir le certificat
+          </button>
+        </div>
+      }
+    </article>
+  }
+}

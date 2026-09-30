@@ -1,11 +1,11 @@
 import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit, ChangeDetectionStrategy } from '@angular/core';
-import { isSuperAdmin, storeSession } from '../../core/auth/roles';
+import { SessionStore } from '../../core/session/session.store';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { AuthService } from '../services/auth.service';
 import Swal from 'sweetalert2'; // Importer SweetAlert2
 import { NavbarComponent } from '../navbar/navbar.component';
 import { RedirectService } from '../services/redirection.service'; // Importer RedirectService
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 
@@ -29,7 +29,9 @@ export class LoginComponent implements OnInit {
     private fb: FormBuilder,
     private authService: AuthService,
     private redirectService: RedirectService,
-    private router: Router
+    private router: Router,
+    private session: SessionStore,
+    private route: ActivatedRoute
   ) {
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
@@ -38,7 +40,30 @@ export class LoginComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // Vous pouvez effectuer des tâches d'initialisation ici
+    // Déjà connecté : directement vers son espace.
+    if (this.session.isAuthenticated()) {
+      this.router.navigateByUrl(this.session.homeUrl());
+      return;
+    }
+    // Arrivée ici après expiration de la session (voir core/http/error.interceptor.ts).
+    if (this.route.snapshot.queryParamMap.get('expired')) {
+      Swal.fire({
+        icon: 'info',
+        title: 'Session expirée',
+        text: 'Pour votre sécurité, veuillez vous reconnecter.',
+        timer: 4000,
+      });
+    }
+  }
+
+  /**
+   * Après connexion : page demandée avant la connexion si elle existe,
+   * sinon l'espace du profil (super admin → /admin, agent → /espace, citoyen → /accueil).
+   */
+  private goHome(): void {
+    const redirectUrl = this.redirectService.getRedirectUrl();
+    this.redirectService.clearRedirectUrl();
+    this.router.navigateByUrl(redirectUrl && redirectUrl !== '/connexion' ? redirectUrl : this.session.homeUrl());
   }
 
   async loginWithGoogle() {
@@ -60,15 +85,7 @@ export class LoginComponent implements OnInit {
           timer: 2000,
         }).then(() => {
           if (response.user && response.token) {
-            storeSession(response);
-            const isAdmin = isSuperAdmin(response.roles, response.user.roles);
-            if (isAdmin) {
-              this.router.navigate(['/admin']);
-            } else {
-              const redirectUrl = this.redirectService.getRedirectUrl();
-              this.redirectService.clearRedirectUrl();
-              this.router.navigate([redirectUrl || '/accueil']);
-            }
+            this.goHome();
           }
         });
       },
@@ -113,24 +130,14 @@ export class LoginComponent implements OnInit {
               // Appel à verifyEmailCode qui renvoie aussi le token
               this.authService.verifyEmailCode(email, result.value).subscribe({
                 next: (res: any) => {
-                  // ✅ Stocker le token & connecter
-                  storeSession(res);   // l'API renvoie ici « access_token »
-                  const isAdmin = isSuperAdmin(res.roles, res.user?.roles);
+                  // Session démarrée par AuthService (l'API renvoie ici « access_token »)
 
                   Swal.fire({
                     icon: 'success',
                     title: 'Email vérifié',
                     text: 'Connexion automatique réussie.',
                     timer: 2000
-                  }).then(() => {
-                    if (isAdmin) {
-                      this.router.navigate(['/admin']);
-                    } else {
-                      const redirectUrl = this.redirectService.getRedirectUrl();
-                      this.redirectService.clearRedirectUrl();
-                      this.router.navigate([redirectUrl || '/accueil']);
-                    }
-                  });
+                  }).then(() => this.goHome());
                 },
                 error: (err) => {
                   Swal.fire({

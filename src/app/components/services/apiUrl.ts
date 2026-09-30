@@ -1,5 +1,4 @@
-  // Pour utiliser le len de l'api deployé
- export const apiUrl = 'https://doctrack.majeliconnect.com/api';
+import { environment } from '../../../environments/environment';
 
- // Pour utiliser le serveur local
-  //  export const apiUrl = 'http://localhost:8000/api';
+/** Adresse de l'API : voir src/environments/ (production / développement). */
+export const apiUrl = environment.apiUrl;

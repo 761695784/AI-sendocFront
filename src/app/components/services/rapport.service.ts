@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { apiUrl } from './apiUrl'; // ← même import que PublicationsService
+import { browserStorage, STORAGE_KEYS } from '../../core/storage/browser-storage';
 
 export interface Rapport {
   uuid: string;
@@ -43,12 +44,6 @@ export interface RapportStatsResponse {
 export class RapportService {
   constructor(private http: HttpClient) {}
 
-  // ── Headers JWT ────────────────────────────────────────────
-  private getHeaders(): HttpHeaders {
-    const token = localStorage.getItem('token');
-    return new HttpHeaders({ Authorization: `Bearer ${token}` });
-  }
-
   // =========================================================
   // Récupérer la liste de tous les rapports sauvegardés
   // GET /api/rapports
@@ -56,7 +51,6 @@ export class RapportService {
   getAllRapports(): Observable<Rapport[]> {
     return this.http
       .get<RapportsListResponse>(`${apiUrl}/rapports`, {
-        headers: this.getHeaders(),
       })
       .pipe(
         map((response) => response.rapports ?? []),
@@ -78,7 +72,6 @@ export class RapportService {
 
     return this.http
       .post<RapportGenereResponse>(`${apiUrl}/rapports/generer`, body, {
-        headers: this.getHeaders(),
       })
       .pipe(catchError(this.handleError));
   }
@@ -95,7 +88,7 @@ export class RapportService {
     if (mois) url += `&mois=${mois}`;
 
     return this.http
-      .get<RapportStatsResponse>(url, { headers: this.getHeaders() })
+      .get<RapportStatsResponse>(url)
       .pipe(catchError(this.handleError));
   }
 
@@ -106,7 +99,6 @@ export class RapportService {
   voirRapport(uuid: string): Observable<Blob> {
     return this.http
       .get(`${apiUrl}/rapports/${uuid}/voir`, {
-        headers: this.getHeaders(),
         responseType: 'blob',
       })
       .pipe(catchError(this.handleError));
@@ -119,7 +111,6 @@ export class RapportService {
   telechargerRapport(uuid: string): Observable<Blob> {
     return this.http
       .get(`${apiUrl}/rapports/${uuid}/telecharger`, {
-        headers: this.getHeaders(),
         responseType: 'blob',
       })
       .pipe(catchError(this.handleError));
@@ -136,7 +127,7 @@ export class RapportService {
       .delete<{
         success: boolean;
         message: string;
-      }>(`${apiUrl}/rapports/${uuid}`, { headers: this.getHeaders() })
+      }>(`${apiUrl}/rapports/${uuid}`)
       .pipe(catchError(this.handleError));
   }
 
@@ -146,10 +137,9 @@ export class RapportService {
   // Retourne l'URL à ouvrir dans window.open()
   // =========================================================
   buildApercuUrl(annee: number, mois?: number): string {
-    const token = localStorage.getItem('token') ?? '';
     let url = `${apiUrl}/rapports/apercu?annee=${annee}`;
     if (mois) url += `&mois=${mois}`;
-    url += `&token=${token}`;
+    url += `&token=${encodeURIComponent(browserStorage.get(STORAGE_KEYS.token) ?? '')}`;
     return url;
   }
 

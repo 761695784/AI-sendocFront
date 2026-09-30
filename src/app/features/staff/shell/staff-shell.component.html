@@ -1,0 +1,70 @@
+<div class="staff" [class.staff--menu-open]="menuOpen()">
+  <aside class="staff__side" aria-label="Menu de l'espace structure">
+    <a routerLink="/espace" class="staff__brand">
+      <img src="/assets/logoo2.webp" alt="" width="36" height="36" />
+      <span>DocTrack <small>Structures</small></span>
+    </a>
+
+    <nav class="staff__nav">
+      @for (section of menu(); track section.title) {
+        @if (section.title) {
+          <p class="staff__section">{{ section.title }}</p>
+        }
+        @for (item of section.items; track item.path) {
+          <a [routerLink]="item.path ? ['/espace', item.path] : ['/espace']"
+             routerLinkActive="active" [routerLinkActiveOptions]="{ exact: !item.path }" class="staff__link">
+            <i class="fas {{ item.icon }}" aria-hidden="true"></i>
+            <span>{{ item.label }}</span>
+            @if (item.path === 'messages' && unread() > 0) {
+              <span class="staff__count">{{ unread() }}</span>
+            }
+          </a>
+        }
+      }
+    </nav>
+
+    @if (isSuperAdmin()) {
+      <a routerLink="/admin" class="staff__link staff__link--muted">
+        <i class="fas fa-user-shield" aria-hidden="true"></i><span>Administration</span>
+      </a>
+    }
+  </aside>
+
+  <div class="staff__backdrop" (click)="toggleMenu()" aria-hidden="true"></div>
+
+  <div class="staff__main">
+    <header class="staff__top">
+      <button type="button" class="staff__burger" (click)="toggleMenu()" aria-label="Ouvrir le menu">
+        <i class="fas fa-bars" aria-hidden="true"></i>
+      </button>
+
+      <app-org-switcher (changed)="onOrganizationChanged()" />
+
+      <div class="staff__top-right">
+        <a routerLink="/espace/messages" class="staff__icon" aria-label="Boîte de réception">
+          <i class="fas fa-bell" aria-hidden="true"></i>
+          @if (unread() > 0) {
+            <span class="staff__dot">{{ unread() > 99 ? '99+' : unread() }}</span>
+          }
+        </a>
+
+        <div ngbDropdown placement="bottom-end">
+          <button type="button" class="staff__user" ngbDropdownToggle>
+            <i class="fas fa-user-circle" aria-hidden="true"></i>
+            <span class="d-none d-sm-inline">{{ displayName() }}</span>
+          </button>
+          <div ngbDropdownMenu>
+            <a ngbDropdownItem routerLink="/modify"><i class="fas fa-user-edit me-2"></i>Mon profil</a>
+            <a ngbDropdownItem routerLink="/accueil"><i class="fas fa-globe me-2"></i>Site public</a>
+            <div class="dropdown-divider"></div>
+            <button ngbDropdownItem type="button" (click)="logout()"><i class="fas fa-sign-out-alt me-2"></i>Déconnexion</button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="staff__content">
+      <router-outlet />
+    </main>
+  </div>
+</div>

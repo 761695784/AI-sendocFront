@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { apiUrl } from './apiUrl';
 
@@ -10,17 +10,10 @@ export class BackupService {
 
   constructor(private http: HttpClient) {}
 
-  // ── Helper headers ──────────────────────────────
-  private getHeaders(): HttpHeaders {
-    const token = localStorage.getItem('token') ?? '';
-    return new HttpHeaders({ Authorization: `Bearer ${token}` });
-  }
-
   // ── Liste des backups ───────────────────────────
   listBackups(): Observable<any> {
     return this.http.get<any>(
-      `${apiUrl}/backup/list`,
-      { headers: this.getHeaders() }
+      `${apiUrl}/backup/list`
     );
   }
 
@@ -28,16 +21,14 @@ export class BackupService {
   runBackup(): Observable<any> {
     return this.http.post<any>(
       `${apiUrl}/backup/run`,
-      {},
-      { headers: this.getHeaders() }
+      {}
     );
   }
 
   // ── Vérifier la santé ───────────────────────────
   checkStatus(): Observable<any> {
     return this.http.get<any>(
-      `${apiUrl}/backup/status`,
-      { headers: this.getHeaders() }
+      `${apiUrl}/backup/status`
     );
   }
 
@@ -45,8 +36,7 @@ export class BackupService {
   cleanBackups(): Observable<any> {
     return this.http.post<any>(
       `${apiUrl}/backup/clean`,
-      {},
-      { headers: this.getHeaders() }
+      {}
     );
   }
 
@@ -54,7 +44,7 @@ export class BackupService {
   downloadBackup(filename: string): Observable<Blob> {
     return this.http.get(
       `${apiUrl}/backup/download?file=${encodeURIComponent(filename)}`,
-      { headers: this.getHeaders(), responseType: 'blob' }
+      { responseType: 'blob' }
     );
   }
 }

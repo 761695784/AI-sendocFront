@@ -1,0 +1,10 @@
+/**
+ * Configuration de PRODUCTION (utilisée par `ng build`).
+ */
+export const environment = {
+  production: true,
+  /** Adresse de l'API Laravel (V1 : /api/..., V2 : /api/v2/...). */
+  apiUrl: 'https://doctrack.majeliconnect.com/api',
+  /** Adresse de base des images publiques (storage). */
+  imageUrl: 'https://doctrack.majeliconnect.com',
+};

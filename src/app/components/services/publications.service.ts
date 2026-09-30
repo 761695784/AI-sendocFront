@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { map, tap, catchError } from 'rxjs/operators';
 import { throwError } from 'rxjs';
@@ -76,16 +76,12 @@ export class PublicationsService {
 
   // Nombre de publications par statut
   getDocumentStatusCount(): Observable<any> {
-    const token = localStorage.getItem('token');
-    const headers = new HttpHeaders({ 'Authorization': `Bearer ${token}` });
-    return this.http.get<any>(`${apiUrl}/status-count`, { headers });
+    return this.http.get<any>(`${apiUrl}/status-count`);
   }
 
   // Demandes de restitution (diagramme circulaire)
   getRestitutionData(): Observable<any> {
-    const token = localStorage.getItem('token');
-    const headers = new HttpHeaders({ 'Authorization': `Bearer ${token}` });
-    return this.http.get<any>(`${apiUrl}/restitution-data`, { headers });
+    return this.http.get<any>(`${apiUrl}/restitution-data`);
   }
 
   // Activité emails
@@ -134,33 +130,25 @@ export class PublicationsService {
 
   // Ajouter une publication
   addPublication(document: FormData): Observable<Document> {
-    const token = localStorage.getItem('token');
-    const headers = new HttpHeaders({ 'Authorization': `Bearer ${token}` });
-    return this.http.post<Document>(`${apiUrl}/documents`, document, { headers });
+    return this.http.post<Document>(`${apiUrl}/documents`, document);
   }
 
   // Supprimer une publication
   deletePublication(uuid: string): Observable<void> {
-    const token = localStorage.getItem('token');
-    const headers = new HttpHeaders({ 'Authorization': `Bearer ${token}` });
-    return this.http.delete<void>(`${apiUrl}/documents/${uuid}`, { headers });
+    return this.http.delete<void>(`${apiUrl}/documents/${uuid}`);
   }
 
   // Restaurer un document
   restoreDocument(uuid: string): Observable<{ success: boolean; message: string }> {
-    const token = localStorage.getItem('token');
-    const headers = new HttpHeaders({ 'Authorization': `Bearer ${token}` });
     return this.http.post<{ success: boolean; message: string }>(
-      `${apiUrl}/documents/restore/${uuid}`, {}, { headers }
+      `${apiUrl}/documents/restore/${uuid}`, {}
     );
   }
 
   // Modifier le statut
   updatePublicationStatus(uuid: string, statut: string): Observable<{ success: boolean; message: string; document: Document }> {
-    const token = localStorage.getItem('token');
-    const headers = new HttpHeaders({ 'Authorization': `Bearer ${token}` });
     return this.http.put<{ success: boolean; message: string; document: Document }>(
-      `${apiUrl}/documents/${uuid}`, { statut }, { headers }
+      `${apiUrl}/documents/${uuid}`, { statut }
     ).pipe(
       tap(response => {
         const updatedDocuments = this.publicationsSubject.value.map(doc =>
@@ -173,10 +161,8 @@ export class PublicationsService {
 
   // ====================== Méthode privée réutilisable ======================
   private getWithAuth<T = Document[]>(url: string): Observable<T> {
-    const token = localStorage.getItem('token');
-    const headers = new HttpHeaders({ 'Authorization': `Bearer ${token}` });
 
-    return this.http.get<any>(url, { headers }).pipe(
+    return this.http.get<any>(url).pipe(
       map(response => {
         // Gestion pagination Laravel (response.data) ou tableau direct
         if (Array.isArray(response)) {

@@ -14,12 +14,11 @@ export const serverRoutes: ServerRoute[] = [
   { path: 'inscription', renderMode: RenderMode.Prerender },
   { path: 'reset', renderMode: RenderMode.Prerender },
 
-  // Pages publiques dont le contenu vient de l'API (dernières publications, liste, fiche)
+  // Pages publiques dont le contenu vient de l'API (dernières publications, liste)
   { path: '', renderMode: RenderMode.Server },
   { path: 'accueil', renderMode: RenderMode.Server },
   { path: 'liste', renderMode: RenderMode.Server },
-  { path: 'document/:uuid', renderMode: RenderMode.Server },
 
-  // Tout le reste (espaces connectés, carte, QR) : navigateur uniquement
+  // Tout le reste (fiche document et espaces connectés, carte, QR) : navigateur uniquement
   { path: '**', renderMode: RenderMode.Client },
 ];

@@ -1,39 +1,25 @@
-import { isSuperAdmin, storedRoles } from '../core/auth/roles';
-import { RedirectService } from './../components/services/redirection.service';
-import { AuthService } from './../components/services/auth.service';
-import { Injectable } from '@angular/core';
-import { CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot, Router } from '@angular/router';
+import { Injectable, inject } from '@angular/core';
+import { ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot, UrlTree } from '@angular/router';
+import { SessionStore } from '../core/session/session.store';
+import { RedirectService } from '../components/services/redirection.service';
 
-@Injectable({
-  providedIn: 'root'
-})
+/**
+ * @deprecated Utiliser les gardes de `core/guards/access.guards.ts`
+ * (authGuard, superAdminGuard, staffGuard, abilityGuard). Conservée pour compatibilité.
+ */
+@Injectable({ providedIn: 'root' })
 export class AuthGuard implements CanActivate {
+  private readonly session = inject(SessionStore);
+  private readonly router = inject(Router);
+  private readonly redirectService = inject(RedirectService);
 
-  constructor(private authService: AuthService, private router: Router, private redirectService: RedirectService) {}
-
-  canActivate(
-    next: ActivatedRouteSnapshot,
-    state: RouterStateSnapshot): boolean {
-
-    if (this.authService.isAuthenticated()) {
-      const isAdmin = isSuperAdmin(storedRoles());
-
-      // Bloquer l'accès aux routes spécifiques si l'utilisateur n'est pas admin
-      const adminRoutes = ['admindec', 'admindetails/:id', 'adminpub', 'admin', 'adminuser','adminadd'];
-      const isRestrictedAdminRoute = adminRoutes.some(route => next.routeConfig?.path?.startsWith(route));
-
-      if (isRestrictedAdminRoute && !isAdmin) {
-        this.router.navigate(['/accueil']);
-        return false;
-      }
-
-      return true;
-    } else {
+  canActivate(next: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean | UrlTree {
+    if (!this.session.isAuthenticated()) {
       this.redirectService.setRedirectUrl(state.url);
-      this.router.navigate(['/connexion']);
-      return false;
+      return this.router.createUrlTree(['/connexion']);
     }
+    const adminRoutes = ['admindec', 'admindetails', 'adminpub', 'admin', 'adminuser', 'adminadd'];
+    const isAdminRoute = adminRoutes.some((route) => next.routeConfig?.path?.startsWith(route));
+    return isAdminRoute && !this.session.isSuperAdmin() ? this.router.createUrlTree(['/accueil']) : true;
   }
-
-
 }

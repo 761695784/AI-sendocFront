@@ -1,6 +1,8 @@
 import { Router } from '@angular/router';
 import { AuthService } from './../services/auth.service';
-import { Component, OnInit, HostListener, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, HostListener, ChangeDetectionStrategy, computed, inject } from '@angular/core';
+import { SessionStore } from '../../core/session/session.store';
+import { MEMBERSHIP_ROLE_LABELS } from '../../core/session/session.models';
 
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
@@ -17,6 +19,17 @@ export class NavbarComponent implements OnInit {
   menuOpen = false;
   userDropdownOpen = false;
   userInitial = '';
+
+  readonly session = inject(SessionStore);
+
+  /** Libellé du profil affiché sous le nom. */
+  readonly roleLabel = computed(() => {
+    if (this.session.isSuperAdmin()) {
+      return 'Administrateur DocTrack';
+    }
+    const m = this.session.activeMembership();
+    return m ? `${MEMBERSHIP_ROLE_LABELS[m.role] ?? m.role} · ${m.organization.name}` : 'Membre DocTrack';
+  });
 
   constructor(public authService: AuthService, private router: Router) {}
 
@@ -53,6 +66,5 @@ export class NavbarComponent implements OnInit {
   logout(): void {
     this.userDropdownOpen = false;
     this.authService.logout();
-    this.router.navigate(['/connexion']);
   }
 }

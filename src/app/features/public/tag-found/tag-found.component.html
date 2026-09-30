@@ -1,0 +1,83 @@
+<app-navbar />
+<div class="dt-page">
+  <section class="dt-hero">
+    <div class="dt-hero__inner">
+      <h1><i class="fas fa-qrcode me-2" aria-hidden="true"></i>Vous avez trouvé un document</h1>
+      <p>Merci ! En quelques secondes, son propriétaire sera prévenu.</p>
+    </div>
+  </section>
+
+  <div class="dt-container" style="max-width: 640px">
+    @if (loading()) {
+      <app-loading />
+    } @else if (answer(); as a) {
+      <div class="dt-card text-center py-4">
+        <i class="fas fa-check-circle" style="font-size: 3rem; color: var(--dt-success)" aria-hidden="true"></i>
+        <h2 class="h4 mt-2">Merci pour votre geste !</h2>
+        <p>{{ a.message }}</p>
+        @if (a.structure; as s) {
+          <p class="mb-1"><b>{{ s.name }}</b></p>
+          @if (s.address) { <p class="dt-muted mb-1">{{ s.address }}</p> }
+          @if (s.phone) { <p><a [href]="'tel:' + s.phone">{{ s.phone }}</a></p> }
+        }
+        <p class="small dt-muted mt-3">Gardez le document en lieu sûr en attendant. Ne remettez jamais un document contre de l'argent.</p>
+        <a routerLink="/accueil" class="btn btn-outline-secondary mt-2">Découvrir DocTrack</a>
+      </div>
+    } @else if (view()?.valid) {
+      <form class="dt-card dt-form" [formGroup]="form" (ngSubmit)="submit()" novalidate>
+        <div class="dt-callout dt-callout--info mt-0 mb-3">
+          <i class="fas fa-shield-alt" aria-hidden="true"></i>
+          <div>
+            <strong>{{ view()?.document_type ?? 'Document' }} enregistré sur DocTrack</strong>
+            {{ view()?.message }}
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label for="phone" class="dt-required">Votre numéro de téléphone</label>
+          <input id="phone" class="form-control" type="tel" inputmode="tel" formControlName="finder_phone" placeholder="77 123 45 67" autocomplete="tel" />
+          @if (fieldError(form.controls.finder_phone, 'Le numéro'); as err) { <small class="dt-error">{{ err }}</small> }
+        </div>
+        <div class="mb-3">
+          <label for="name">Votre prénom</label>
+          <input id="name" class="form-control" formControlName="finder_name" autocomplete="given-name" />
+        </div>
+        <div class="mb-2">
+          <label for="place">Où l'avez-vous trouvé ?</label>
+          <input id="place" class="form-control" formControlName="place" placeholder="Ex. Gare routière des Baux Maraîchers" />
+        </div>
+        <div class="mb-3 d-flex flex-wrap align-items-center gap-2">
+          <button type="button" class="btn btn-sm btn-outline-secondary" [disabled]="gpsBusy()" (click)="locate()">
+            <i class="fas fa-location-arrow me-1" aria-hidden="true"></i>
+            {{ gpsBusy() ? 'Localisation…' : gps() ? 'Position enregistrée' : 'Partager ma position' }}
+          </button>
+          @if (gpsError()) { <small class="dt-error">{{ gpsError() }}</small> }
+        </div>
+
+        <div class="form-check mb-2">
+          <input class="form-check-input" type="checkbox" id="owner" formControlName="allow_owner_contact" />
+          <label class="form-check-label" for="owner">Le propriétaire peut recevoir mon numéro pour me contacter.</label>
+        </div>
+        <div class="form-check mb-3">
+          <input class="form-check-input" type="checkbox" id="consent" formControlName="contact_consent" />
+          <label class="form-check-label" for="consent">J'accepte d'être appelé par la structure officielle la plus proche pour lui remettre le document.</label>
+        </div>
+
+        @if (error()) { <div class="alert alert-danger py-2">{{ error() }}</div> }
+
+        <button type="submit" class="btn btn-dt btn-lg w-100" [disabled]="sending()">
+          {{ sending() ? 'Envoi…' : 'Prévenir le propriétaire' }}
+        </button>
+        <p class="small dt-muted mt-2 mb-0 text-center">Votre numéro n'est jamais publié.</p>
+      </form>
+    } @else {
+      <div class="dt-card text-center py-4">
+        <i class="fas fa-exclamation-circle" style="font-size: 2.5rem; color: #b5bdc8" aria-hidden="true"></i>
+        <h2 class="h5 mt-2">QR code inactif</h2>
+        <p>{{ view()?.message }}</p>
+        <a routerLink="/publier" class="btn btn-dt">Publier le document trouvé</a>
+      </div>
+    }
+  </div>
+</div>
+<app-footer />

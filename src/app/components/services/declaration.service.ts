@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { tap, map } from 'rxjs/operators';
 import { AuthService } from './auth.service';
@@ -14,25 +14,15 @@ export class DeclarationService {
     private authService: AuthService,
   ) {}
 
-  // ── Helper headers ──────────────────────────────
-  private getHeaders(): HttpHeaders {
-    const token = localStorage.getItem('token') ?? '';
-    return new HttpHeaders({ Authorization: `Bearer ${token}` });
-  }
-
   // Récupérer les déclarations de l'utilisateur connecté
   getUserDeclarations(): Observable<any[]> {
-    const token = localStorage.getItem('token');
-    const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
-    return this.http.get<any[]>(`${apiUrl}/my-declarations`, { headers });
+    return this.http.get<any[]>(`${apiUrl}/my-declarations`);
   }
 
   // Ajouter une déclaration
   addDeclaration(declaration: FormData): Observable<any> {
-    const token = localStorage.getItem('token');
-    const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
     return this.http
-      .post<any>(`${apiUrl}/declarations`, declaration, { headers })
+      .post<any>(`${apiUrl}/declarations`, declaration)
       .pipe(
         tap((response) => {
           // console.log('Réponse du serveur:', response);
@@ -42,38 +32,28 @@ export class DeclarationService {
 
   // Afficher toutes les déclarations pour l'admin
   getAllDeclarations(): Observable<any[]> {
-    const token = localStorage.getItem('token');
-    const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
-    return this.http.get<any>(`${apiUrl}/declarations`, { headers }).pipe(
+    return this.http.get<any>(`${apiUrl}/declarations`).pipe(
       map((response) => response?.data ?? []), // ← simple, plus de data.data
     );
   }
 
   // Supprimer une déclaration
   deleteDeclaration(uuid: string): Observable<any> {
-    const token = localStorage.getItem('token');
-    const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
-    return this.http.delete(`${apiUrl}/declarations/${uuid}`, { headers });
+    return this.http.delete(`${apiUrl}/declarations/${uuid}`);
   }
 
   // Récupérer les déclarations supprimées
   getTrashedDeclarations(): Observable<{ success: boolean; message: string; data: any[];}> {
-    const token = localStorage.getItem('token');
-    const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
     return this.http.get<{ success: boolean; message: string; data: any[] }>(
       `${apiUrl}/trashed-declarations`,
-      { headers },
     );
   }
 
   // Restaurer une déclaration supprimée
   restoreDeclaration(id: number): Observable<any> {
-    const token = localStorage.getItem('token');
-    const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
     return this.http.post(
       `${apiUrl}/declarations/restore/${id}`,
       {},
-      { headers },
     );
   }
 
@@ -85,7 +65,7 @@ export class DeclarationService {
    */
   getCertificates(): Observable<any[]> {
     return this.http
-      .get<any>(`${apiUrl}/admin/certificats`, { headers: this.getHeaders() })
+      .get<any>(`${apiUrl}/admin/certificats`)
       .pipe(map((res) => res.certificats ?? res ?? []));
   }
 
@@ -94,7 +74,7 @@ export class DeclarationService {
    */
   getMesCertificats(): Observable<any[]> {
     return this.http
-      .get<any>(`${apiUrl}/my-certificats`, { headers: this.getHeaders() })
+      .get<any>(`${apiUrl}/my-certificats`)
       .pipe(map((res) => res.certificats ?? res ?? []));
   }
 
@@ -105,10 +85,8 @@ export class DeclarationService {
   viewCertificate(uuid: string): void {
     // On ouvre directement — le token est vérifié côté backend
     // via l'URL ou on peut passer par un blob si l'API l'exige
-    const token = localStorage.getItem('token') ?? '';
     this.http
       .get(`${apiUrl}/certificats/${uuid}/voir`, {
-        headers: this.getHeaders(),
         responseType: 'blob',
       })
       .subscribe({
@@ -128,7 +106,6 @@ export class DeclarationService {
    */
   viewCertificateBlob(uuid: string): Observable<Blob> {
     return this.http.get(`${apiUrl}/certificats/${uuid}/voir`, {
-      headers: this.getHeaders(),
       responseType: 'blob',
     });
   }
@@ -138,7 +115,6 @@ export class DeclarationService {
    */
   downloadCertificate(uuid: string): Observable<Blob> {
     return this.http.get(`${apiUrl}/certificats/${uuid}/telecharger`, {
-      headers: this.getHeaders(),
       responseType: 'blob',
     });
   }

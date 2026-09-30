@@ -1,234 +1,151 @@
-import { RedirectService } from './redirection.service';
-import { isSuperAdmin, storeSession } from '../../core/auth/roles';
-import { User } from '../register/register.component';
-import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Injectable, inject } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { Observable, throwError } from 'rxjs';
-import { tap,timeout, catchError } from 'rxjs/operators';
+import { catchError, tap, timeout } from 'rxjs/operators';
+import { User } from '../register/register.component';
 import { apiUrl } from './apiUrl';
+import { SessionStore } from '../../core/session/session.store';
+import { LoginResponse } from '../../core/session/session.models';
 
+/**
+ * Authentification et comptes (API V1).
+ * Le jeton est ajouté automatiquement par l'intercepteur (core/http/auth.interceptor.ts)
+ * et la session est tenue par SessionStore.
+ */
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
-  constructor(
-    private http: HttpClient,
-    public router: Router,
-    private redirectService: RedirectService,
-  ) {}
+  private readonly http = inject(HttpClient);
+  public readonly router = inject(Router);
+  private readonly session = inject(SessionStore);
 
-  // ── Helper sécurisé pour localStorage ──
-  private getStorage(): Storage | null {
-    if (typeof window !== 'undefined' && window.localStorage) {
-      return window.localStorage;
-    }
-    return null;
-  }
+  // ── Session ──────────────────────────────────────────────────────
 
-  private getToken(): string {
-    return this.getStorage()?.getItem('token') || '';
-  }
-
-  private getAuthHeaders(): HttpHeaders {
-    return new HttpHeaders({ Authorization: `Bearer ${this.getToken()}` });
-  }
-
-  // Récupérer le profil utilisateur
-  getUserProfile(): Observable<any> {
-    return this.http.get(`${apiUrl}/me`, { headers: this.getAuthHeaders() });
-  }
-
-  // Récupérer toutes les notifications
-  getAllNotifications(): Observable<any> {
-    return this.http.get(`${apiUrl}/notifications`, {
-      headers: this.getAuthHeaders(),
-    });
-  }
-
-  // Marquer toutes les notifications comme lues
-  markAllAsRead(): Observable<any> {
-    return this.http.post(`${apiUrl}/notifications/mark-all-as-read`, null, {
-      headers: this.getAuthHeaders(),
-    });
-  }
-
-  // Renouveler le QR code
-  renewQrCode(): Observable<any> {
-    if (!this.getToken()) {
-      console.error('Aucun token trouvé dans localStorage');
-      return throwError(() => new Error('Aucun token disponible'));
-    }
-    return this.http.post(
-      `${apiUrl}/renew-qr-code`,
-      {},
-      { headers: this.getAuthHeaders() },
-    );
-  }
-
-  // Marquer une notification comme lue
-  markNotificationAsRead(notificationId: number): Observable<any> {
-    return this.http.patch(
-      `${apiUrl}/notifications/${notificationId}/mark-as-read`,
-      null,
-      { headers: this.getAuthHeaders() },
-    );
-  }
-
-  // Inscription d'un utilisateur
-  register(user: User): Observable<any> {
-    return this.http.post(`${apiUrl}/register`, user);
-  }
-
-  // Connexion d'un utilisateur
-  login(credentials: any): Observable<any> {
-    const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
-    return this.http.post(`${apiUrl}/login`, credentials, { headers }).pipe(
-      tap((response: any) => {
-        if (response.token) {
-          storeSession(response);
-          const isAdmin = isSuperAdmin(response.roles, response.user?.roles);
-          if (isAdmin) {
-            this.router.navigate(['/admin']);
-          } else {
-            const redirectUrl = this.redirectService.getRedirectUrl();
-            this.redirectService.clearRedirectUrl();
-            this.router.navigate([redirectUrl || '/accueil']);
-          }
+  /** Connexion. La navigation après connexion est faite par l'écran (session.homeUrl()). */
+  login(credentials: { email: string; password: string }): Observable<LoginResponse> {
+    return this.http.post<LoginResponse>(`${apiUrl}/login`, credentials).pipe(
+      tap((response) => {
+        if (response?.token) {
+          this.session.start(response);
         }
       }),
     );
   }
 
-  // Vérifier si l'utilisateur est authentifié
+  /** Vérification du code reçu par e-mail : connecte aussi l'utilisateur. */
+  verifyEmailCode(email: string, code: string): Observable<LoginResponse> {
+    return this.http.post<LoginResponse>(`${apiUrl}/verify-email`, { email, code }).pipe(
+      tap((response) => this.session.start(response)),
+    );
+  }
+
   isAuthenticated(): boolean {
-    return !!this.getToken();
+    return this.session.isAuthenticated();
   }
 
-  // Vérification du code email
-  verifyEmailCode(email: string, code: string): Observable<any> {
-    return this.http.post(`${apiUrl}/verify-email`, { email, code });
-  }
-
-  // Récupérer le prénom de l'utilisateur
   getUserName(): string {
-    try {
-      const raw = this.getStorage()?.getItem('user');
-      if (!raw) return 'Utilisateur';
-      const user = JSON.parse(raw);
-      return user?.FirstName || 'Utilisateur';
-    } catch {
-      return 'Utilisateur';
-    }
+    return (this.session.user()?.FirstName as string | undefined) || 'Utilisateur';
   }
 
-  // Déconnexion
   logout(): void {
-    const storage = this.getStorage();
-    if (storage) {
-      storage.removeItem('token');
-      storage.removeItem('user');
-      storage.removeItem('userId');
-      storage.removeItem('roles');
-      storage.removeItem('organizations');
+    // Invalide le jeton côté API (sans attendre la réponse), puis efface la session.
+    if (this.session.isAuthenticated()) {
+      this.http.post(`${apiUrl}/logout`, {}).subscribe({ error: () => undefined });
     }
+    this.session.clear();
     this.router.navigate(['/connexion']);
   }
 
-  // Modifier le profil
-  updateProfile(profileData: any): Observable<any> {
-    return this.http.put(`${apiUrl}/profil`, profileData, {
-      headers: this.getAuthHeaders(),
-    });
+  register(user: User): Observable<any> {
+    return this.http.post(`${apiUrl}/register`, user);
   }
 
-  // Changer le mot de passe
-  changePassword(passwordData: any): Observable<any> {
-    return this.http.put(`${apiUrl}/change-password`, passwordData, {
-      headers: this.getAuthHeaders(),
-    });
-  }
-
-  // Récupérer tous les utilisateurs
-  getAllUsers(): Observable<any> {
-    return this.http.get(`${apiUrl}/users`, { headers: this.getAuthHeaders() });
-  }
-
-  // Supprimer un utilisateur
-  deleteUser(id: number): Observable<any> {
-    return this.http.delete(`${apiUrl}/users/${id}`, {
-      headers: this.getAuthHeaders(),
-    });
-  }
-
-  // Ajouter un administrateur
-  addUser(userData: any): Observable<any> {
-    return this.http.post(`${apiUrl}/create-admin`, userData, {
-      headers: this.getAuthHeaders(),
-    });
-  }
-
-  // Récupérer tous les logs d'emails
-  getAllEmailLogs(): Observable<any> {
-    return this.http.get(`${apiUrl}/all-emails`, {
-      headers: this.getAuthHeaders(),
-    });
-  }
-
-  // Récupérer toutes les données
-  getAllData(): Observable<any> {
-    return this.http.get(`${apiUrl}/all-notifications`, {
-      headers: this.getAuthHeaders(),
-    });
-  }
-
-  // Récupérer le nombre de demandes de restitution
-  getRestitutionRequestCount(): Observable<any> {
-    return this.http.get(`${apiUrl}/restitution-count`, {
-      headers: this.getAuthHeaders(),
-    });
-  }
-
-  // Envoyer un email de réinitialisation
   sendResetPasswordEmail(email: string): Observable<any> {
     return this.http.get(`${apiUrl}/forgot-password`, { params: { email } });
   }
 
-  // Réinitialiser le mot de passe
-  resetPassword(data: {
-    token: string;
-    email: string;
-    password: string;
-    password_confirmation: string;
-  }): Observable<any> {
+  resetPassword(data: { token: string; email: string; password: string; password_confirmation: string }): Observable<any> {
     return this.http.post(`${apiUrl}/reset-password`, data);
   }
 
-getActivityLogs(page = 1): Observable<any> {
-    return this.http.get(`${apiUrl}/activity-logs?page=${page}`, {
-        headers: this.getAuthHeaders(),
-    }).pipe(
-        timeout(15000), // ← 15 secondes max, sinon erreur
-        catchError(err => {
-            if (err.name === 'TimeoutError') {
-                return throwError(() => new Error('La requête a pris trop de temps.'));
-            }
-            return throwError(() => err);
-        })
-    );
-}
+  // ── Profil ───────────────────────────────────────────────────────
 
-getActivityLogsByType(type: string, page = 1): Observable<any> {
-    return this.http.get(`${apiUrl}/activity-logs/${type}?page=${page}`, {
-        headers: this.getAuthHeaders(),
-    }).pipe(
-        timeout(15000),
-        catchError(err => {
-            if (err.name === 'TimeoutError') {
-                return throwError(() => new Error('La requête a pris trop de temps.'));
-            }
-            return throwError(() => err);
-        })
+  getUserProfile(): Observable<any> {
+    return this.http.get(`${apiUrl}/me`);
+  }
+
+  updateProfile(profileData: any): Observable<any> {
+    return this.http.put(`${apiUrl}/profil`, profileData);
+  }
+
+  changePassword(passwordData: any): Observable<any> {
+    return this.http.put(`${apiUrl}/change-password`, passwordData);
+  }
+
+  renewQrCode(): Observable<any> {
+    if (!this.session.isAuthenticated()) {
+      return throwError(() => new Error('Aucun token disponible'));
+    }
+    return this.http.post(`${apiUrl}/renew-qr-code`, {});
+  }
+
+  // ── Notifications (V1) ───────────────────────────────────────────
+
+  getAllNotifications(): Observable<any> {
+    return this.http.get(`${apiUrl}/notifications`);
+  }
+
+  markAllAsRead(): Observable<any> {
+    return this.http.post(`${apiUrl}/notifications/mark-all-as-read`, null);
+  }
+
+  markNotificationAsRead(notificationId: number): Observable<any> {
+    return this.http.patch(`${apiUrl}/notifications/${notificationId}/mark-as-read`, null);
+  }
+
+  // ── Administration (super admin) ─────────────────────────────────
+
+  getAllUsers(): Observable<any> {
+    return this.http.get(`${apiUrl}/users`);
+  }
+
+  deleteUser(id: number): Observable<any> {
+    return this.http.delete(`${apiUrl}/users/${id}`);
+  }
+
+  addUser(userData: any): Observable<any> {
+    return this.http.post(`${apiUrl}/create-admin`, userData);
+  }
+
+  getAllEmailLogs(): Observable<any> {
+    return this.http.get(`${apiUrl}/all-emails`);
+  }
+
+  getAllData(): Observable<any> {
+    return this.http.get(`${apiUrl}/all-notifications`);
+  }
+
+  getRestitutionRequestCount(): Observable<any> {
+    return this.http.get(`${apiUrl}/restitution-count`);
+  }
+
+  getActivityLogs(page = 1): Observable<any> {
+    return this.withTimeout(this.http.get(`${apiUrl}/activity-logs`, { params: { page } }));
+  }
+
+  getActivityLogsByType(type: string, page = 1): Observable<any> {
+    return this.withTimeout(this.http.get(`${apiUrl}/activity-logs/${type}`, { params: { page } }));
+  }
+
+  /** 15 secondes max, sinon message clair. */
+  private withTimeout<T>(request: Observable<T>): Observable<T> {
+    return request.pipe(
+      timeout(15000),
+      catchError((err) =>
+        throwError(() => (err?.name === 'TimeoutError' ? new Error('La requête a pris trop de temps.') : err)),
+      ),
     );
-}
+  }
 }

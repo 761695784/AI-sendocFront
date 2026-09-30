@@ -7,7 +7,8 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "serve:ssr": "node dist/doc-track-front/server/server.mjs"
+    "serve:ssr": "node dist/doc-track-front/server/server.mjs",
+    "api:types": "npx -y openapi-typescript@7 ../AI-sendocAPI/docs/api/doctrack-v2.openapi.yaml -o src/app/core/api/schema.d.ts"
   },
   "private": true,
   "dependencies": {
@@ -40,15 +41,9 @@
     "@angular/compiler-cli": "^22.2.0",
     "@angular/localize": "^22.2.0",
     "@types/express": "^4.17.17",
-    "@types/jasmine": "~5.1.0",
     "@types/node": "^24.19.0",
-    "istanbul-lib-instrument": "^6.0.3",
-    "jasmine-core": "~5.1.0",
-    "karma": "~6.4.0",
-    "karma-chrome-launcher": "~3.2.0",
-    "karma-coverage": "~2.2.0",
-    "karma-jasmine": "~5.1.0",
-    "karma-jasmine-html-reporter": "~2.1.0",
-    "typescript": "~6.0.3"
+    "typescript": "~6.0.3",
+    "vitest": "^5.0.0",
+    "jsdom": "^27.0.0"
   }
 }

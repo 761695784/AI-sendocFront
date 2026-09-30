@@ -1,13 +1,12 @@
 import { FoundQrComponent } from './components/found-qr/found-qr.component';
 import { Routes } from '@angular/router';
-import { AuthGuard } from './guards/auth.guard';
+import { authGuard, superAdminGuard, staffGuard } from './core/guards/access.guards';
 import { LandingComponent } from './components/landing/landing.component';
 import { NavbarComponent } from './components/navbar/navbar.component';
 import { LoginComponent } from './components/login/login.component';
 import { RegisterComponent } from './components/register/register.component';
 import { DocumentListComponent } from './components/document-list/document-list.component';
 import { DocumentDetailComponent } from './components/document-detail/document-detail.component';
-import { PublishformComponent } from './components/publishform/publishform.component';
 import { DeclarationformComponent } from './components/declarationform/declarationform.component';
 import { LostdeclarationComponent } from './components/lostdeclaration/lostdeclaration.component';
 import { MypublishComponent } from './components/mypublish/mypublish.component';
@@ -51,18 +50,24 @@ export const routes: Routes = [
 
 
   // Routes avec Authentification pour un user simple
-  { path: 'publier', component: PublishformComponent, canActivate: [AuthGuard] },
-  { path: 'document/:uuid', component: DocumentDetailComponent, canActivate: [AuthGuard] },
-  { path: 'declarer', component: DeclarationformComponent, canActivate: [AuthGuard] },
-  { path: 'lost', component: LostdeclarationComponent, canActivate: [AuthGuard] },
-  { path: 'mypub', component: MypublishComponent, canActivate: [AuthGuard] },
-  { path: 'modify', component: ChangeprofilComponent, canActivate: [AuthGuard] },
-  { path: 'code', component: QrcodeComponent,canActivate: [AuthGuard] },
+  // Publier un document trouvé (avec lecture automatique de la pièce)
+  {
+    path: 'publier',
+    canActivate: [authGuard],
+    title: 'Publier un document trouvé — DocTrack',
+    loadComponent: () => import('./features/citizen/publish/publish-found.component').then(m => m.PublishFoundComponent)
+  },
+  { path: 'document/:uuid', component: DocumentDetailComponent, canActivate: [authGuard] },
+  { path: 'declarer', component: DeclarationformComponent, canActivate: [authGuard] },
+  { path: 'lost', component: LostdeclarationComponent, canActivate: [authGuard] },
+  { path: 'mypub', component: MypublishComponent, canActivate: [authGuard] },
+  { path: 'modify', component: ChangeprofilComponent, canActivate: [authGuard] },
+  { path: 'code', component: QrcodeComponent,canActivate: [authGuard] },
 
   // Routes pour un Administrateur
   {
     path: 'admin',
-    canActivate: [AuthGuard],
+    canActivate: [superAdminGuard],
     children: [
       { path: '', component: AdminComponent },
       { path: 'profil', component: AdminprofilComponent },
@@ -80,10 +85,51 @@ export const routes: Routes = [
   },
 
   // Routes pour les differents diagrammes
-  { path: 'statistiques', component: EvolutionChartComponent, canActivate: [AuthGuard] },
-  { path: 'restitution', component: RestitutionChartComponent, canActivate: [AuthGuard] },
-  { path: 'publication-types', component: PublicationTypeChartComponent, canActivate: [AuthGuard] },
-  { path: 'email-activity', component: EmailActivityChartComponent, canActivate: [AuthGuard] },
+  { path: 'statistiques', component: EvolutionChartComponent, canActivate: [authGuard] },
+  { path: 'restitution', component: RestitutionChartComponent, canActivate: [authGuard] },
+  { path: 'publication-types', component: PublicationTypeChartComponent, canActivate: [authGuard] },
+  { path: 'email-activity', component: EmailActivityChartComponent, canActivate: [authGuard] },
+
+  // Espace citoyen : déclarations, remises, documents trouvés, QR codes, paiements
+  {
+    path: 'mon-espace',
+    canActivate: [authGuard],
+    loadChildren: () => import('./features/citizen/citizen.routes').then(m => m.CITIZEN_ROUTES)
+  },
+
+  // Pages publiques V2 (sans compte)
+  {
+    path: 't/:token',
+    title: 'Document trouvé — DocTrack',
+    loadComponent: () => import('./features/public/tag-found/tag-found.component').then(m => m.TagFoundComponent)
+  },
+  {
+    path: 'verifier',
+    title: 'Vérifier un certificat — DocTrack',
+    loadComponent: () => import('./features/public/verify/verify.component').then(m => m.VerifyComponent)
+  },
+  {
+    path: 'verifier/:code',
+    title: 'Vérifier un certificat — DocTrack',
+    loadComponent: () => import('./features/public/verify/verify.component').then(m => m.VerifyComponent)
+  },
+  {
+    path: 'paiement/succes',
+    data: { outcome: 'success' },
+    loadComponent: () => import('./features/public/payment-return/payment-return.component').then(m => m.PaymentReturnComponent)
+  },
+  {
+    path: 'paiement/echec',
+    data: { outcome: 'error' },
+    loadComponent: () => import('./features/public/payment-return/payment-return.component').then(m => m.PaymentReturnComponent)
+  },
+
+  // Espace des structures (agents, responsables, institutions) — chargé à la demande
+  {
+    path: 'espace',
+    canActivate: [staffGuard],
+    loadChildren: () => import('./features/staff/staff.routes').then(m => m.STAFF_ROUTES)
+  },
 
   // Lazy Loading pour la carte
   {

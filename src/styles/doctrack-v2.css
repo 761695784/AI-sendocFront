@@ -1,0 +1,83 @@
+/* ══════════════════════════════════════════════════════════════════
+   DocTrack V2 — styles communs des nouveaux écrans (espace citoyen, pages publiques)
+   Couleurs de la marque : violet #31287C, or #F6A500.
+   ══════════════════════════════════════════════════════════════════ */
+:root {
+  --dt-purple: #31287c;
+  --dt-purple-dark: #1e1a55;
+  --dt-gold: #f6a500;
+  --dt-ink: #1c2430;
+  --dt-muted: #5f6b7a;
+  --dt-line: #e3e8ef;
+  --dt-bg: #f4f3fb;
+  --dt-success: #1e7044;
+  --dt-danger: #a52a2a;
+}
+
+/* Page sous la barre de navigation publique (fixe, 64 px) */
+.dt-page { background: var(--dt-bg); min-height: 100vh; padding-top: 64px; font-family: 'Poppins', system-ui, sans-serif; color: var(--dt-ink); }
+.dt-hero { background: linear-gradient(135deg, var(--dt-purple) 0%, var(--dt-purple-dark) 70%); color: #fff; padding: 2rem 1rem 1.5rem; }
+.dt-hero__inner, .dt-container { max-width: 1100px; margin: 0 auto; padding: 0 1rem; }
+.dt-hero h1 { font-size: clamp(1.4rem, 3vw, 1.9rem); font-weight: 700; margin: 0 0 .35rem; }
+.dt-hero p { margin: 0; opacity: .85; max-width: 42rem; }
+.dt-container { padding-top: 1.5rem; padding-bottom: 3rem; }
+
+/* Onglets de l'espace citoyen */
+.dt-tabs { display: flex; gap: .25rem; overflow-x: auto; margin-top: 1.25rem; scrollbar-width: none; }
+.dt-tabs::-webkit-scrollbar { display: none; }
+.dt-tab { flex: 0 0 auto; padding: .55rem 1rem; border-radius: .6rem .6rem 0 0; color: #dcd8f5; text-decoration: none; font-weight: 500; font-size: .92rem; white-space: nowrap; }
+.dt-tab:hover { color: #fff; background: rgba(255, 255, 255, .08); }
+.dt-tab.active { background: var(--dt-bg); color: var(--dt-purple); }
+.dt-tab .dt-count { margin-left: .35rem; background: var(--dt-gold); color: var(--dt-ink); border-radius: 999px; padding: 0 .45rem; font-size: .72rem; font-weight: 700; }
+
+/* Cartes */
+.dt-card { background: #fff; border: 1px solid var(--dt-line); border-radius: .9rem; padding: 1.1rem 1.25rem; box-shadow: 0 1px 2px rgba(20, 20, 60, .04); }
+.dt-card + .dt-card { margin-top: 1rem; }
+.dt-card__head { display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; gap: .5rem; }
+.dt-card__title { font-weight: 700; font-size: 1.02rem; margin: 0; }
+.dt-card__meta { color: var(--dt-muted); font-size: .85rem; margin: .15rem 0 0; }
+.dt-grid { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); }
+.dt-toolbar { display: flex; flex-wrap: wrap; gap: .5rem; align-items: center; justify-content: space-between; margin-bottom: 1rem; }
+.dt-toolbar h2 { font-size: 1.15rem; font-weight: 700; margin: 0; }
+
+/* Encadrés d'information */
+.dt-callout { display: flex; gap: .75rem; padding: .85rem 1rem; border-radius: .7rem; margin-top: .85rem; font-size: .92rem; }
+.dt-callout i { margin-top: .15rem; }
+.dt-callout--info { background: #eef1ff; color: #2c3e8c; }
+.dt-callout--success { background: #e3f4ea; color: var(--dt-success); }
+.dt-callout--warning { background: #fff3dc; color: #7a5000; }
+.dt-callout--danger { background: #fde8e8; color: var(--dt-danger); }
+.dt-callout strong { display: block; }
+
+/* Boutons de la marque */
+.btn-dt { background: var(--dt-purple); border-color: var(--dt-purple); color: #fff; }
+.btn-dt:hover, .btn-dt:focus { background: var(--dt-purple-dark); border-color: var(--dt-purple-dark); color: #fff; }
+.btn-dt-gold { background: var(--dt-gold); border-color: var(--dt-gold); color: var(--dt-ink); font-weight: 600; }
+.btn-dt-gold:hover { background: #e39800; border-color: #e39800; color: var(--dt-ink); }
+
+/* Formulaires */
+.dt-form label { font-weight: 500; font-size: .9rem; margin-bottom: .3rem; }
+.dt-form .form-control, .dt-form .form-select { border-radius: .55rem; padding: .6rem .8rem; }
+.dt-form .form-text { color: var(--dt-muted); }
+.dt-error { color: var(--dt-danger); font-size: .82rem; margin-top: .25rem; display: block; }
+.dt-required::after { content: ' *'; color: var(--dt-danger); }
+.dt-step { display: flex; align-items: center; gap: .6rem; font-weight: 700; margin: 0 0 .75rem; }
+.dt-step span { display: inline-grid; place-items: center; width: 1.8rem; height: 1.8rem; border-radius: 50%; background: var(--dt-purple); color: #fff; font-size: .85rem; }
+
+/* Zone de dépôt / prise de photo */
+.dt-drop { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: .4rem; text-align: center;
+  border: 2px dashed #c8c3ea; border-radius: .9rem; padding: 1.5rem 1rem; background: #faf9ff; cursor: pointer; }
+.dt-drop:hover, .dt-drop:focus-within { border-color: var(--dt-purple); }
+.dt-drop i { font-size: 2rem; color: var(--dt-purple); }
+.dt-drop small { color: var(--dt-muted); }
+.dt-photo { width: 100%; max-height: 280px; object-fit: contain; border-radius: .7rem; background: #111; }
+
+/* Petites étiquettes */
+.dt-chip { display: inline-flex; align-items: center; gap: .3rem; padding: .15rem .55rem; border-radius: 999px; background: #eef0f3; font-size: .78rem; color: #4a5361; }
+.dt-muted { color: var(--dt-muted); }
+.dt-mono { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: .02em; }
+
+@media print {
+  .navbar-wrap, .dt-hero, .dt-tabs, .dt-no-print, app-footer { display: none !important; }
+  .dt-page { padding-top: 0; background: #fff; }
+}
