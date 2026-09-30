@@ -2,11 +2,13 @@
 
 <div class="page-content">
 
-  <div *ngIf="isLoading" class="loader-overlay">
-    <l-ring-2 size="40" stroke="5" stroke-length="0.55"
-      bg-opacity="0.1" speed="0.8" color="#F6A500">
-    </l-ring-2>
-  </div>
+  @if (isLoading) {
+    <div class="loader-overlay">
+      <l-ring-2 size="40" stroke="5" stroke-length="0.55"
+        bg-opacity="0.1" speed="0.8" color="#F6A500">
+      </l-ring-2>
+    </div>
+  }
 
   <div class="page-header">
     <div class="page-header-left">
@@ -37,15 +39,17 @@
           <i class="fas fa-shield-alt"></i> Rôle
         </label>
         <select formControlName="role"
-                title="Choisissez un rôle"
-                aria-label="Sélectionner un rôle">
+          title="Choisissez un rôle"
+          aria-label="Sélectionner un rôle">
           <option value="" disabled selected>Sélectionner un rôle</option>
           <option value="Admin">Administrateur</option>
         </select>
-        <small class="error-text"
-               *ngIf="userForm.get('role')?.invalid && userForm.get('role')?.touched">
-          Le rôle est requis.
-        </small>
+        @if (userForm.get('role')?.invalid && userForm.get('role')?.touched) {
+          <small class="error-text"
+            >
+            Le rôle est requis.
+          </small>
+        }
       </div>
 
       <div class="form-divider"></div>
@@ -57,22 +61,34 @@
             <i class="fas fa-user"></i> Nom
           </label>
           <input type="text" formControlName="FirstName" placeholder="Nom de famille">
-          <small class="error-text"
-                 *ngIf="userForm.get('FirstName')?.invalid && userForm.get('FirstName')?.touched">
-            <span *ngIf="userForm.get('FirstName')?.errors?.['required']">Le nom est requis.</span>
-            <span *ngIf="userForm.get('FirstName')?.errors?.['maxlength']">Max 40 caractères.</span>
-          </small>
+          @if (userForm.get('FirstName')?.invalid && userForm.get('FirstName')?.touched) {
+            <small class="error-text"
+              >
+              @if (userForm.get('FirstName')?.errors?.['required']) {
+                <span>Le nom est requis.</span>
+              }
+              @if (userForm.get('FirstName')?.errors?.['maxlength']) {
+                <span>Max 40 caractères.</span>
+              }
+            </small>
+          }
         </div>
         <div class="field-group">
           <label for="LastName" class="required">
             <i class="fas fa-user"></i> Prénom
           </label>
           <input type="text" formControlName="LastName" placeholder="Prénom">
-          <small class="error-text"
-                 *ngIf="userForm.get('LastName')?.invalid && userForm.get('LastName')?.touched">
-            <span *ngIf="userForm.get('LastName')?.errors?.['required']">Le prénom est requis.</span>
-            <span *ngIf="userForm.get('LastName')?.errors?.['maxlength']">Max 20 caractères.</span>
-          </small>
+          @if (userForm.get('LastName')?.invalid && userForm.get('LastName')?.touched) {
+            <small class="error-text"
+              >
+              @if (userForm.get('LastName')?.errors?.['required']) {
+                <span>Le prénom est requis.</span>
+              }
+              @if (userForm.get('LastName')?.errors?.['maxlength']) {
+                <span>Max 20 caractères.</span>
+              }
+            </small>
+          }
         </div>
       </div>
 
@@ -84,12 +100,20 @@
           <i class="fas fa-envelope"></i> Adresse email
         </label>
         <input type="email" formControlName="email" placeholder="exemple@doctrack.sn">
-        <small class="error-text"
-               *ngIf="userForm.get('email')?.invalid && userForm.get('email')?.touched">
-          <span *ngIf="userForm.get('email')?.errors?.['required']">L'email est requis.</span>
-          <span *ngIf="userForm.get('email')?.errors?.['email']">Format d'email invalide.</span>
-          <span *ngIf="userForm.get('email')?.errors?.['maxlength']">Max 50 caractères.</span>
-        </small>
+        @if (userForm.get('email')?.invalid && userForm.get('email')?.touched) {
+          <small class="error-text"
+            >
+            @if (userForm.get('email')?.errors?.['required']) {
+              <span>L'email est requis.</span>
+            }
+            @if (userForm.get('email')?.errors?.['email']) {
+              <span>Format d'email invalide.</span>
+            }
+            @if (userForm.get('email')?.errors?.['maxlength']) {
+              <span>Max 50 caractères.</span>
+            }
+          </small>
+        }
       </div>
 
       <div class="form-row">
@@ -98,22 +122,34 @@
             <i class="fas fa-phone"></i> Téléphone
           </label>
           <input type="text" formControlName="Phone" placeholder="+221 XX XXX XX XX">
-          <small class="error-text"
-                 *ngIf="userForm.get('Phone')?.invalid && userForm.get('Phone')?.touched">
-            <span *ngIf="userForm.get('Phone')?.errors?.['required']">Le téléphone est requis.</span>
-            <span *ngIf="userForm.get('Phone')?.errors?.['maxlength']">Max 20 caractères.</span>
-          </small>
+          @if (userForm.get('Phone')?.invalid && userForm.get('Phone')?.touched) {
+            <small class="error-text"
+              >
+              @if (userForm.get('Phone')?.errors?.['required']) {
+                <span>Le téléphone est requis.</span>
+              }
+              @if (userForm.get('Phone')?.errors?.['maxlength']) {
+                <span>Max 20 caractères.</span>
+              }
+            </small>
+          }
         </div>
         <div class="field-group">
           <label for="Adress" class="required">
             <i class="fas fa-map-marker-alt"></i> Adresse
           </label>
           <input type="text" formControlName="Adress" placeholder="Ex: Dakar, Plateau">
-          <small class="error-text"
-                 *ngIf="userForm.get('Adress')?.invalid && userForm.get('Adress')?.touched">
-            <span *ngIf="userForm.get('Adress')?.errors?.['required']">L'adresse est requise.</span>
-            <span *ngIf="userForm.get('Adress')?.errors?.['maxlength']">Max 100 caractères.</span>
-          </small>
+          @if (userForm.get('Adress')?.invalid && userForm.get('Adress')?.touched) {
+            <small class="error-text"
+              >
+              @if (userForm.get('Adress')?.errors?.['required']) {
+                <span>L'adresse est requise.</span>
+              }
+              @if (userForm.get('Adress')?.errors?.['maxlength']) {
+                <span>Max 100 caractères.</span>
+              }
+            </small>
+          }
         </div>
       </div>
 
@@ -127,19 +163,25 @@
           </label>
           <div class="password-wrap">
             <input [type]="showPassword ? 'text' : 'password'"
-                   formControlName="password"
-                   placeholder="••••••••">
+              formControlName="password"
+              placeholder="••••••••">
             <button type="button" class="toggle-pw"
-                    (click)="showPassword = !showPassword"
-                    aria-label="Afficher ou masquer le mot de passe">
+              (click)="showPassword = !showPassword"
+              aria-label="Afficher ou masquer le mot de passe">
               <i class="fas" [ngClass]="showPassword ? 'fa-eye-slash' : 'fa-eye'"></i>
             </button>
           </div>
-          <small class="error-text"
-                 *ngIf="userForm.get('password')?.invalid && userForm.get('password')?.touched">
-            <span *ngIf="userForm.get('password')?.errors?.['required']">Le mot de passe est requis.</span>
-            <span *ngIf="userForm.get('password')?.errors?.['minlength']">Minimum 8 caractères.</span>
-          </small>
+          @if (userForm.get('password')?.invalid && userForm.get('password')?.touched) {
+            <small class="error-text"
+              >
+              @if (userForm.get('password')?.errors?.['required']) {
+                <span>Le mot de passe est requis.</span>
+              }
+              @if (userForm.get('password')?.errors?.['minlength']) {
+                <span>Minimum 8 caractères.</span>
+              }
+            </small>
+          }
         </div>
         <div class="field-group">
           <label for="password_confirmation" class="required">
@@ -147,20 +189,22 @@
           </label>
           <div class="password-wrap">
             <input [type]="showConfirm ? 'text' : 'password'"
-                   formControlName="password_confirmation"
-                   placeholder="••••••••">
+              formControlName="password_confirmation"
+              placeholder="••••••••">
             <button type="button" class="toggle-pw"
-                    (click)="showConfirm = !showConfirm"
-                    aria-label="Afficher ou masquer la confirmation">
+              (click)="showConfirm = !showConfirm"
+              aria-label="Afficher ou masquer la confirmation">
               <i class="fas" [ngClass]="showConfirm ? 'fa-eye-slash' : 'fa-eye'"></i>
             </button>
           </div>
-          <small class="error-text"
-                 *ngIf="userForm.errors?.['mismatch'] &&
-                        (userForm.get('password_confirmation')?.touched ||
-                         userForm.get('password')?.touched)">
-            Les mots de passe ne correspondent pas.
-          </small>
+          @if (userForm.errors?.['mismatch'] &&
+            (userForm.get('password_confirmation')?.touched ||
+            userForm.get('password')?.touched)) {
+            <small class="error-text"
+              >
+              Les mots de passe ne correspondent pas.
+            </small>
+          }
         </div>
       </div>
 

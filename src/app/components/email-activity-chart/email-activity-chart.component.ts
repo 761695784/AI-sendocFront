@@ -1,13 +1,13 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { Chart } from 'chart.js/auto';
 import { PublicationsService } from '../services/publications.service';
 
 @Component({
-  selector: 'app-email-activity-chart',
-  standalone: true,
-  imports: [],
-  templateUrl: './email-activity-chart.component.html',
-  styleUrls: ['./email-activity-chart.component.css'] // Correction ici, c'est 'styleUrls'
+    selector: 'app-email-activity-chart',
+    imports: [],
+    templateUrl: './email-activity-chart.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
+    styleUrls: ['./email-activity-chart.component.css'] // Correction ici, c'est 'styleUrls'
 })
 export class EmailActivityChartComponent implements OnInit {
 

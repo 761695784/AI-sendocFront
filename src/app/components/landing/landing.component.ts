@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { PublicationsService } from './../services/publications.service';
 import { Document } from '../document-list/document-list.component';
 import { NavbarComponent } from '../navbar/navbar.component';
@@ -9,11 +9,11 @@ import { Router } from '@angular/router';
 import { MapComponent } from '../map/map.component';
 
 @Component({
-  selector: 'app-landing',
-  standalone: true,
-  imports: [NavbarComponent, FooterComponent, FormsModule, CommonModule,MapComponent],
-  templateUrl: './landing.component.html',
-  styleUrls: ['./landing.component.css']
+    selector: 'app-landing',
+    imports: [NavbarComponent, FooterComponent, FormsModule, CommonModule, MapComponent],
+    templateUrl: './landing.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
+    styleUrls: ['./landing.component.css']
 })
 export class LandingComponent implements OnInit {
   searchTerm: string = '';

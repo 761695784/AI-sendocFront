@@ -2,11 +2,13 @@
 
 <div class="page-content">
 
-  <div *ngIf="isLoading" class="loader-overlay">
-    <l-ring-2 size="40" stroke="5" stroke-length="0.55"
-      bg-opacity="0.1" speed="0.8" color="#F6A500">
-    </l-ring-2>
-  </div>
+  @if (isLoading) {
+    <div class="loader-overlay">
+      <l-ring-2 size="40" stroke="5" stroke-length="0.55"
+        bg-opacity="0.1" speed="0.8" color="#F6A500">
+      </l-ring-2>
+    </div>
+  }
 
   <div class="profile-layout">
 
@@ -39,18 +41,24 @@
           <span>Mon QR Code personnel</span>
         </div>
 
-        <div class="qr-image-wrap qr-code-print" *ngIf="qrCodeUrl">
-          <img [src]="qrCodeUrl" alt="QR Code DocTrack" />
-          <div class="qr-validity-badge" *ngIf="user?.qr_code_expires_at">
-            <i class="fas fa-clock"></i>
-            Valide jusqu'au {{ user.qr_code_expires_at | date:'dd/MM/yyyy' }}
+        @if (qrCodeUrl) {
+          <div class="qr-image-wrap qr-code-print">
+            <img [src]="qrCodeUrl" alt="QR Code DocTrack" />
+            @if (user?.qr_code_expires_at) {
+              <div class="qr-validity-badge">
+                <i class="fas fa-clock"></i>
+                Valide jusqu'au {{ user.qr_code_expires_at | date:'dd/MM/yyyy' }}
+              </div>
+            }
           </div>
-        </div>
+        }
 
-        <div class="qr-placeholder" *ngIf="!qrCodeUrl">
-          <i class="fas fa-spinner fa-spin"></i>
-          <span>Chargement du QR code...</span>
-        </div>
+        @if (!qrCodeUrl) {
+          <div class="qr-placeholder">
+            <i class="fas fa-spinner fa-spin"></i>
+            <span>Chargement du QR code...</span>
+          </div>
+        }
 
         <div class="qr-info">
           <i class="fas fa-info-circle"></i>
@@ -59,11 +67,11 @@
 
         <div class="qr-actions">
           <button class="btn-qr-print" (click)="printQrCode()" type="button"
-                  aria-label="Imprimer le QR code">
+            aria-label="Imprimer le QR code">
             <i class="fas fa-print"></i> Imprimer
           </button>
           <button class="btn-qr-renew" (click)="renewQrCode()" type="button"
-                  aria-label="Renouveler le QR code">
+            aria-label="Renouveler le QR code">
             <i class="fas fa-sync-alt"></i> Renouveler
           </button>
         </div>
@@ -86,14 +94,14 @@
           <div class="field-group">
             <label for="LastName">Nom</label>
             <input type="text" id="LastName"
-                   formControlName="LastName"
-                   placeholder="Votre nom">
+              formControlName="LastName"
+              placeholder="Votre nom">
           </div>
           <div class="field-group">
             <label for="FirstName">Prénom</label>
             <input type="text" id="FirstName"
-                   formControlName="FirstName"
-                   placeholder="Votre prénom">
+              formControlName="FirstName"
+              placeholder="Votre prénom">
           </div>
         </div>
 
@@ -101,14 +109,14 @@
           <div class="field-group">
             <label for="email">Email</label>
             <input type="email" id="email"
-                   formControlName="email"
-                   placeholder="votre@email.com">
+              formControlName="email"
+              placeholder="votre@email.com">
           </div>
           <div class="field-group">
             <label for="Phone">Téléphone</label>
             <input type="tel" id="Phone"
-                   formControlName="Phone"
-                   placeholder="+221 XX XXX XX XX">
+              formControlName="Phone"
+              placeholder="+221 XX XXX XX XX">
           </div>
         </div>
 
@@ -116,8 +124,8 @@
           <div class="field-group full">
             <label for="Adress">Adresse</label>
             <input type="text" id="Adress"
-                   formControlName="Adress"
-                   placeholder="Votre adresse">
+              formControlName="Adress"
+              placeholder="Votre adresse">
           </div>
         </div>
 
@@ -128,8 +136,8 @@
           <div class="field-group">
             <label for="oldPassword">Ancien mot de passe</label>
             <input type="password" id="oldPassword"
-                   formControlName="oldPassword"
-                   placeholder="••••••••">
+              formControlName="oldPassword"
+              placeholder="••••••••">
           </div>
         </div>
 
@@ -137,18 +145,20 @@
           <div class="field-group">
             <label for="newPassword">Nouveau mot de passe</label>
             <input type="password" id="newPassword"
-                   formControlName="newPassword"
-                   placeholder="••••••••">
+              formControlName="newPassword"
+              placeholder="••••••••">
           </div>
           <div class="field-group">
             <label for="newPasswordConfirm">Confirmation</label>
             <input type="password" id="newPasswordConfirm"
-                   formControlName="newPasswordConfirm"
-                   placeholder="••••••••">
-            <small class="error-text"
-                   *ngIf="profileForm.hasError('passwordMismatch')">
-              Les mots de passe ne correspondent pas.
-            </small>
+              formControlName="newPasswordConfirm"
+              placeholder="••••••••">
+            @if (profileForm.hasError('passwordMismatch')) {
+              <small class="error-text"
+                >
+                Les mots de passe ne correspondent pas.
+              </small>
+            }
           </div>
         </div>
 

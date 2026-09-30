@@ -1,16 +1,16 @@
-import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit } from '@angular/core';
+import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../services/auth.service';
 import { SideheadersComponent } from "../sideheaders/sideheaders.component";
 
 @Component({
-  selector: 'app-adminlogs',
-  standalone: true,
-  imports: [CommonModule, FormsModule, SideheadersComponent],
-  templateUrl: './adminlogs.component.html',
-  styleUrls: ['./adminlogs.component.css'],
-  schemas: [CUSTOM_ELEMENTS_SCHEMA],
+    selector: 'app-adminlogs',
+    imports: [CommonModule, FormsModule, SideheadersComponent],
+    templateUrl: './adminlogs.component.html',
+    styleUrls: ['./adminlogs.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class AdminlogsComponent implements OnInit {
 

@@ -1,6 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { CommonModule } from '@angular/common';
+
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { FoundQrService } from '../services/found-qr.service';
@@ -8,11 +8,11 @@ import Swal from 'sweetalert2';
 import { Router } from '@angular/router';
 
 @Component({
-  selector: 'app-found-qr',
-  standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule, ],
-  templateUrl: './found-qr.component.html',
-  styleUrls: ['./found-qr.component.css']
+    selector: 'app-found-qr',
+    imports: [FormsModule, RouterModule],
+    templateUrl: './found-qr.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
+    styleUrls: ['./found-qr.component.css']
 })
 export class FoundQrComponent implements OnInit {
   token: string = '';

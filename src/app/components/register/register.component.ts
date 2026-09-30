@@ -1,4 +1,4 @@
-import { Component, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { Component, CUSTOM_ELEMENTS_SCHEMA, ChangeDetectionStrategy } from '@angular/core';
 import { NavbarComponent } from "../navbar/navbar.component";
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { AuthService } from '../services/auth.service';
@@ -17,13 +17,12 @@ export interface User {
 }
 
 @Component({
-  selector: 'app-register',
-  standalone: true,
-  imports: [NavbarComponent, ReactiveFormsModule, CommonModule],
-  templateUrl: './register.component.html',
-  styleUrls: ['./register.component.css'],
-  schemas: [CUSTOM_ELEMENTS_SCHEMA], // Ajoutez cette ligne
-
+    selector: 'app-register',
+    imports: [NavbarComponent, ReactiveFormsModule, CommonModule],
+    templateUrl: './register.component.html',
+    styleUrls: ['./register.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class RegisterComponent {
   registerForm: FormGroup;

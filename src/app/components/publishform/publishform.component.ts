@@ -1,19 +1,18 @@
-import { Component, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { Component, CUSTOM_ELEMENTS_SCHEMA, ChangeDetectionStrategy } from '@angular/core';
 import Swal from 'sweetalert2';
 import { FormGroup, FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { PublicationsService } from '../services/publications.service';
 import { AuthService } from '../services/auth.service';
 import { NavbarComponent } from '../navbar/navbar.component';
-import { CommonModule } from '@angular/common';
+
 
 @Component({
-  selector: 'app-publishform',
-  imports: [NavbarComponent, ReactiveFormsModule, CommonModule],
-  standalone: true,
-  templateUrl: './publishform.component.html',
-  styleUrls: ['./publishform.component.css'],
-  schemas: [CUSTOM_ELEMENTS_SCHEMA], // Ajoutez cette ligne
-
+    selector: 'app-publishform',
+    imports: [NavbarComponent, ReactiveFormsModule],
+    templateUrl: './publishform.component.html',
+    styleUrls: ['./publishform.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class PublishformComponent {
   publishForm: FormGroup;

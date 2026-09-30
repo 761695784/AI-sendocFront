@@ -1,6 +1,6 @@
 import { ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { Component, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { Component, CUSTOM_ELEMENTS_SCHEMA, ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { SideheadersComponent } from '../sideheaders/sideheaders.component';
 import { FooterComponent } from '../footer/footer.component';
@@ -13,12 +13,12 @@ import { AuthService } from '../services/auth.service';
 
 
 @Component({
-  selector: 'app-admindetails',
-  standalone: true,
-  imports: [SideheadersComponent,CommonModule,FormsModule],
-  templateUrl: './admindetails.component.html',
-  styleUrl: './admindetails.component.css',
-   schemas: [CUSTOM_ELEMENTS_SCHEMA],
+    selector: 'app-admindetails',
+    imports: [SideheadersComponent, CommonModule, FormsModule],
+    templateUrl: './admindetails.component.html',
+    styleUrl: './admindetails.component.css',
+    changeDetection: ChangeDetectionStrategy.Eager,
+    schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class AdmindetailsComponent {
   // Déclaration des variables pour les données du document et des commentaires

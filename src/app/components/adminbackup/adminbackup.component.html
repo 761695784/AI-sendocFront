@@ -23,51 +23,54 @@
       </div>
 
       <!-- Stats -->
-      <div class="stats-row" *ngIf="!isLoading">
-        <div class="stat-card">
-          <div class="stat-icon purple">
-            <i class="fas fa-database"></i>
-          </div>
-          <div class="stat-info">
-            <span class="stat-num">{{ totalBackups }}</span>
-            <span class="stat-label">Total sauvegardes</span>
-          </div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-icon green" *ngIf="isHealthy; else unhealthy">
-            <i class="fas fa-check-circle"></i>
-          </div>
-          <ng-template #unhealthy>
-            <div class="stat-icon red">
-              <i class="fas fa-exclamation-circle"></i>
+      @if (!isLoading) {
+        <div class="stats-row">
+          <div class="stat-card">
+            <div class="stat-icon purple">
+              <i class="fas fa-database"></i>
             </div>
-          </ng-template>
-          <div class="stat-info">
-            <span class="stat-num" [ngClass]="isHealthy ? 'text-green' : 'text-red'">
-              {{ isHealthy ? 'Sain' : 'Alerte' }}
-            </span>
-            <span class="stat-label">État du système</span>
+            <div class="stat-info">
+              <span class="stat-num">{{ totalBackups }}</span>
+              <span class="stat-label">Total sauvegardes</span>
+            </div>
+          </div>
+          <div class="stat-card">
+            @if (isHealthy) {
+              <div class="stat-icon green">
+                <i class="fas fa-check-circle"></i>
+              </div>
+            } @else {
+              <div class="stat-icon red">
+                <i class="fas fa-exclamation-circle"></i>
+              </div>
+            }
+            <div class="stat-info">
+              <span class="stat-num" [ngClass]="isHealthy ? 'text-green' : 'text-red'">
+                {{ isHealthy ? 'Sain' : 'Alerte' }}
+              </span>
+              <span class="stat-label">État du système</span>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon orange">
+              <i class="fas fa-hdd"></i>
+            </div>
+            <div class="stat-info">
+              <span class="stat-num">{{ totalSizeMb }} MB</span>
+              <span class="stat-label">Espace utilisé</span>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon blue">
+              <i class="fas fa-clock"></i>
+            </div>
+            <div class="stat-info">
+              <span class="stat-num">{{ lastBackupDate || '—' }}</span>
+              <span class="stat-label">Dernière sauvegarde</span>
+            </div>
           </div>
         </div>
-        <div class="stat-card">
-          <div class="stat-icon orange">
-            <i class="fas fa-hdd"></i>
-          </div>
-          <div class="stat-info">
-            <span class="stat-num">{{ totalSizeMb }} MB</span>
-            <span class="stat-label">Espace utilisé</span>
-          </div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-icon blue">
-            <i class="fas fa-clock"></i>
-          </div>
-          <div class="stat-info">
-            <span class="stat-num">{{ lastBackupDate || '—' }}</span>
-            <span class="stat-label">Dernière sauvegarde</span>
-          </div>
-        </div>
-      </div>
+      }
 
       <!-- Info planification -->
       <div class="schedule-card">
@@ -118,28 +121,28 @@
         </h3>
         <div class="actions-grid">
           <button class="action-btn purple"
-                  (click)="runBackup()"
-                  [disabled]="isRunning">
+            (click)="runBackup()"
+            [disabled]="isRunning">
             <i class="fas fa-save"></i>
             <span>Sauvegarder maintenant</span>
             <small>Lance une sauvegarde complète</small>
           </button>
           <button class="action-btn green"
-                  (click)="checkStatus()"
-                  [disabled]="isCheckingStatus">
+            (click)="checkStatus()"
+            [disabled]="isCheckingStatus">
             <i class="fas fa-heartbeat"></i>
             <span>Vérifier la santé</span>
             <small>Contrôle l'état des sauvegardes</small>
           </button>
           <button class="action-btn orange"
-                  (click)="cleanBackups()"
-                  [disabled]="isCleaning">
+            (click)="cleanBackups()"
+            [disabled]="isCleaning">
             <i class="fas fa-broom"></i>
             <span>Nettoyer</span>
             <small>Supprime les vieilles sauvegardes</small>
           </button>
           <button class="action-btn blue"
-                  (click)="loadBackups()">
+            (click)="loadBackups()">
             <i class="fas fa-sync-alt"></i>
             <span>Actualiser la liste</span>
             <small>Recharge les sauvegardes</small>
@@ -148,132 +151,140 @@
       </div>
 
       <!-- Message feedback -->
-      <div class="feedback-msg success" *ngIf="successMsg">
-        <i class="fas fa-check-circle"></i>
-        <div>
-          <strong>Succès</strong>
-          <p>{{ successMsg }}</p>
+      @if (successMsg) {
+        <div class="feedback-msg success">
+          <i class="fas fa-check-circle"></i>
+          <div>
+            <strong>Succès</strong>
+            <p>{{ successMsg }}</p>
+          </div>
+          <button class="feedback-close"
+            (click)="successMsg = ''"
+            aria-label="Fermer">
+            <i class="fas fa-times"></i>
+          </button>
         </div>
-        <button class="feedback-close"
-                (click)="successMsg = ''"
-                aria-label="Fermer">
-          <i class="fas fa-times"></i>
-        </button>
-      </div>
+      }
 
-      <div class="feedback-msg error" *ngIf="errorMsg">
-        <i class="fas fa-exclamation-circle"></i>
-        <div>
-          <strong>Erreur</strong>
-          <p>{{ errorMsg }}</p>
+      @if (errorMsg) {
+        <div class="feedback-msg error">
+          <i class="fas fa-exclamation-circle"></i>
+          <div>
+            <strong>Erreur</strong>
+            <p>{{ errorMsg }}</p>
+          </div>
+          <button class="feedback-close"
+            (click)="errorMsg = ''"
+            aria-label="Fermer">
+            <i class="fas fa-times"></i>
+          </button>
         </div>
-        <button class="feedback-close"
-                (click)="errorMsg = ''"
-                aria-label="Fermer">
-          <i class="fas fa-times"></i>
-        </button>
-      </div>
+      }
 
       <!-- Status monitoring -->
-      <div class="status-card" *ngIf="statusOutput">
-        <div class="status-header">
-          <i class="fas fa-heartbeat"></i>
-          <h3>Résultat du monitoring</h3>
+      @if (statusOutput) {
+        <div class="status-card">
+          <div class="status-header">
+            <i class="fas fa-heartbeat"></i>
+            <h3>Résultat du monitoring</h3>
+          </div>
+          <div class="status-output">{{ statusOutput }}</div>
         </div>
-        <div class="status-output">{{ statusOutput }}</div>
-      </div>
+      }
 
       <!-- Loader -->
-      <div class="loader-center" *ngIf="isLoading">
-        <l-ring-2 size="36" stroke="4" stroke-length="0.55"
-          bg-opacity="0.1" speed="0.8" color="#31287C">
-        </l-ring-2>
-        <span>Chargement des sauvegardes...</span>
-      </div>
+      @if (isLoading) {
+        <div class="loader-center">
+          <l-ring-2 size="36" stroke="4" stroke-length="0.55"
+            bg-opacity="0.1" speed="0.8" color="#31287C">
+          </l-ring-2>
+          <span>Chargement des sauvegardes...</span>
+        </div>
+      }
 
       <!-- Empty state -->
-      <div class="empty-state" *ngIf="!isLoading && backups.length === 0">
-        <div class="empty-icon"><i class="fas fa-database"></i></div>
-        <h3>Aucune sauvegarde trouvée</h3>
-        <p>Lancez votre première sauvegarde en cliquant sur le bouton ci-dessus.</p>
-      </div>
+      @if (!isLoading && backups.length === 0) {
+        <div class="empty-state">
+          <div class="empty-icon"><i class="fas fa-database"></i></div>
+          <h3>Aucune sauvegarde trouvée</h3>
+          <p>Lancez votre première sauvegarde en cliquant sur le bouton ci-dessus.</p>
+        </div>
+      }
 
       <!-- Liste des backups -->
-      <div class="table-card" *ngIf="!isLoading && backups.length > 0">
-        <div class="table-header">
-          <span class="table-count">
-            <strong>{{ backups.length }}</strong> sauvegarde(s) disponible(s)
-          </span>
-        </div>
-
-        <div class="table-wrap">
-          <table class="backup-table">
-            <thead>
-              <tr>
-                <th>Nom du fichier</th>
-                <th>Taille</th>
-                <th>Date de création</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr *ngFor="let backup of backups; let i = index"
-                  class="backup-row"
-                  [style.animation-delay]="i * 0.04 + 's'">
-
-                <!-- Nom -->
-                <td>
-                  <div class="file-cell">
-                    <div class="file-icon">
-                      <i class="fas fa-file-archive"></i>
-                    </div>
-                    <div>
-                      <span class="file-name">{{ backup.name }}</span>
-                      <span class="file-badge">
-                        <i class="fas fa-lock"></i> ZIP
-                      </span>
-                    </div>
-                  </div>
-                </td>
-
-                <!-- Taille -->
-                <td>
-                  <div class="size-cell">
-                    <span class="size-main">{{ backup.size_mb }} MB</span>
-                    <span class="size-bytes">{{ formatBytes(backup.size_bytes) }}</span>
-                  </div>
-                </td>
-
-                <!-- Date -->
-                <td>
-                  <div class="date-cell">
-                    <span class="date-main">{{ backup.created_at | date:'dd/MM/yyyy' }}</span>
-                    <span class="date-time">{{ backup.created_at | date:'HH:mm:ss' }}</span>
-                  </div>
-                </td>
-
-                <!-- Actions -->
-                <td>
-                  <div class="actions-cell">
-                    <button class="btn-dl"
-                            (click)="downloadBackup(backup.name)"
-                            [disabled]="isDownloading === backup.name"
-                            aria-label="Télécharger cette sauvegarde">
-                      <i class="fas"
+      @if (!isLoading && backups.length > 0) {
+        <div class="table-card">
+          <div class="table-header">
+            <span class="table-count">
+              <strong>{{ backups.length }}</strong> sauvegarde(s) disponible(s)
+            </span>
+          </div>
+          <div class="table-wrap">
+            <table class="backup-table">
+              <thead>
+                <tr>
+                  <th>Nom du fichier</th>
+                  <th>Taille</th>
+                  <th>Date de création</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (backup of backups; track backup; let i = $index) {
+                  <tr
+                    class="backup-row"
+                    [style.animation-delay]="i * 0.04 + 's'">
+                    <!-- Nom -->
+                    <td>
+                      <div class="file-cell">
+                        <div class="file-icon">
+                          <i class="fas fa-file-archive"></i>
+                        </div>
+                        <div>
+                          <span class="file-name">{{ backup.name }}</span>
+                          <span class="file-badge">
+                            <i class="fas fa-lock"></i> ZIP
+                          </span>
+                        </div>
+                      </div>
+                    </td>
+                    <!-- Taille -->
+                    <td>
+                      <div class="size-cell">
+                        <span class="size-main">{{ backup.size_mb }} MB</span>
+                        <span class="size-bytes">{{ formatBytes(backup.size_bytes) }}</span>
+                      </div>
+                    </td>
+                    <!-- Date -->
+                    <td>
+                      <div class="date-cell">
+                        <span class="date-main">{{ backup.created_at | date:'dd/MM/yyyy' }}</span>
+                        <span class="date-time">{{ backup.created_at | date:'HH:mm:ss' }}</span>
+                      </div>
+                    </td>
+                    <!-- Actions -->
+                    <td>
+                      <div class="actions-cell">
+                        <button class="btn-dl"
+                          (click)="downloadBackup(backup.name)"
+                          [disabled]="isDownloading === backup.name"
+                          aria-label="Télécharger cette sauvegarde">
+                          <i class="fas"
                          [ngClass]="isDownloading === backup.name
                            ? 'fa-spinner fa-spin'
                            : 'fa-download'">
-                      </i>
-                      {{ isDownloading === backup.name ? 'Téléchargement...' : 'Télécharger' }}
-                    </button>
-                  </div>
-                </td>
-
-              </tr>
-            </tbody>
-          </table>
+                          </i>
+                          {{ isDownloading === backup.name ? 'Téléchargement...' : 'Télécharger' }}
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
         </div>
-      </div>
+      }
 
     </div>
   </div>

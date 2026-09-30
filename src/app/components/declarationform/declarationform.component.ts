@@ -1,20 +1,18 @@
-import { Component, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { Component, CUSTOM_ELEMENTS_SCHEMA, ChangeDetectionStrategy } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import Swal from 'sweetalert2';
 import { DeclarationService } from '../services/declaration.service';
 import { AuthService } from '../services/auth.service';
 import { NavbarComponent } from '../navbar/navbar.component';
-import { CommonModule } from '@angular/common';
+
 
 @Component({
-  selector: 'app-declaration',
-  imports: [NavbarComponent, ReactiveFormsModule, CommonModule],
-  standalone: true,
-  templateUrl: './declarationform.component.html',
-  styleUrls: ['./declarationform.component.css'],
-  schemas: [CUSTOM_ELEMENTS_SCHEMA], // Ajoutez cette ligne
-
-
+    selector: 'app-declaration',
+    imports: [NavbarComponent, ReactiveFormsModule],
+    templateUrl: './declarationform.component.html',
+    styleUrls: ['./declarationform.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class DeclarationformComponent {
   declarationForm: FormGroup;

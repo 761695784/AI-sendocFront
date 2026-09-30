@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { NavbarComponent } from '../navbar/navbar.component';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { CommonModule } from '@angular/common';
+
 import Swal from 'sweetalert2'; // Importer SweetAlert2
 import { AuthService } from '../services/auth.service';
 import { Router } from '@angular/router';
@@ -9,7 +9,7 @@ import { Router } from '@angular/router';
 @Component({
   selector: 'app-googleauth',
   standalone: true,
-  imports: [NavbarComponent,ReactiveFormsModule, CommonModule],
+  imports: [NavbarComponent, ReactiveFormsModule],
   templateUrl: './googleauth.component.html',
   styleUrl: './googleauth.component.css'
 })

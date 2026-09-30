@@ -35,46 +35,48 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let user of paginatedUsers; let i = index">
-          <td data-label="ID">
-            <span class="id-badge">#{{ user.id }}</span>
-          </td>
-          <td data-label="Nom">
-            <div class="user-cell">
-            <div class="user-avatar">{{ user.FirstName.charAt(0) }}{{ user.LastName.charAt(0) }}</div>
-              <span class="user-name">{{ user.LastName }}</span>
-            </div>
-          </td>
-          <td data-label="Prénom">{{ user.FirstName }}</td>
-          <td data-label="Email">
-            <span class="email-chip">{{ user.email }}</span>
-          </td>
-          <td data-label="Rôle">
-            <span class="role-badge"
-              [ngClass]="user.roles.includes('Admin') ? 'role-admin' : 'role-user'">
-              <i class="fas" [ngClass]="user.roles.includes('Admin') ? 'fa-shield-alt' : 'fa-user'"></i>
-              {{ user.roles.join(', ') }}
-            </span>
-          </td>
-          <td data-label="Adresse">
-            <span class="muted">
-              <i class="fas fa-map-marker-alt" style="color:#F6A500; margin-right:4px;"></i>
-              {{ user.Adress }}
-            </span>
-          </td>
-          <td data-label="Téléphone">
-            <span class="phone-chip">{{ user.Phone }}</span>
-          </td>
-          <td data-label="Action">
-        <button class="delete-btn"
+        @for (user of paginatedUsers; track user; let i = $index) {
+          <tr>
+            <td data-label="ID">
+              <span class="id-badge">#{{ user.id }}</span>
+            </td>
+            <td data-label="Nom">
+              <div class="user-cell">
+                <div class="user-avatar">{{ user.FirstName.charAt(0) }}{{ user.LastName.charAt(0) }}</div>
+                <span class="user-name">{{ user.LastName }}</span>
+              </div>
+            </td>
+            <td data-label="Prénom">{{ user.FirstName }}</td>
+            <td data-label="Email">
+              <span class="email-chip">{{ user.email }}</span>
+            </td>
+            <td data-label="Rôle">
+              <span class="role-badge"
+                [ngClass]="user.roles.includes('Admin') ? 'role-admin' : 'role-user'">
+                <i class="fas" [ngClass]="user.roles.includes('Admin') ? 'fa-shield-alt' : 'fa-user'"></i>
+                {{ user.roles.join(', ') }}
+              </span>
+            </td>
+            <td data-label="Adresse">
+              <span class="muted">
+                <i class="fas fa-map-marker-alt" style="color:#F6A500; margin-right:4px;"></i>
+                {{ user.Adress }}
+              </span>
+            </td>
+            <td data-label="Téléphone">
+              <span class="phone-chip">{{ user.Phone }}</span>
+            </td>
+            <td data-label="Action">
+              <button class="delete-btn"
                 (click)="deleteUser(user.id)"
                 [disabled]="user.roles.includes('Admin')"
                 [title]="user.roles.includes('Admin') ? 'Impossible de supprimer un admin' : 'Supprimer'"
                 aria-label="Supprimer l'utilisateur">
-          <i class="fas fa-trash-alt"></i>
-        </button>
-          </td>
-        </tr>
+                <i class="fas fa-trash-alt"></i>
+              </button>
+            </td>
+          </tr>
+        }
       </tbody>
     </table>
   </div>

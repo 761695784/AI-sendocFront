@@ -7,7 +7,7 @@
       [(ngModel)]="selectedFilter"
       (change)="filterDeclarations()"
       title="Filtrer les déclarations"
-    >
+      >
       <option value="all">Toutes les déclarations</option>
       <option value="active">Actives</option>
       <option value="deleted">Supprimées</option>
@@ -18,11 +18,13 @@
       [(ngModel)]="selectedType"
       (change)="filterDeclarations()"
       title="Filtrer par type de document"
-    >
+      >
       <option [ngValue]="null">Tous les types</option>
-      <option *ngFor="let type of documentTypes" [ngValue]="type.id">
-        {{ type.TypeName }}
-      </option>
+      @for (type of documentTypes; track type) {
+        <option [ngValue]="type.id">
+          {{ type.TypeName }}
+        </option>
+      }
     </select>
 
     <input
@@ -30,7 +32,7 @@
       placeholder="Rechercher par prénom, nom, titre..."
       [(ngModel)]="searchTerm"
       (input)="filterDeclarations()"
-    />
+      />
     <button class="search-btn" (click)="filterDeclarations()">Chercher</button>
   </div>
 
@@ -50,102 +52,104 @@
   </div>
 
   <!-- Message aucun résultat -->
-  <div *ngIf="pasderesultat" class="error-message">
-    Aucune déclaration trouvée pour votre recherche.
-  </div>
+  @if (pasderesultat) {
+    <div class="error-message">
+      Aucune déclaration trouvée pour votre recherche.
+    </div>
+  }
 
   <!-- Etat vide -->
-  <div *ngIf="declarations.length === 0" class="empty-state">
-    <div class="empty-icon">📋</div>
-    <h3>Aucune déclaration disponible</h3>
-    <p>Les déclarations de perte apparaîtront ici.</p>
-  </div>
+  @if (declarations.length === 0) {
+    <div class="empty-state">
+      <div class="empty-icon">📋</div>
+      <h3>Aucune déclaration disponible</h3>
+      <p>Les déclarations de perte apparaîtront ici.</p>
+    </div>
+  }
 
   <!-- Grid -->
-  <div
-    class="grid-container"
-    *ngIf="!pasderesultat && filteredDeclarations.length > 0"
-  >
+  @if (!pasderesultat && filteredDeclarations.length > 0) {
     <div
-      *ngFor="let declaration of paginatedDeclarations; let i = index"
-      class="card"
-      [style.animation-delay]="i * 0.05 + 's'"
-    >
-      <!-- Badge type document -->
-      <div class="card-badge">{{ declaration.document_type.TypeName }}</div>
-
-      <!-- Image -->
-      <div class="card-image-wrap">
-        <img src="/assets/declaration.webp" alt="Déclaration" />
-        <div class="card-image-overlay"></div>
-      </div>
-
-      <div class="card-content">
-        <!-- Titre -->
-        <h3 class="card-title">{{ declaration.Title }}</h3>
-
-        <!-- Déclarant -->
-        <div class="card-meta">
-          <span class="meta-label">Déclaré par</span>
-          <span class="meta-value">
-            {{ declaration.user.FirstName }} {{ declaration.user.LastName }}
-          </span>
-        </div>
-        <div class="card-meta">
-          <span class="meta-label">Date</span>
-          <span class="meta-value">{{
-            declaration.created_at | date: "dd/MM/yyyy"
-          }}</span>
-        </div>
-        <div class="card-meta">
-          <span class="meta-label">Téléphone</span>
-          <span class="meta-value">📞 {{ declaration.user.Phone }}</span>
-        </div>
-
-        <div class="card-divider"></div>
-
-        <!-- Infos document -->
-        <div class="card-meta">
-          <span class="meta-label">Prénom</span>
-          <span class="meta-value highlight">{{
-            declaration.FirstNameInDoc
-          }}</span>
-        </div>
-        <div class="card-meta">
-          <span class="meta-label">Nom</span>
-          <span class="meta-value highlight">{{
-            declaration.LastNameInDoc
-          }}</span>
-        </div>
-
-        <!-- Actions -->
-        <div class="card-actions">
-          <button
-            class="btn-delete"
-            (click)="deleteDeclaration(declaration.uuid)"
+      class="grid-container"
+      >
+      @for (declaration of paginatedDeclarations; track declaration; let i = $index) {
+        <div
+          class="card"
+          [style.animation-delay]="i * 0.05 + 's'"
           >
-            <i class="fas fa-trash-alt"></i>
-            Supprimer
-          </button>
+          <!-- Badge type document -->
+          <div class="card-badge">{{ declaration.document_type.TypeName }}</div>
+          <!-- Image -->
+          <div class="card-image-wrap">
+            <img src="/assets/declaration.webp" alt="Déclaration" />
+            <div class="card-image-overlay"></div>
+          </div>
+          <div class="card-content">
+            <!-- Titre -->
+            <h3 class="card-title">{{ declaration.Title }}</h3>
+            <!-- Déclarant -->
+            <div class="card-meta">
+              <span class="meta-label">Déclaré par</span>
+              <span class="meta-value">
+                {{ declaration.user.FirstName }} {{ declaration.user.LastName }}
+              </span>
+            </div>
+            <div class="card-meta">
+              <span class="meta-label">Date</span>
+              <span class="meta-value">{{
+                declaration.created_at | date: "dd/MM/yyyy"
+              }}</span>
+            </div>
+            <div class="card-meta">
+              <span class="meta-label">Téléphone</span>
+              <span class="meta-value">📞 {{ declaration.user.Phone }}</span>
+            </div>
+            <div class="card-divider"></div>
+            <!-- Infos document -->
+            <div class="card-meta">
+              <span class="meta-label">Prénom</span>
+              <span class="meta-value highlight">{{
+                declaration.FirstNameInDoc
+              }}</span>
+            </div>
+            <div class="card-meta">
+              <span class="meta-label">Nom</span>
+              <span class="meta-value highlight">{{
+                declaration.LastNameInDoc
+              }}</span>
+            </div>
+            <!-- Actions -->
+            <div class="card-actions">
+              <button
+                class="btn-delete"
+                (click)="deleteDeclaration(declaration.uuid)"
+                >
+                <i class="fas fa-trash-alt"></i>
+                Supprimer
+              </button>
+            </div>
+          </div>
         </div>
-      </div>
+      }
     </div>
-  </div>
+  }
 
   <!-- Pagination -->
-  <div class="pagination-controls" *ngIf="declarations.length > 0">
-    <button
-      (click)="pageChanged(currentPage - 1)"
-      [disabled]="currentPage === 1"
-    >
-      <i class="fas fa-chevron-left"></i> Précédent
-    </button>
-    <span>Page {{ currentPage }} sur {{ totalPages }}</span>
-    <button
-      (click)="pageChanged(currentPage + 1)"
-      [disabled]="currentPage === totalPages"
-    >
-      Suivant <i class="fas fa-chevron-right"></i>
-    </button>
-  </div>
+  @if (declarations.length > 0) {
+    <div class="pagination-controls">
+      <button
+        (click)="pageChanged(currentPage - 1)"
+        [disabled]="currentPage === 1"
+        >
+        <i class="fas fa-chevron-left"></i> Précédent
+      </button>
+      <span>Page {{ currentPage }} sur {{ totalPages }}</span>
+      <button
+        (click)="pageChanged(currentPage + 1)"
+        [disabled]="currentPage === totalPages"
+        >
+        Suivant <i class="fas fa-chevron-right"></i>
+      </button>
+    </div>
+  }
 </div>

@@ -1,5 +1,5 @@
 import { AuthService } from './../services/auth.service';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 // import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
@@ -19,11 +19,11 @@ interface User {
 }
 
 @Component({
-  selector: 'app-userget',
-  standalone: true,
-  imports: [ CommonModule, FormsModule, SideheadersComponent],
-  templateUrl: './userget.component.html',
-  styleUrls: ['./userget.component.css']
+    selector: 'app-userget',
+    imports: [CommonModule, FormsModule, SideheadersComponent],
+    templateUrl: './userget.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
+    styleUrls: ['./userget.component.css']
 })
 export class UsergetComponent implements OnInit {
 

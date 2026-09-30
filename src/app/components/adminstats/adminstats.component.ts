@@ -5,14 +5,14 @@ import { PublicationTypeChartComponent } from '../publication-type-chart/publica
 import { RestitutionChartComponent } from '../restitution-chart/restitution-chart.component';
 import { SideheadersComponent } from '../sideheaders/sideheaders.component';
 import { StatusBarChartComponent } from './../status-bar-chart/status-bar-chart.component';
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 
 @Component({
-  selector: 'app-adminstats',
-  standalone: true,
-  imports: [StatusBarChartComponent, SideheadersComponent,EvolutionChartComponent, EmailActivityChartComponent,PublicationTypeChartComponent, RestitutionChartComponent,MapComponent],
-  templateUrl: './adminstats.component.html',
-  styleUrl: './adminstats.component.css'
+    selector: 'app-adminstats',
+    imports: [StatusBarChartComponent, SideheadersComponent, EvolutionChartComponent, EmailActivityChartComponent, PublicationTypeChartComponent, RestitutionChartComponent, MapComponent],
+    templateUrl: './adminstats.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
+    styleUrl: './adminstats.component.css'
 })
 export class AdminstatsComponent {
 

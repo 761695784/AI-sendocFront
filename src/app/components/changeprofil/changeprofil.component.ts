@@ -1,5 +1,5 @@
 import { IMAGE_URL_BASE } from './../services/imageUrl';
-import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit } from '@angular/core';
+import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { NavbarComponent } from '../navbar/navbar.component';
@@ -8,12 +8,12 @@ import { CommonModule } from '@angular/common';
 import Swal from 'sweetalert2';
 
 @Component({
-  selector: 'app-changeprofil',
-  standalone: true,
-  imports: [NavbarComponent, FormsModule, ReactiveFormsModule, CommonModule],
-  templateUrl: './changeprofil.component.html',
-  styleUrls: ['./changeprofil.component.css'],
-  schemas: [CUSTOM_ELEMENTS_SCHEMA],
+    selector: 'app-changeprofil',
+    imports: [NavbarComponent, FormsModule, ReactiveFormsModule, CommonModule],
+    templateUrl: './changeprofil.component.html',
+    styleUrls: ['./changeprofil.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class ChangeprofilComponent implements OnInit {
 

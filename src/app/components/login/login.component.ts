@@ -1,4 +1,5 @@
-import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit } from '@angular/core';
+import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { isSuperAdmin, storeSession } from '../../core/auth/roles';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { AuthService } from '../services/auth.service';
 import Swal from 'sweetalert2'; // Importer SweetAlert2
@@ -9,14 +10,12 @@ import { CommonModule } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
-  selector: 'app-login',
-  standalone: true,
-  imports: [NavbarComponent, ReactiveFormsModule,CommonModule],
-  templateUrl: './login.component.html',
-  styleUrls: ['./login.component.css'],
-  schemas: [CUSTOM_ELEMENTS_SCHEMA], // Ajoutez cette ligne
-
-
+    selector: 'app-login',
+    imports: [NavbarComponent, ReactiveFormsModule, CommonModule],
+    templateUrl: './login.component.html',
+    styleUrls: ['./login.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class LoginComponent implements OnInit {
   loginForm: FormGroup;
@@ -61,11 +60,8 @@ export class LoginComponent implements OnInit {
           timer: 2000,
         }).then(() => {
           if (response.user && response.token) {
-            localStorage.setItem('token', response.token);
-            localStorage.setItem('user', JSON.stringify(response.user));
-            localStorage.setItem('userId', response.user.id);
-            const roles = response.user.roles || [];
-            const isAdmin = roles.some((role: any) => role.name === 'Admin');
+            storeSession(response);
+            const isAdmin = isSuperAdmin(response.roles, response.user.roles);
             if (isAdmin) {
               this.router.navigate(['/admin']);
             } else {
@@ -118,12 +114,8 @@ export class LoginComponent implements OnInit {
               this.authService.verifyEmailCode(email, result.value).subscribe({
                 next: (res: any) => {
                   // ✅ Stocker le token & connecter
-                  localStorage.setItem('token', res.token);
-                  localStorage.setItem('user', JSON.stringify(res.user));
-                  localStorage.setItem('userId', res.user.id);
-
-                  const roles = res.user.roles || [];
-                  const isAdmin = roles.some((role: any) => role.name === 'Admin');
+                  storeSession(res);   // l'API renvoie ici « access_token »
+                  const isAdmin = isSuperAdmin(res.roles, res.user?.roles);
 
                   Swal.fire({
                     icon: 'success',

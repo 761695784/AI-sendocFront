@@ -11,7 +11,7 @@
     <ul class="navbar-links">
       <li>
         <a routerLink="/accueil" routerLinkActive="active"
-           [routerLinkActiveOptions]="{exact:true}">Accueil</a>
+        [routerLinkActiveOptions]="{exact:true}">Accueil</a>
       </li>
       <li>
         <a routerLink="/liste" routerLinkActive="active">Publications</a>
@@ -26,45 +26,43 @@
 
     <!-- Auth zone -->
     <div class="navbar-auth">
-      <ng-container *ngIf="authService.isAuthenticated(); else loginBtn">
-
+      @if (authService.isAuthenticated()) {
         <div class="user-dropdown">
           <button class="user-btn" (click)="toggleUserDropdown()">
             <div class="user-initials">{{ userInitial }}</div>
             <span class="user-label">{{ authService.getUserName() }}</span>
             <i class="fas fa-chevron-down chevron"
-               [style.transform]="userDropdownOpen ? 'rotate(180deg)' : 'rotate(0)'"
-               style="transition: transform 0.2s;"></i>
+              [style.transform]="userDropdownOpen ? 'rotate(180deg)' : 'rotate(0)'"
+            style="transition: transform 0.2s;"></i>
           </button>
-
-          <div class="user-panel" *ngIf="userDropdownOpen">
-            <div class="user-panel-header">
-              <div class="up-avatar">{{ userInitial }}</div>
-              <div>
-                <div class="up-name">{{ authService.getUserName() }}</div>
-                <div class="up-role">Membre DocTrack</div>
+          @if (userDropdownOpen) {
+            <div class="user-panel">
+              <div class="user-panel-header">
+                <div class="up-avatar">{{ userInitial }}</div>
+                <div>
+                  <div class="up-name">{{ authService.getUserName() }}</div>
+                  <div class="up-role">Membre DocTrack</div>
+                </div>
               </div>
+              <a class="up-item" (click)="goToChangePassword()">
+                <i class="fas fa-user-edit"></i> Modifier mon profil
+              </a>
+              <a class="up-item danger" (click)="logout()">
+                <i class="fas fa-sign-out-alt"></i> Déconnexion
+              </a>
             </div>
-            <a class="up-item" (click)="goToChangePassword()">
-              <i class="fas fa-user-edit"></i> Modifier mon profil
-            </a>
-            <a class="up-item danger" (click)="logout()">
-              <i class="fas fa-sign-out-alt"></i> Déconnexion
-            </a>
-          </div>
+          }
         </div>
-
-      </ng-container>
-      <ng-template #loginBtn>
+      } @else {
         <a routerLink="/connexion" class="connexion-btn">
           <i class="fas fa-sign-in-alt"></i> Connexion
         </a>
-      </ng-template>
+      }
     </div>
 
     <!-- Burger mobile -->
     <button class="burger" (click)="toggleMenu()" [class.open]="menuOpen"
-            aria-label="Menu">
+      aria-label="Menu">
       <span></span><span></span><span></span>
     </button>
 
@@ -75,30 +73,36 @@
     <ul>
       <li>
         <a routerLink="/accueil" routerLinkActive="active"
-           (click)="menuOpen=false">Accueil</a>
+        (click)="menuOpen=false">Accueil</a>
       </li>
       <li>
         <a routerLink="/liste" routerLinkActive="active"
-           (click)="menuOpen=false">Publications</a>
+        (click)="menuOpen=false">Publications</a>
       </li>
       <li>
         <a routerLink="/lost" routerLinkActive="active"
-           (click)="menuOpen=false">Déclaration de perte</a>
+        (click)="menuOpen=false">Déclaration de perte</a>
       </li>
       <li>
         <a routerLink="/apropos" routerLinkActive="active"
-           (click)="menuOpen=false">À propos</a>
+        (click)="menuOpen=false">À propos</a>
       </li>
-      <li *ngIf="authService.isAuthenticated()">
-        <a (click)="goToChangePassword(); menuOpen=false">Mon profil</a>
-      </li>
-      <li *ngIf="authService.isAuthenticated()">
-        <a (click)="logout(); menuOpen=false" class="mobile-logout">Déconnexion</a>
-      </li>
-      <li *ngIf="!authService.isAuthenticated()">
-        <a routerLink="/connexion" class="mobile-connexion"
-           (click)="menuOpen=false">Connexion</a>
-      </li>
+      @if (authService.isAuthenticated()) {
+        <li>
+          <a (click)="goToChangePassword(); menuOpen=false">Mon profil</a>
+        </li>
+      }
+      @if (authService.isAuthenticated()) {
+        <li>
+          <a (click)="logout(); menuOpen=false" class="mobile-logout">Déconnexion</a>
+        </li>
+      }
+      @if (!authService.isAuthenticated()) {
+        <li>
+          <a routerLink="/connexion" class="mobile-connexion"
+          (click)="menuOpen=false">Connexion</a>
+        </li>
+      }
     </ul>
   </div>
 </header>

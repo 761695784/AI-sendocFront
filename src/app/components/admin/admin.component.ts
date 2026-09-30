@@ -3,17 +3,17 @@ import { FormsModule } from '@angular/forms';
 import { SideheadersComponent } from './../sideheaders/sideheaders.component';
 import { AuthService } from './../services/auth.service';
 import { SidebarComponent } from './../sidebar/sidebar.component';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { EmailActivityChartComponent } from '../email-activity-chart/email-activity-chart.component';
 
 
 @Component({
-  selector: 'app-admin',
-  standalone: true,
-  imports: [CommonModule, SideheadersComponent, FormsModule,PublicationTypeChartComponent, EmailActivityChartComponent],
-  templateUrl: './admin.component.html',
-  styleUrls: ['./admin.component.css']
+    selector: 'app-admin',
+    imports: [CommonModule, SideheadersComponent, FormsModule, PublicationTypeChartComponent, EmailActivityChartComponent],
+    templateUrl: './admin.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
+    styleUrls: ['./admin.component.css']
 })
 export class AdminComponent implements OnInit {
 

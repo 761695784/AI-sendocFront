@@ -2,11 +2,13 @@
 
 <div class="page-content">
 
-  <div *ngIf="isLoading" class="loader-overlay">
-    <l-ring-2 size="40" stroke="5" stroke-length="0.55"
-      bg-opacity="0.1" speed="0.8" color="#F6A500">
-    </l-ring-2>
-  </div>
+  @if (isLoading) {
+    <div class="loader-overlay">
+      <l-ring-2 size="40" stroke="5" stroke-length="0.55"
+        bg-opacity="0.1" speed="0.8" color="#F6A500">
+      </l-ring-2>
+    </div>
+  }
 
   <div class="profile-layout">
 
@@ -80,7 +82,7 @@
           <div class="field-group full">
             <label for="oldPassword">Ancien mot de passe</label>
             <input type="password" id="oldPassword"
-                   formControlName="oldPassword" placeholder="••••••••">
+              formControlName="oldPassword" placeholder="••••••••">
           </div>
         </div>
 
@@ -88,16 +90,18 @@
           <div class="field-group">
             <label for="newPassword">Nouveau mot de passe</label>
             <input type="password" id="newPassword"
-                   formControlName="newPassword" placeholder="••••••••">
+              formControlName="newPassword" placeholder="••••••••">
           </div>
           <div class="field-group">
             <label for="newPasswordConfirm">Confirmation</label>
             <input type="password" id="newPasswordConfirm"
-                   formControlName="newPasswordConfirm" placeholder="••••••••">
-            <small class="error-text"
-                   *ngIf="profileForm.hasError('passwordMismatch')">
-              Les mots de passe ne correspondent pas.
-            </small>
+              formControlName="newPasswordConfirm" placeholder="••••••••">
+            @if (profileForm.hasError('passwordMismatch')) {
+              <small class="error-text"
+                >
+                Les mots de passe ne correspondent pas.
+              </small>
+            }
           </div>
         </div>
 

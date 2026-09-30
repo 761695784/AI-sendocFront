@@ -1,4 +1,5 @@
 import { RedirectService } from './redirection.service';
+import { isSuperAdmin, storeSession } from '../../core/auth/roles';
 import { User } from '../register/register.component';
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
@@ -85,14 +86,8 @@ export class AuthService {
     return this.http.post(`${apiUrl}/login`, credentials, { headers }).pipe(
       tap((response: any) => {
         if (response.token) {
-          const storage = this.getStorage();
-          if (storage) {
-            storage.setItem('token', response.token);
-            storage.setItem('user', JSON.stringify(response.user));
-            storage.setItem('userId', response.user.id);
-          }
-          const roles = response.user.roles || [];
-          const isAdmin = roles.some((role: any) => role.name === 'Admin');
+          storeSession(response);
+          const isAdmin = isSuperAdmin(response.roles, response.user?.roles);
           if (isAdmin) {
             this.router.navigate(['/admin']);
           } else {
@@ -134,6 +129,8 @@ export class AuthService {
       storage.removeItem('token');
       storage.removeItem('user');
       storage.removeItem('userId');
+      storage.removeItem('roles');
+      storage.removeItem('organizations');
     }
     this.router.navigate(['/connexion']);
   }

@@ -1,5 +1,5 @@
 import { AuthService } from './../services/auth.service';
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { SideheadersComponent } from '../sideheaders/sideheaders.component';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -34,16 +34,16 @@ export interface Declaration {
 }
 
 @Component({
-  selector: 'app-admindeclaration',
-  standalone: true,
-  imports: [
-    SideheadersComponent,
-    CommonModule,
-    FormsModule,
-    NgxPaginationModule,
-  ],
-  templateUrl: './admindeclaration.component.html',
-  styleUrl: './admindeclaration.component.css',
+    selector: 'app-admindeclaration',
+    imports: [
+        SideheadersComponent,
+        CommonModule,
+        FormsModule,
+        NgxPaginationModule,
+    ],
+    templateUrl: './admindeclaration.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
+    styleUrl: './admindeclaration.component.css'
 })
 export class AdmindeclarationComponent {
   declarations: Declaration[] = [];

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit } from '@angular/core';
+import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import Swal from 'sweetalert2';
@@ -7,13 +7,12 @@ import { AuthService } from '../services/auth.service';
 import { NavbarComponent } from '../navbar/navbar.component';
 
 @Component({
-  selector: 'app-newpass',
-  standalone: true,
-  imports: [NavbarComponent, CommonModule, ReactiveFormsModule],
-  templateUrl: './newpass.component.html',
-  styleUrls: ['./newpass.component.css'],
-  schemas: [CUSTOM_ELEMENTS_SCHEMA],
-
+    selector: 'app-newpass',
+    imports: [NavbarComponent, CommonModule, ReactiveFormsModule],
+    templateUrl: './newpass.component.html',
+    styleUrls: ['./newpass.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class NewpassComponent implements OnInit {
   newPasswordForm!: FormGroup;

@@ -1,13 +1,13 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { Chart } from 'chart.js/auto';
 import { PublicationsService } from '../services/publications.service';
 
 @Component({
-  selector: 'app-publication-type-chart',
-  standalone: true,
-  imports: [],
-  templateUrl: './publication-type-chart.component.html',
-  styleUrls: ['./publication-type-chart.component.css']
+    selector: 'app-publication-type-chart',
+    imports: [],
+    templateUrl: './publication-type-chart.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
+    styleUrls: ['./publication-type-chart.component.css']
 })
 export class PublicationTypeChartComponent implements OnInit {
 

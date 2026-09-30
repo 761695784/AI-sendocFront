@@ -1,6 +1,6 @@
   import { AuthService } from './../services/auth.service';
   import { FooterComponent } from './../footer/footer.component';
-  import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit } from '@angular/core';
+  import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit, ChangeDetectionStrategy } from '@angular/core';
   import { ActivatedRoute } from '@angular/router';
   import { DetailsService } from '../services/details.service';
   import { NavbarComponent } from '../navbar/navbar.component';
@@ -55,12 +55,12 @@
 
   @Component({
     selector: 'app-document-detail',
-    standalone: true,
     imports: [NavbarComponent, FooterComponent, CommonModule, FormsModule],
     templateUrl: './document-detail.component.html',
     styleUrls: ['./document-detail.component.css'],
-    schemas: [CUSTOM_ELEMENTS_SCHEMA],
-  })
+    changeDetection: ChangeDetectionStrategy.Eager,
+    schemas: [CUSTOM_ELEMENTS_SCHEMA]
+})
   export class DocumentDetailComponent implements OnInit {
     documentDetails: DocumentDetails | null = null; // Utiliser le type DocumentDetails
     commentaires: Commentaire[] = []; // Ajout pour stocker les commentaires

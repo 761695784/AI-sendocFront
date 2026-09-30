@@ -1,13 +1,13 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { Chart } from 'chart.js/auto';
 import { PublicationsService } from '../services/publications.service';
 
 @Component({
-  selector: 'app-evolution-chart',
-  standalone: true,
-  imports: [],
-  templateUrl: './evolution-chart.component.html',
-  styleUrl: './evolution-chart.component.css'
+    selector: 'app-evolution-chart',
+    imports: [],
+    templateUrl: './evolution-chart.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
+    styleUrl: './evolution-chart.component.css'
 })
 export class EvolutionChartComponent implements OnInit {
 

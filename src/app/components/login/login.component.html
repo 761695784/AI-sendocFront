@@ -2,11 +2,13 @@
 
 <div class="page-wrapper">
 
-  <div *ngIf="isLoading" class="loader-overlay">
-    <l-ring-2 size="40" stroke="5" stroke-length="0.55"
-      bg-opacity="0.1" speed="0.8" color="#F6A500">
-    </l-ring-2>
-  </div>
+  @if (isLoading) {
+    <div class="loader-overlay">
+      <l-ring-2 size="40" stroke="5" stroke-length="0.55"
+        bg-opacity="0.1" speed="0.8" color="#F6A500">
+      </l-ring-2>
+    </div>
+  }
 
   <div class="auth-layout">
 
@@ -54,7 +56,7 @@
       <div class="auth-institution">
         <i class="fas fa-landmark"></i>
         <span>Plateforme officielle — République du Sénégal<br>
-          Ministère de l'Intérieur et de la Sécurité Publique</span>
+        Ministère de l'Intérieur et de la Sécurité Publique</span>
       </div>
 
       <!-- Drapeau filigrane -->
@@ -80,64 +82,66 @@
               <i class="fas fa-envelope"></i> Adresse email
             </label>
             <input type="email" id="email"
-                   formControlName="email"
-                   placeholder="votre@email.com"
-                   [class.input-error]="loginForm.get('email')?.invalid && loginForm.get('email')?.touched">
-          </div>
-
-          <div class="field-group">
-            <label for="password">
-              <i class="fas fa-lock"></i> Mot de passe
-            </label>
-            <div class="password-wrap">
-              <input [type]="showPassword ? 'text' : 'password'"
-                     id="password"
-                     formControlName="password"
-                     placeholder="••••••••"
-                     [class.input-error]="loginForm.get('password')?.invalid && loginForm.get('password')?.touched">
-              <button type="button" class="toggle-pw"
-                      (click)="showPassword = !showPassword"
-                      aria-label="Afficher ou masquer le mot de passe">
-                <i class="fas" [ngClass]="showPassword ? 'fa-eye-slash' : 'fa-eye'"></i>
-              </button>
+              formControlName="email"
+              placeholder="votre@email.com"
+              [class.input-error]="loginForm.get('email')?.invalid && loginForm.get('email')?.touched">
             </div>
+
+            <div class="field-group">
+              <label for="password">
+                <i class="fas fa-lock"></i> Mot de passe
+              </label>
+              <div class="password-wrap">
+                <input [type]="showPassword ? 'text' : 'password'"
+                  id="password"
+                  formControlName="password"
+                  placeholder="••••••••"
+                  [class.input-error]="loginForm.get('password')?.invalid && loginForm.get('password')?.touched">
+                  <button type="button" class="toggle-pw"
+                    (click)="showPassword = !showPassword"
+                    aria-label="Afficher ou masquer le mot de passe">
+                    <i class="fas" [ngClass]="showPassword ? 'fa-eye-slash' : 'fa-eye'"></i>
+                  </button>
+                </div>
+              </div>
+
+              <div class="auth-links">
+                <a href="/reset" class="forgot-link">
+                  <i class="fas fa-key"></i> Mot de passe oublié ?
+                </a>
+              </div>
+
+              @if (isLocked) {
+                <div class="lockout-message">
+                  <i class="fas fa-exclamation-triangle"></i>
+                  Compte bloqué. Temps restant :
+                  <strong>{{ lockoutTimeRemaining }}</strong> secondes.
+                </div>
+              }
+
+              <button type="submit" class="btn-submit"
+                [disabled]="isLocked || isLoading">
+                <i class="fas fa-sign-in-alt"></i>
+                {{ isLoading ? 'Connexion en cours...' : 'Se connecter' }}
+              </button>
+
+              <div class="divider"><span>ou</span></div>
+
+              <button type="button" class="btn-google"
+                [disabled]="isLocked || isLoading">
+                <i class="fab fa-google"></i>
+                Continuer avec Google
+              </button>
+
+            </form>
+
+            <p class="signup-link">
+              Pas encore de compte ?
+              <a href="/inscription">Créer un compte</a>
+            </p>
+
           </div>
-
-          <div class="auth-links">
-            <a href="/reset" class="forgot-link">
-              <i class="fas fa-key"></i> Mot de passe oublié ?
-            </a>
-          </div>
-
-          <div *ngIf="isLocked" class="lockout-message">
-            <i class="fas fa-exclamation-triangle"></i>
-            Compte bloqué. Temps restant :
-            <strong>{{ lockoutTimeRemaining }}</strong> secondes.
-          </div>
-
-          <button type="submit" class="btn-submit"
-                  [disabled]="isLocked || isLoading">
-            <i class="fas fa-sign-in-alt"></i>
-            {{ isLoading ? 'Connexion en cours...' : 'Se connecter' }}
-          </button>
-
-          <div class="divider"><span>ou</span></div>
-
-          <button type="button" class="btn-google"
-                  [disabled]="isLocked || isLoading">
-            <i class="fab fa-google"></i>
-            Continuer avec Google
-          </button>
-
-        </form>
-
-        <p class="signup-link">
-          Pas encore de compte ?
-          <a href="/inscription">Créer un compte</a>
-        </p>
+        </div>
 
       </div>
     </div>
-
-  </div>
-</div>

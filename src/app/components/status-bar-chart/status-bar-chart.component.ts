@@ -1,13 +1,13 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { Chart } from 'chart.js/auto';
 import { PublicationsService } from '../services/publications.service';
 
 @Component({
-  selector: 'app-status-bar-chart',
-  standalone: true,
-  imports: [],
-  templateUrl: './status-bar-chart.component.html',
-  styleUrl: './status-bar-chart.component.css'
+    selector: 'app-status-bar-chart',
+    imports: [],
+    templateUrl: './status-bar-chart.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
+    styleUrl: './status-bar-chart.component.css'
 })
 export class StatusBarChartComponent {
   chart: any;

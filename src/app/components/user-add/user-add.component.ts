@@ -1,4 +1,4 @@
-import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit } from '@angular/core';
+import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormGroup, FormBuilder, Validators, ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { SideheadersComponent } from '../sideheaders/sideheaders.component';
@@ -7,13 +7,12 @@ import { AuthService } from '../services/auth.service';
 import { Router } from '@angular/router';
 
 @Component({
-  selector: 'app-user-add',
-  standalone: true,
-  imports: [CommonModule, FormsModule, SideheadersComponent,  ReactiveFormsModule],
-  templateUrl: './user-add.component.html',
-  styleUrl: './user-add.component.css',
-  schemas: [CUSTOM_ELEMENTS_SCHEMA], // Ajoutez cette ligne
-
+    selector: 'app-user-add',
+    imports: [CommonModule, FormsModule, SideheadersComponent, ReactiveFormsModule],
+    templateUrl: './user-add.component.html',
+    styleUrl: './user-add.component.css',
+    changeDetection: ChangeDetectionStrategy.Eager,
+    schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class UserAddComponent implements OnInit {
 

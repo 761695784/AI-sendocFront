@@ -1,18 +1,18 @@
 import { FormsModule } from '@angular/forms';
 import { FooterComponent } from './../footer/footer.component';
 import { NavbarComponent } from './../navbar/navbar.component';
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DeclarationService } from '../services/declaration.service';
 import { HttpClient } from '@angular/common/http';
 import Swal from 'sweetalert2';
 
 @Component({
-  selector: 'app-lostdeclaration',
-  standalone: true,
-  imports: [NavbarComponent, FooterComponent, FormsModule, CommonModule],
-  templateUrl: './lostdeclaration.component.html',
-  styleUrl: './lostdeclaration.component.css'
+    selector: 'app-lostdeclaration',
+    imports: [NavbarComponent, FooterComponent, FormsModule, CommonModule],
+    templateUrl: './lostdeclaration.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
+    styleUrl: './lostdeclaration.component.css'
 })
 export class LostdeclarationComponent {
   declarations: any[] = [];

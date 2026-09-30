@@ -1,16 +1,16 @@
-import { AfterViewInit, Component } from '@angular/core';
+import { AfterViewInit, Component, ChangeDetectionStrategy } from '@angular/core';
 import * as maplibregl from 'maplibre-gl';
-import { CommonModule } from '@angular/common';
+
 import { PublicationsService } from '../services/publications.service';
 import { isPlatformBrowser } from '@angular/common';
 import { Inject, PLATFORM_ID } from '@angular/core';
 
 @Component({
-  selector: 'app-map',
-  standalone: true,
-  imports: [CommonModule], // Ajout du module requis pour les fonctionnalités Angular
-  templateUrl: './map.component.html',
-  styleUrls: ['./map.component.css'] // Correction: styleUrls au lieu de styleUrl
+    selector: 'app-map',
+    imports: [], // Ajout du module requis pour les fonctionnalités Angular
+    templateUrl: './map.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
+    styleUrls: ['./map.component.css'] // Correction: styleUrls au lieu de styleUrl
 })
 export class MapComponent implements AfterViewInit {
 

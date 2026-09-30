@@ -1,13 +1,13 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { Chart } from 'chart.js/auto';
 import { PublicationsService } from '../services/publications.service';
 
 @Component({
-  selector: 'app-restitution-chart',
-  standalone: true,
-  imports: [],
-  templateUrl: './restitution-chart.component.html',
-  styleUrls: ['./restitution-chart.component.css']
+    selector: 'app-restitution-chart',
+    imports: [],
+    templateUrl: './restitution-chart.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
+    styleUrls: ['./restitution-chart.component.css']
 })
 export class RestitutionChartComponent implements OnInit {
 

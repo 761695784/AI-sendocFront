@@ -2,11 +2,13 @@
 
 <div class="page-wrapper">
 
-  <div *ngIf="isLoading" class="loader-overlay">
-    <l-ring-2 size="40" stroke="5" stroke-length="0.55"
-      bg-opacity="0.1" speed="0.8" color="#F6A500">
-    </l-ring-2>
-  </div>
+  @if (isLoading) {
+    <div class="loader-overlay">
+      <l-ring-2 size="40" stroke="5" stroke-length="0.55"
+        bg-opacity="0.1" speed="0.8" color="#F6A500">
+      </l-ring-2>
+    </div>
+  }
 
   <div class="auth-layout">
 
@@ -44,7 +46,7 @@
       <div class="auth-institution">
         <i class="fas fa-landmark"></i>
         <span>Plateforme officielle — République du Sénégal<br>
-          Ministère de l'Intérieur et de la Sécurité Publique</span>
+        Ministère de l'Intérieur et de la Sécurité Publique</span>
       </div>
 
       <img src="/assets/Drapeau_national1.webp" alt="Sénégal" class="auth-flag">
@@ -71,145 +73,159 @@
                 <i class="fas fa-user"></i> Nom
               </label>
               <input type="text" id="LastName"
-                     formControlName="LastName"
-                     placeholder="Votre nom">
-              <small class="error-text"
-                     *ngIf="registerForm.get('LastName')?.invalid && (registerForm.get('LastName')?.touched || registerForm.get('LastName')?.dirty)">
-                {{ getErrorMessage('LastName') }}
-              </small>
-            </div>
-            <div class="field-group">
-              <label for="FirstName" class="required">
-                <i class="fas fa-user"></i> Prénom
-              </label>
-              <input type="text" id="FirstName"
-                     formControlName="FirstName"
-                     placeholder="Votre prénom">
-              <small class="error-text"
-                     *ngIf="registerForm.get('FirstName')?.invalid && (registerForm.get('FirstName')?.touched || registerForm.get('FirstName')?.dirty)">
-                {{ getErrorMessage('FirstName') }}
-              </small>
-            </div>
-          </div>
-
-          <!-- Email -->
-          <div class="field-group">
-            <label for="email" class="required">
-              <i class="fas fa-envelope"></i> Adresse email
-            </label>
-            <input type="email" id="email"
-                   formControlName="email"
-                   placeholder="votre@email.com">
-            <small class="error-text"
-                   *ngIf="registerForm.get('email')?.invalid && (registerForm.get('email')?.touched || registerForm.get('email')?.dirty)">
-              {{ getErrorMessage('email') }}
-            </small>
-          </div>
-
-          <!-- Mots de passe -->
-          <div class="form-row">
-            <div class="field-group">
-              <label for="password" class="required">
-                <i class="fas fa-lock"></i> Mot de passe
-              </label>
-              <div class="password-wrap">
-                <input [type]="showPassword ? 'text' : 'password'"
-                       id="password"
-                       formControlName="password"
-                       placeholder="••••••••">
-                <button type="button" class="toggle-pw"
-                        (click)="showPassword = !showPassword"
-                        aria-label="Afficher ou masquer le mot de passe">
-                  <i class="fas" [ngClass]="showPassword ? 'fa-eye-slash' : 'fa-eye'"></i>
-                </button>
-
+                formControlName="LastName"
+                placeholder="Votre nom">
+                @if (registerForm.get('LastName')?.invalid && (registerForm.get('LastName')?.touched || registerForm.get('LastName')?.dirty)) {
+                  <small class="error-text"
+                    >
+                    {{ getErrorMessage('LastName') }}
+                  </small>
+                }
               </div>
-              <small class="error-text"
-                     *ngIf="registerForm.get('password')?.invalid && (registerForm.get('password')?.touched || registerForm.get('password')?.dirty)">
-                {{ getErrorMessage('password') }}
-              </small>
-            </div>
-            <div class="field-group">
-              <label for="password_confirmation" class="required">
-                <i class="fas fa-lock"></i> Confirmation
-              </label>
-              <div class="password-wrap">
-                <input [type]="showConfirmPassword ? 'text' : 'password'"
-                       id="password_confirmation"
-                       formControlName="password_confirmation"
-                       placeholder="••••••••">
-              <button type="button" class="toggle-pw"
-                      (click)="showConfirmPassword = !showConfirmPassword"
-                      aria-label="Afficher ou masquer la confirmation du mot de passe">
-                <i class="fas" [ngClass]="showConfirmPassword ? 'fa-eye-slash' : 'fa-eye'"></i>
-              </button>
+              <div class="field-group">
+                <label for="FirstName" class="required">
+                  <i class="fas fa-user"></i> Prénom
+                </label>
+                <input type="text" id="FirstName"
+                  formControlName="FirstName"
+                  placeholder="Votre prénom">
+                  @if (registerForm.get('FirstName')?.invalid && (registerForm.get('FirstName')?.touched || registerForm.get('FirstName')?.dirty)) {
+                    <small class="error-text"
+                      >
+                      {{ getErrorMessage('FirstName') }}
+                    </small>
+                  }
+                </div>
               </div>
-              <small class="error-text"
-                     *ngIf="registerForm.get('password_confirmation')?.invalid && (registerForm.get('password_confirmation')?.touched || registerForm.get('password_confirmation')?.dirty)">
-                {{ getErrorMessage('password_confirmation') }}
-              </small>
-            </div>
-          </div>
 
-          <!-- Adresse / Téléphone -->
-          <div class="form-row">
-            <div class="field-group">
-              <label for="Adress" class="required">
-                <i class="fas fa-map-marker-alt"></i> Adresse
-              </label>
-              <input type="text" id="Adress"
-                     formControlName="Adress"
-                     placeholder="Ex: Dakar, Plateau">
-              <small class="error-text"
-                     *ngIf="registerForm.get('Adress')?.invalid && (registerForm.get('Adress')?.touched || registerForm.get('Adress')?.dirty)">
-                {{ getErrorMessage('Adress') }}
-              </small>
-            </div>
-            <div class="field-group">
-              <label for="Phone" class="required">
-                <i class="fas fa-phone"></i> Téléphone
-              </label>
-              <input type="tel" id="Phone"
-                     formControlName="Phone"
-                     placeholder="+221 XX XXX XX XX">
-              <small class="error-text"
-                     *ngIf="registerForm.get('Phone')?.invalid && (registerForm.get('Phone')?.touched || registerForm.get('Phone')?.dirty)">
-                {{ getErrorMessage('Phone') }}
-              </small>
-            </div>
-          </div>
+              <!-- Email -->
+              <div class="field-group">
+                <label for="email" class="required">
+                  <i class="fas fa-envelope"></i> Adresse email
+                </label>
+                <input type="email" id="email"
+                  formControlName="email"
+                  placeholder="votre@email.com">
+                  @if (registerForm.get('email')?.invalid && (registerForm.get('email')?.touched || registerForm.get('email')?.dirty)) {
+                    <small class="error-text"
+                      >
+                      {{ getErrorMessage('email') }}
+                    </small>
+                  }
+                </div>
 
-          <!-- Politique -->
-          <div class="policy-wrap">
-            <label class="policy-label">
-              <input type="checkbox" id="acceptPolicy"
-                     formControlName="acceptPolicy"
-                     class="policy-checkbox">
-              <span class="policy-custom"></span>
-              <span class="policy-text">
-                J'accepte les
-                <a href="/private-policy" target="_blank">termes et conditions</a>
-                de DocTrack
-              </span>
-            </label>
-          </div>
+                <!-- Mots de passe -->
+                <div class="form-row">
+                  <div class="field-group">
+                    <label for="password" class="required">
+                      <i class="fas fa-lock"></i> Mot de passe
+                    </label>
+                    <div class="password-wrap">
+                      <input [type]="showPassword ? 'text' : 'password'"
+                        id="password"
+                        formControlName="password"
+                        placeholder="••••••••">
+                        <button type="button" class="toggle-pw"
+                          (click)="showPassword = !showPassword"
+                          aria-label="Afficher ou masquer le mot de passe">
+                          <i class="fas" [ngClass]="showPassword ? 'fa-eye-slash' : 'fa-eye'"></i>
+                        </button>
 
-          <div class="form-actions">
-            <button type="submit" class="btn-submit" [disabled]="isLoading">
-              <i class="fas fa-user-plus"></i>
-              {{ isLoading ? 'Inscription en cours...' : 'Créer mon compte' }}
-            </button>
-          </div>
+                      </div>
+                      @if (registerForm.get('password')?.invalid && (registerForm.get('password')?.touched || registerForm.get('password')?.dirty)) {
+                        <small class="error-text"
+                          >
+                          {{ getErrorMessage('password') }}
+                        </small>
+                      }
+                    </div>
+                    <div class="field-group">
+                      <label for="password_confirmation" class="required">
+                        <i class="fas fa-lock"></i> Confirmation
+                      </label>
+                      <div class="password-wrap">
+                        <input [type]="showConfirmPassword ? 'text' : 'password'"
+                          id="password_confirmation"
+                          formControlName="password_confirmation"
+                          placeholder="••••••••">
+                          <button type="button" class="toggle-pw"
+                            (click)="showConfirmPassword = !showConfirmPassword"
+                            aria-label="Afficher ou masquer la confirmation du mot de passe">
+                            <i class="fas" [ngClass]="showConfirmPassword ? 'fa-eye-slash' : 'fa-eye'"></i>
+                          </button>
+                        </div>
+                        @if (registerForm.get('password_confirmation')?.invalid && (registerForm.get('password_confirmation')?.touched || registerForm.get('password_confirmation')?.dirty)) {
+                          <small class="error-text"
+                            >
+                            {{ getErrorMessage('password_confirmation') }}
+                          </small>
+                        }
+                      </div>
+                    </div>
 
-        </form>
+                    <!-- Adresse / Téléphone -->
+                    <div class="form-row">
+                      <div class="field-group">
+                        <label for="Adress" class="required">
+                          <i class="fas fa-map-marker-alt"></i> Adresse
+                        </label>
+                        <input type="text" id="Adress"
+                          formControlName="Adress"
+                          placeholder="Ex: Dakar, Plateau">
+                          @if (registerForm.get('Adress')?.invalid && (registerForm.get('Adress')?.touched || registerForm.get('Adress')?.dirty)) {
+                            <small class="error-text"
+                              >
+                              {{ getErrorMessage('Adress') }}
+                            </small>
+                          }
+                        </div>
+                        <div class="field-group">
+                          <label for="Phone" class="required">
+                            <i class="fas fa-phone"></i> Téléphone
+                          </label>
+                          <input type="tel" id="Phone"
+                            formControlName="Phone"
+                            placeholder="+221 XX XXX XX XX">
+                            @if (registerForm.get('Phone')?.invalid && (registerForm.get('Phone')?.touched || registerForm.get('Phone')?.dirty)) {
+                              <small class="error-text"
+                                >
+                                {{ getErrorMessage('Phone') }}
+                              </small>
+                            }
+                          </div>
+                        </div>
 
-        <p class="login-link">
-          Déjà un compte ?
-          <a href="/connexion">Se connecter</a>
-        </p>
+                        <!-- Politique -->
+                        <div class="policy-wrap">
+                          <label class="policy-label">
+                            <input type="checkbox" id="acceptPolicy"
+                              formControlName="acceptPolicy"
+                              class="policy-checkbox">
+                              <span class="policy-custom"></span>
+                              <span class="policy-text">
+                                J'accepte les
+                                <a href="/private-policy" target="_blank">termes et conditions</a>
+                                de DocTrack
+                              </span>
+                            </label>
+                          </div>
 
-      </div>
-    </div>
+                          <div class="form-actions">
+                            <button type="submit" class="btn-submit" [disabled]="isLoading">
+                              <i class="fas fa-user-plus"></i>
+                              {{ isLoading ? 'Inscription en cours...' : 'Créer mon compte' }}
+                            </button>
+                          </div>
 
-  </div>
-</div>
+                        </form>
+
+                        <p class="login-link">
+                          Déjà un compte ?
+                          <a href="/connexion">Se connecter</a>
+                        </p>
+
+                      </div>
+                    </div>
+
+                  </div>
+                </div>

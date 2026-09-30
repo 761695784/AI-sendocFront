@@ -3,11 +3,13 @@
 <div class="page-wrapper">
 
   <!-- Loader -->
-  <div *ngIf="isLoading" class="loader-overlay">
-    <l-ring-2 size="40" stroke="5" stroke-length="0.55"
-      bg-opacity="0.1" speed="0.8" color="#F6A500">
-    </l-ring-2>
-  </div>
+  @if (isLoading) {
+    <div class="loader-overlay">
+      <l-ring-2 size="40" stroke="5" stroke-length="0.55"
+        bg-opacity="0.1" speed="0.8" color="#F6A500">
+      </l-ring-2>
+    </div>
+  }
 
   <!-- Hero -->
   <div class="page-hero">
@@ -46,13 +48,17 @@
               <span class="file-drop-text">Cliquer pour sélectionner une image</span>
               <span class="file-drop-hint">JPG, PNG, PDF — max 5 Mo</span>
               <input #fileInput type="file" id="image"
-                     (change)="onFileChange($event)" hidden>
+                (change)="onFileChange($event)" hidden>
             </div>
-            <small class="error-text" *ngIf="fileError">{{ fileError }}</small>
-            <small class="error-text"
-                   *ngIf="publishForm.get('image')?.invalid && publishForm.get('image')?.touched">
-              {{ getErrorMessage('image') }}
-            </small>
+            @if (fileError) {
+              <small class="error-text">{{ fileError }}</small>
+            }
+            @if (publishForm.get('image')?.invalid && publishForm.get('image')?.touched) {
+              <small class="error-text"
+                >
+                {{ getErrorMessage('image') }}
+              </small>
+            }
           </div>
 
           <div class="form-divider"></div>
@@ -62,22 +68,26 @@
             <div class="field-group">
               <label for="OwnerLastName" class="required">Nom</label>
               <input type="text" id="OwnerLastName"
-                     formControlName="OwnerLastName"
-                     placeholder="Nom du propriétaire">
-              <small class="error-text"
-                     *ngIf="publishForm.get('OwnerLastName')?.invalid && publishForm.get('OwnerLastName')?.touched">
-                {{ getErrorMessage('OwnerLastName') }}
-              </small>
+                formControlName="OwnerLastName"
+                placeholder="Nom du propriétaire">
+              @if (publishForm.get('OwnerLastName')?.invalid && publishForm.get('OwnerLastName')?.touched) {
+                <small class="error-text"
+                  >
+                  {{ getErrorMessage('OwnerLastName') }}
+                </small>
+              }
             </div>
             <div class="field-group">
               <label for="OwnerFirstName" class="required">Prénom</label>
               <input type="text" id="OwnerFirstName"
-                     formControlName="OwnerFirstName"
-                     placeholder="Prénom du propriétaire">
-              <small class="error-text"
-                     *ngIf="publishForm.get('OwnerFirstName')?.invalid && publishForm.get('OwnerFirstName')?.touched">
-                {{ getErrorMessage('OwnerFirstName') }}
-              </small>
+                formControlName="OwnerFirstName"
+                placeholder="Prénom du propriétaire">
+              @if (publishForm.get('OwnerFirstName')?.invalid && publishForm.get('OwnerFirstName')?.touched) {
+                <small class="error-text"
+                  >
+                  {{ getErrorMessage('OwnerFirstName') }}
+                </small>
+              }
             </div>
           </div>
 
@@ -90,20 +100,22 @@
                 <i class="fas fa-id-card"></i> Numéro d'identification
               </label>
               <input type="text" id="DocIdentification"
-                     formControlName="DocIdentification"
-                     placeholder="Optionnel">
+                formControlName="DocIdentification"
+                placeholder="Optionnel">
             </div>
             <div class="field-group">
               <label for="Location" class="required">
                 <i class="fas fa-map-marker-alt"></i> Lieu de trouvaille
               </label>
               <input type="text" id="Location"
-                     formControlName="Location"
-                     placeholder="Ex: Dakar, Plateau">
-              <small class="error-text"
-                     *ngIf="publishForm.get('Location')?.invalid && publishForm.get('Location')?.touched">
-                {{ getErrorMessage('Location') }}
-              </small>
+                formControlName="Location"
+                placeholder="Ex: Dakar, Plateau">
+              @if (publishForm.get('Location')?.invalid && publishForm.get('Location')?.touched) {
+                <small class="error-text"
+                  >
+                  {{ getErrorMessage('Location') }}
+                </small>
+              }
             </div>
           </div>
 
@@ -114,14 +126,18 @@
               </label>
               <select id="documentType" formControlName="documentType">
                 <option value="" disabled>Sélectionner un type</option>
-                <option *ngFor="let type of documentTypes" [value]="type.id">
-                  {{ type.name }}
-                </option>
+                @for (type of documentTypes; track type) {
+                  <option [value]="type.id">
+                    {{ type.name }}
+                  </option>
+                }
               </select>
-              <small class="error-text"
-                     *ngIf="publishForm.get('documentType')?.invalid && publishForm.get('documentType')?.touched">
-                {{ getErrorMessage('documentType') }}
-              </small>
+              @if (publishForm.get('documentType')?.invalid && publishForm.get('documentType')?.touched) {
+                <small class="error-text"
+                  >
+                  {{ getErrorMessage('documentType') }}
+                </small>
+              }
             </div>
             <div class="field-group">
               <label for="statut" class="required">
@@ -146,7 +162,7 @@
       <!-- Colonne droite : image décorative + infos -->
       <div class="info-card">
         <img src="/assets/imageformpub.webp"
-             alt="Publication de document" class="info-image">
+          alt="Publication de document" class="info-image">
         <div class="info-tips">
           <h3 class="tips-title">
             <i class="fas fa-lightbulb"></i> Conseils

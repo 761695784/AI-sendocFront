@@ -2,11 +2,13 @@
 
 <div class="page-wrapper">
 
-  <div *ngIf="isLoading" class="loader-overlay">
-    <l-ring-2 size="40" stroke="5" stroke-length="0.55"
-      bg-opacity="0.1" speed="0.8" color="#F6A500">
-    </l-ring-2>
-  </div>
+  @if (isLoading) {
+    <div class="loader-overlay">
+      <l-ring-2 size="40" stroke="5" stroke-length="0.55"
+        bg-opacity="0.1" speed="0.8" color="#F6A500">
+      </l-ring-2>
+    </div>
+  }
 
   <div class="auth-layout">
 
@@ -40,7 +42,7 @@
       <div class="auth-institution">
         <i class="fas fa-landmark"></i>
         <span>Plateforme officielle — République du Sénégal<br>
-          Ministère de l'Intérieur et de la Sécurité Publique</span>
+        Ministère de l'Intérieur et de la Sécurité Publique</span>
       </div>
 
       <img src="/assets/Drapeau_national1.png" alt="Sénégal" class="auth-flag">
@@ -66,78 +68,86 @@
             </label>
             <div class="password-wrap">
               <input [type]="showPassword ? 'text' : 'password'"
-                     id="password"
-                     formControlName="password"
-                     placeholder="••••••••"
-                     [class.input-error]="newPasswordForm.get('password')?.invalid && newPasswordForm.get('password')?.touched">
-              <button type="button" class="toggle-pw"
-                      (click)="showPassword = !showPassword"
-                      aria-label="Afficher ou masquer le mot de passe">
-                <i class="fas" [ngClass]="showPassword ? 'fa-eye-slash' : 'fa-eye'"></i>
-              </button>
-            </div>
-            <small class="error-text"
-                   *ngIf="newPasswordForm.get('password')?.invalid && newPasswordForm.get('password')?.touched">
-              Le mot de passe doit contenir au moins 8 caractères.
-            </small>
-          </div>
-
-          <div class="field-group">
-            <label for="password_confirmation" class="required">
-              <i class="fas fa-lock"></i> Confirmer le mot de passe
-            </label>
-            <div class="password-wrap">
-              <input [type]="showConfirm ? 'text' : 'password'"
-                     id="password_confirmation"
-                     formControlName="password_confirmation"
-                     placeholder="••••••••"
-                     [class.input-error]="newPasswordForm.get('password_confirmation')?.invalid && newPasswordForm.get('password_confirmation')?.touched">
-              <button type="button" class="toggle-pw"
-                      (click)="showConfirm = !showConfirm"
-                      aria-label="Afficher ou masquer la confirmation">
-                <i class="fas" [ngClass]="showConfirm ? 'fa-eye-slash' : 'fa-eye'"></i>
-              </button>
-            </div>
-            <small class="error-text"
-                   *ngIf="newPasswordForm.get('password_confirmation')?.invalid && newPasswordForm.get('password_confirmation')?.touched">
-              La confirmation du mot de passe est requise.
-            </small>
-            <small class="error-text"
-                   *ngIf="newPasswordForm.hasError('passwordsMismatch') && newPasswordForm.get('password_confirmation')?.touched">
-              Les mots de passe ne correspondent pas.
-            </small>
-          </div>
-
-          <!-- Indicateur de force -->
-          <div class="strength-wrap" *ngIf="newPasswordForm.get('password')?.value">
-            <div class="strength-label">Force du mot de passe</div>
-            <div class="strength-bar">
-              <div class="strength-fill"
-                   [style.width]="passwordStrength + '%'"
-                   [ngClass]="strengthClass">
+                id="password"
+                formControlName="password"
+                placeholder="••••••••"
+                [class.input-error]="newPasswordForm.get('password')?.invalid && newPasswordForm.get('password')?.touched">
+                <button type="button" class="toggle-pw"
+                  (click)="showPassword = !showPassword"
+                  aria-label="Afficher ou masquer le mot de passe">
+                  <i class="fas" [ngClass]="showPassword ? 'fa-eye-slash' : 'fa-eye'"></i>
+                </button>
               </div>
+              @if (newPasswordForm.get('password')?.invalid && newPasswordForm.get('password')?.touched) {
+                <small class="error-text"
+                  >
+                  Le mot de passe doit contenir au moins 8 caractères.
+                </small>
+              }
             </div>
-            <span class="strength-text" [ngClass]="strengthClass">{{ strengthLabel }}</span>
+
+            <div class="field-group">
+              <label for="password_confirmation" class="required">
+                <i class="fas fa-lock"></i> Confirmer le mot de passe
+              </label>
+              <div class="password-wrap">
+                <input [type]="showConfirm ? 'text' : 'password'"
+                  id="password_confirmation"
+                  formControlName="password_confirmation"
+                  placeholder="••••••••"
+                  [class.input-error]="newPasswordForm.get('password_confirmation')?.invalid && newPasswordForm.get('password_confirmation')?.touched">
+                  <button type="button" class="toggle-pw"
+                    (click)="showConfirm = !showConfirm"
+                    aria-label="Afficher ou masquer la confirmation">
+                    <i class="fas" [ngClass]="showConfirm ? 'fa-eye-slash' : 'fa-eye'"></i>
+                  </button>
+                </div>
+                @if (newPasswordForm.get('password_confirmation')?.invalid && newPasswordForm.get('password_confirmation')?.touched) {
+                  <small class="error-text"
+                    >
+                    La confirmation du mot de passe est requise.
+                  </small>
+                }
+                @if (newPasswordForm.hasError('passwordsMismatch') && newPasswordForm.get('password_confirmation')?.touched) {
+                  <small class="error-text"
+                    >
+                    Les mots de passe ne correspondent pas.
+                  </small>
+                }
+              </div>
+
+              <!-- Indicateur de force -->
+              @if (newPasswordForm.get('password')?.value) {
+                <div class="strength-wrap">
+                  <div class="strength-label">Force du mot de passe</div>
+                  <div class="strength-bar">
+                    <div class="strength-fill"
+                      [style.width]="passwordStrength + '%'"
+                      [ngClass]="strengthClass">
+                    </div>
+                  </div>
+                  <span class="strength-text" [ngClass]="strengthClass">{{ strengthLabel }}</span>
+                </div>
+              }
+
+              <div class="form-actions">
+                <button type="submit" class="btn-submit"
+                  [disabled]="newPasswordForm.invalid || isLoading">
+                  <i class="fas fa-check-circle"></i>
+                  {{ isLoading ? 'Enregistrement...' : 'Définir le mot de passe' }}
+                </button>
+              </div>
+
+            </form>
+
+            <p class="back-link">
+              <a href="/connexion">
+                <i class="fas fa-arrow-left"></i> Retour à la connexion
+              </a>
+            </p>
+
           </div>
-
-          <div class="form-actions">
-            <button type="submit" class="btn-submit"
-                    [disabled]="newPasswordForm.invalid || isLoading">
-              <i class="fas fa-check-circle"></i>
-              {{ isLoading ? 'Enregistrement...' : 'Définir le mot de passe' }}
-            </button>
-          </div>
-
-        </form>
-
-        <p class="back-link">
-          <a href="/connexion">
-            <i class="fas fa-arrow-left"></i> Retour à la connexion
-          </a>
-        </p>
+        </div>
 
       </div>
     </div>
-
-  </div>
-</div>

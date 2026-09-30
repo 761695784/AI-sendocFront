@@ -1,19 +1,18 @@
-import { Component, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { Component, CUSTOM_ELEMENTS_SCHEMA, ChangeDetectionStrategy } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { NavbarComponent } from '../navbar/navbar.component';
 import { AuthService } from '../services/auth.service';
-import { CommonModule } from '@angular/common';
+
 import Swal from 'sweetalert2';
 import { Router } from '@angular/router';
 
 @Component({
-  selector: 'app-reset-password',
-  standalone: true,
-  imports: [NavbarComponent, ReactiveFormsModule, CommonModule],
-  templateUrl: './reset-password.component.html',
-  styleUrls: ['./reset-password.component.css'], // Correction: 'styleUrl' => 'styleUrls'
-  schemas: [CUSTOM_ELEMENTS_SCHEMA], // Ajoutez cette ligne
-  
+    selector: 'app-reset-password',
+    imports: [NavbarComponent, ReactiveFormsModule],
+    templateUrl: './reset-password.component.html',
+    styleUrls: ['./reset-password.component.css'], // Correction: 'styleUrl' => 'styleUrls'
+    changeDetection: ChangeDetectionStrategy.Eager,
+    schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class ResetPasswordComponent {
   resetPasswordForm: FormGroup; // FormGroup pour le formulaire

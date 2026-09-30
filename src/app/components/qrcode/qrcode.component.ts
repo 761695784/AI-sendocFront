@@ -1,20 +1,19 @@
 import { IMAGE_URL_BASE } from './../services/imageUrl';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from './../services/auth.service';
-import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit } from '@angular/core';
+import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import Swal from 'sweetalert2';
 
 
 @Component({
-  imports: [CommonModule,FormsModule],
-  selector: 'app-qrcode',
-  standalone: true,
-  templateUrl: './qrcode.component.html',
-  styleUrl: './qrcode.component.css',
-  schemas: [CUSTOM_ELEMENTS_SCHEMA], 
-  
+    imports: [CommonModule, FormsModule],
+    selector: 'app-qrcode',
+    templateUrl: './qrcode.component.html',
+    styleUrl: './qrcode.component.css',
+    changeDetection: ChangeDetectionStrategy.Eager,
+    schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 
 export class QrcodeComponent implements OnInit {

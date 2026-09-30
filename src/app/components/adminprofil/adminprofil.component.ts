@@ -1,19 +1,18 @@
 import { SideheadersComponent } from './../sideheaders/sideheaders.component';
-import { Component, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { Component, CUSTOM_ELEMENTS_SCHEMA, ChangeDetectionStrategy } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthService } from '../services/auth.service';
 import { Router, RouterModule } from '@angular/router';
 import Swal from 'sweetalert2';
-import { CommonModule } from '@angular/common';
+
 
 @Component({
-  selector: 'app-adminprofil',
-  standalone: true,
-  imports: [SideheadersComponent,RouterModule, ReactiveFormsModule, CommonModule],
-  templateUrl: './adminprofil.component.html',
-  styleUrl: './adminprofil.component.css',
-  schemas: [CUSTOM_ELEMENTS_SCHEMA],
-  
+    selector: 'app-adminprofil',
+    imports: [SideheadersComponent, RouterModule, ReactiveFormsModule],
+    templateUrl: './adminprofil.component.html',
+    styleUrl: './adminprofil.component.css',
+    changeDetection: ChangeDetectionStrategy.Eager,
+    schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class AdminprofilComponent {
 

@@ -1,49 +1,54 @@
-import { APP_BASE_HREF } from '@angular/common';
-import { renderApplication } from '@angular/platform-server';
+import {
+  AngularNodeAppEngine,
+  createNodeRequestHandler,
+  isMainModule,
+  writeResponseToNodeResponse,
+} from '@angular/ssr/node';
 import express from 'express';
-import { fileURLToPath } from 'node:url';
-import { dirname, join, resolve } from 'node:path';
-import bootstrap from './src/main.server';
+import { join } from 'node:path';
 
-// The Express app is exported so that it can be used by serverless Functions.
-export function app(): express.Express {
-  const server = express();
-  const serverDistFolder = dirname(fileURLToPath(import.meta.url));
-  const browserDistFolder = resolve(serverDistFolder, '../browser');
-  const indexHtml = join(serverDistFolder, 'index.server.html');
+const browserDistFolder = join(import.meta.dirname, '../browser');
 
-  server.set('view engine', 'html');
-  server.set('views', browserDistFolder);
+const app = express();
+const angularApp = new AngularNodeAppEngine();
 
-  // Serve static files from /browser
-  server.get('*.*', express.static(browserDistFolder, {
-    maxAge: '1y'
-  }));
+/**
+ * Fichiers statiques (JS, CSS, images) servis depuis /browser, mis en cache 1 an.
+ */
+app.use(
+  express.static(browserDistFolder, {
+    maxAge: '1y',
+    index: false,
+    redirect: false,
+  }),
+);
 
-  // All regular routes use the Angular engine
-  server.get('*', (req, res, next) => {
-    const { baseUrl } = req;
+/**
+ * Toutes les autres requêtes : rendu par Angular (mode choisi route par route
+ * dans src/app/app.routes.server.ts).
+ */
+app.use((req, res, next) => {
+  angularApp
+    .handle(req)
+    .then((response) => (response ? writeResponseToNodeResponse(response, res) : next()))
+    .catch(next);
+});
 
-    renderApplication(bootstrap, {
-      document: indexHtml,
-      url: req.originalUrl,
-      platformProviders: [{ provide: APP_BASE_HREF, useValue: baseUrl }],
-    })
-      .then((html: string) => res.send(html))
-      .catch((err: Error) => next(err));
-  });
-
-  return server;
-}
-
-function run(): void {
+/**
+ * Démarrage du serveur quand ce fichier est lancé directement
+ * (node dist/doc-track-front/server/server.mjs), port 4000 par défaut.
+ */
+if (isMainModule(import.meta.url) || process.env['pm_id']) {
   const port = process.env['PORT'] || 4000;
-
-  // Start up the Node server
-  const server = app();
-  server.listen(port, () => {
-    console.log(`Node Express server listening on http://localhost:${port}`);
+  app.listen(port, (error?: unknown) => {
+    if (error) {
+      throw error;
+    }
+    console.log(`Serveur DocTrack démarré sur http://localhost:${port}`);
   });
 }
 
-run();
+/**
+ * Gestionnaire utilisé par la CLI (ng serve) et les hébergeurs serverless.
+ */
+export const reqHandler = createNodeRequestHandler(app);

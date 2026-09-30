@@ -1,6 +1,6 @@
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { PublicationsService } from '../services/publications.service';
 import { FooterComponent } from '../footer/footer.component';
 import { SideheadersComponent } from '../sideheaders/sideheaders.component';
@@ -39,11 +39,11 @@ export interface Document {
 }
 
 @Component({
-  selector: 'app-adminpub',
-  standalone: true,
-  imports: [SideheadersComponent, CommonModule, FormsModule],
-  templateUrl: './adminpub.component.html',
-  styleUrls: ['./adminpub.component.css'],
+    selector: 'app-adminpub',
+    imports: [SideheadersComponent, CommonModule, FormsModule],
+    templateUrl: './adminpub.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
+    styleUrls: ['./adminpub.component.css']
 })
 export class AdminpubComponent implements OnInit {
   documents: Document[] = [];

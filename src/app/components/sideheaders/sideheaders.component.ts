@@ -1,5 +1,5 @@
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
-import { Component, OnInit, EventEmitter, Output, NgModule } from '@angular/core';
+import { Component, OnInit, EventEmitter, Output, NgModule, ChangeDetectionStrategy } from '@angular/core';
 import { SidebarComponent } from "../sidebar/sidebar.component";
 import { AuthService } from '../services/auth.service';
 import { CommonModule } from '@angular/common';
@@ -19,11 +19,11 @@ export interface Notifications {
   }
 
 @Component({
-  selector: 'app-sideheaders',
-  standalone: true,
-  imports: [SidebarComponent,CommonModule,RouterModule, NgbModule],
-  templateUrl: './sideheaders.component.html',
-  styleUrl: './sideheaders.component.css'
+    selector: 'app-sideheaders',
+    imports: [SidebarComponent, CommonModule, RouterModule, NgbModule],
+    templateUrl: './sideheaders.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
+    styleUrl: './sideheaders.component.css'
 })
 export class SideheadersComponent implements OnInit {
   FirstName: string = '';

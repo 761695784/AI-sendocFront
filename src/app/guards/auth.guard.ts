@@ -1,3 +1,4 @@
+import { isSuperAdmin, storedRoles } from '../core/auth/roles';
 import { RedirectService } from './../components/services/redirection.service';
 import { AuthService } from './../components/services/auth.service';
 import { Injectable } from '@angular/core';
@@ -15,9 +16,7 @@ export class AuthGuard implements CanActivate {
     state: RouterStateSnapshot): boolean {
 
     if (this.authService.isAuthenticated()) {
-      const user = JSON.parse(localStorage.getItem('user') || '{}');
-      const roles = user.roles || [];
-      const isAdmin = roles.some((role: any) => role.name === 'Admin');
+      const isAdmin = isSuperAdmin(storedRoles());
 
       // Bloquer l'accès aux routes spécifiques si l'utilisateur n'est pas admin
       const adminRoutes = ['admindec', 'admindetails/:id', 'adminpub', 'admin', 'adminuser','adminadd'];

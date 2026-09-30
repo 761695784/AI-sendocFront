@@ -1,14 +1,14 @@
-import { CommonModule } from '@angular/common';
-import { Component, NgModule } from '@angular/core';
+
+import { Component, NgModule, ChangeDetectionStrategy } from '@angular/core';
 import { RouterLink, RouterModule } from '@angular/router';
 
 
 @Component({
-  selector: 'app-sidebar',
-  standalone: true,
-  imports: [RouterLink,RouterModule,CommonModule],
-  templateUrl: './sidebar.component.html',
-  styleUrl: './sidebar.component.css'
+    selector: 'app-sidebar',
+    imports: [RouterLink, RouterModule],
+    templateUrl: './sidebar.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
+    styleUrl: './sidebar.component.css'
 })
 export class SidebarComponent {
 

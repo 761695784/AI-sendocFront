@@ -11,7 +11,7 @@
 
     <!-- Bouton fermer -->
     <button class="btn-close" (click)="navigateToHome()"
-            aria-label="Fermer">
+      aria-label="Fermer">
       <i class="fas fa-times"></i>
     </button>
 
@@ -44,36 +44,42 @@
         <div class="input-wrap">
           <span class="input-prefix">🇸🇳</span>
           <input type="tel"
-                 id="finderPhone"
-                 [(ngModel)]="finderPhone"
-                 name="finderPhone"
-                 placeholder="+221 77 123 45 67"
-                 required
-                 pattern="^\+221(33|70|75|76|77|78)[0-9]{7}$"
-                 #phoneInput="ngModel"
-                 [disabled]="isLoading"
-                 [class.input-error]="phoneInput.invalid && (phoneInput.touched || phoneInput.dirty)">
+            id="finderPhone"
+            [(ngModel)]="finderPhone"
+            name="finderPhone"
+            placeholder="+221 77 123 45 67"
+            required
+            pattern="^\+221(33|70|75|76|77|78)[0-9]{7}$"
+            #phoneInput="ngModel"
+            [disabled]="isLoading"
+            [class.input-error]="phoneInput.invalid && (phoneInput.touched || phoneInput.dirty)">
         </div>
-        <div *ngIf="phoneInput.invalid && (phoneInput.touched || phoneInput.dirty)">
-          <small class="error-text" *ngIf="phoneInput.errors?.['required']">
-            <i class="fas fa-exclamation-circle"></i> Ce champ est requis
-          </small>
-          <small class="error-text" *ngIf="phoneInput.errors?.['pattern']">
-            <i class="fas fa-exclamation-circle"></i> Format invalide. Ex: +221771234567
-          </small>
-        </div>
+        @if (phoneInput.invalid && (phoneInput.touched || phoneInput.dirty)) {
+          <div>
+            @if (phoneInput.errors?.['required']) {
+              <small class="error-text">
+                <i class="fas fa-exclamation-circle"></i> Ce champ est requis
+              </small>
+            }
+            @if (phoneInput.errors?.['pattern']) {
+              <small class="error-text">
+                <i class="fas fa-exclamation-circle"></i> Format invalide. Ex: +221771234567
+              </small>
+            }
+          </div>
+        }
       </div>
 
       <button type="submit" class="btn-submit"
-              [disabled]="isLoading || !phoneForm.valid">
-        <ng-container *ngIf="!isLoading">
+        [disabled]="isLoading || !phoneForm.valid">
+        @if (!isLoading) {
           <i class="fas fa-paper-plane"></i>
           Valider et notifier le propriétaire
-        </ng-container>
-        <ng-container *ngIf="isLoading">
+        }
+        @if (isLoading) {
           <div class="spinner-border" role="status"></div>
           Envoi en cours...
-        </ng-container>
+        }
       </button>
 
     </form>

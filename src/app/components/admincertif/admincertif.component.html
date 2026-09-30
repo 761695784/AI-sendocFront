@@ -18,44 +18,46 @@
       </div>
 
       <!-- Stats rapides -->
-      <div class="stats-row" *ngIf="!isLoading">
-        <div class="stat-card">
-          <div class="stat-icon purple">
-            <i class="fas fa-certificate"></i>
+      @if (!isLoading) {
+        <div class="stats-row">
+          <div class="stat-card">
+            <div class="stat-icon purple">
+              <i class="fas fa-certificate"></i>
+            </div>
+            <div class="stat-info">
+              <span class="stat-num">{{ totalCertificats }}</span>
+              <span class="stat-label">Total émis</span>
+            </div>
           </div>
-          <div class="stat-info">
-            <span class="stat-num">{{ totalCertificats }}</span>
-            <span class="stat-label">Total émis</span>
+          <div class="stat-card">
+            <div class="stat-icon orange">
+              <i class="fas fa-calendar-alt"></i>
+            </div>
+            <div class="stat-info">
+              <span class="stat-num">{{ certificatsDuMois }}</span>
+              <span class="stat-label">Ce mois-ci</span>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon green">
+              <i class="fas fa-file-pdf"></i>
+            </div>
+            <div class="stat-info">
+              <span class="stat-num">{{ typeDocumentTop }}</span>
+              <span class="stat-label">Type le + déclaré</span>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon blue">
+              <i class="fas fa-users"></i>
+            </div>
+            <div class="stat-info">
+              <span class="stat-num">{{ uniqueDeclarants }}</span>
+              <span class="stat-label">Déclarants uniques</span>
+            </div>
           </div>
         </div>
-        <div class="stat-card">
-          <div class="stat-icon orange">
-            <i class="fas fa-calendar-alt"></i>
-          </div>
-          <div class="stat-info">
-            <span class="stat-num">{{ certificatsDuMois }}</span>
-            <span class="stat-label">Ce mois-ci</span>
-          </div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-icon green">
-            <i class="fas fa-file-pdf"></i>
-          </div>
-          <div class="stat-info">
-            <span class="stat-num">{{ typeDocumentTop }}</span>
-            <span class="stat-label">Type le + déclaré</span>
-          </div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-icon blue">
-            <i class="fas fa-users"></i>
-          </div>
-          <div class="stat-info">
-            <span class="stat-num">{{ uniqueDeclarants }}</span>
-            <span class="stat-label">Déclarants uniques</span>
-          </div>
-        </div>
-      </div>
+      }
 
       <!-- Filtres -->
       <div class="filters-card">
@@ -66,181 +68,184 @@
             <div class="search-wrap">
               <i class="fas fa-search search-ico"></i>
               <input type="text"
-                     [(ngModel)]="searchTerm"
-                     (input)="applyFilters()"
-                     placeholder="Nom, prénom, type de document...">
+                [(ngModel)]="searchTerm"
+                (input)="applyFilters()"
+                placeholder="Nom, prénom, type de document...">
+              </div>
             </div>
+
+            <div class="filter-group">
+              <label><i class="fas fa-folder-open"></i> Type de document</label>
+              <select [(ngModel)]="selectedType" (change)="applyFilters()"
+                aria-label="Filtrer par type de document">
+                <option value="">Tous les types</option>
+                @for (type of documentTypes; track type) {
+                  <option [value]="type">
+                    {{ type }}
+                  </option>
+                }
+              </select>
+            </div>
+
+            <div class="filter-group">
+              <label><i class="fas fa-calendar"></i> Période</label>
+              <select [(ngModel)]="selectedPeriod" (change)="applyFilters()"
+                aria-label="Filtrer par période d'émission">
+                <option value="">Toutes les dates</option>
+                <option value="today">Aujourd'hui</option>
+                <option value="week">Cette semaine</option>
+                <option value="month">Ce mois-ci</option>
+              </select>
+            </div>
+
+            <button class="btn-reset" (click)="resetFilters()" aria-label="Réinitialiser les filtres">
+              <i class="fas fa-redo"></i> Réinitialiser
+            </button>
+
           </div>
-
-          <div class="filter-group">
-            <label><i class="fas fa-folder-open"></i> Type de document</label>
-            <select [(ngModel)]="selectedType" (change)="applyFilters()"
-              aria-label="Filtrer par type de document">
-              <option value="">Tous les types</option>
-              <option *ngFor="let type of documentTypes" [value]="type">
-                {{ type }}
-              </option>
-            </select>
-          </div>
-
-          <div class="filter-group">
-            <label><i class="fas fa-calendar"></i> Période</label>
-            <select [(ngModel)]="selectedPeriod" (change)="applyFilters()"
-              aria-label="Filtrer par période d'émission">
-              <option value="">Toutes les dates</option>
-              <option value="today">Aujourd'hui</option>
-              <option value="week">Cette semaine</option>
-              <option value="month">Ce mois-ci</option>
-            </select>
-          </div>
-
-          <button class="btn-reset" (click)="resetFilters()" aria-label="Réinitialiser les filtres">
-            <i class="fas fa-redo"></i> Réinitialiser
-          </button>
-
-        </div>
-      </div>
-
-      <!-- Loader -->
-      <div class="loader-center" *ngIf="isLoading">
-        <l-ring-2 size="36" stroke="4" stroke-length="0.55"
-          bg-opacity="0.1" speed="0.8" color="#31287C">
-        </l-ring-2>
-        <span>Chargement des certificats...</span>
-      </div>
-
-      <!-- Empty state -->
-      <div class="empty-state" *ngIf="!isLoading && filteredCertificats.length === 0">
-        <div class="empty-icon"><i class="fas fa-certificate"></i></div>
-        <h3>Aucun certificat trouvé</h3>
-        <p>Aucun certificat ne correspond à vos critères de recherche.</p>
-        <button class="btn-reset-empty" (click)="resetFilters()">
-          <i class="fas fa-redo"></i> Réinitialiser les filtres
-        </button>
-      </div>
-
-      <!-- Table certificats -->
-      <div class="table-card" *ngIf="!isLoading && filteredCertificats.length > 0">
-
-        <div class="table-header">
-          <span class="table-count">
-            <strong>{{ filteredCertificats.length }}</strong> certificat(s) affiché(s)
-          </span>
         </div>
 
-        <div class="table-wrap">
-          <table class="cert-table">
-            <thead>
-              <tr>
-                <th>Déclarant</th>
-                <th>Document</th>
-                <th>Identité dans le doc</th>
-                <th>Date d'émission</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr *ngFor="let cert of paginatedCertificats; let i = index"
-                  class="cert-row"
-                  [style.animation-delay]="i * 0.04 + 's'">
+        <!-- Loader -->
+        @if (isLoading) {
+          <div class="loader-center">
+            <l-ring-2 size="36" stroke="4" stroke-length="0.55"
+              bg-opacity="0.1" speed="0.8" color="#31287C">
+            </l-ring-2>
+            <span>Chargement des certificats...</span>
+          </div>
+        }
 
-                <!-- Déclarant -->
-                <td>
-                  <div class="user-cell">
-                    <div class="user-avatar">
-                      {{ cert.declaration?.user?.FirstName?.charAt(0) }}{{ cert.declaration?.user?.LastName?.charAt(0) }}
-                    </div>
-                    <div>
-                      <span class="user-name">
-                        {{ cert.declaration?.user?.FirstName }}
-                        {{ cert.declaration?.user?.LastName }}
-                      </span>
-                      <span class="user-email">{{ cert.declaration?.user?.email }}</span>
-                    </div>
-                  </div>
-                </td>
+        <!-- Empty state -->
+        @if (!isLoading && filteredCertificats.length === 0) {
+          <div class="empty-state">
+            <div class="empty-icon"><i class="fas fa-certificate"></i></div>
+            <h3>Aucun certificat trouvé</h3>
+            <p>Aucun certificat ne correspond à vos critères de recherche.</p>
+            <button class="btn-reset-empty" (click)="resetFilters()">
+              <i class="fas fa-redo"></i> Réinitialiser les filtres
+            </button>
+          </div>
+        }
 
-                <!-- Type document -->
-                <td>
-                  <span class="type-badge">
-                    <i class="fas fa-id-card"></i>
-                    {{ cert.declaration?.document_type?.TypeName ?? '—' }}
-                  </span>
-                </td>
-
-                <!-- Identité -->
-                <td>
-                  <div class="identity-cell">
-                    <span class="identity-name">
-                      {{ cert.declaration?.FirstNameInDoc }}
-                      {{ cert.declaration?.LastNameInDoc }}
-                    </span>
-                    <span class="identity-ref" *ngIf="cert.declaration?.DocIdentification">
-                      Réf: {{ cert.declaration?.DocIdentification }}
-                    </span>
-                  </div>
-                </td>
-
-                <!-- Date -->
-                <td>
-                  <div class="date-cell">
-                    <span class="date-main">{{ cert.created_at | date:'dd/MM/yyyy' }}</span>
-                    <span class="date-time">{{ cert.created_at | date:'HH:mm' }}</span>
-                  </div>
-                </td>
-
-                <!-- Actions -->
-                <td>
-                  <div class="actions-cell">
-                    <button class="btn-voir"
+        <!-- Table certificats -->
+        @if (!isLoading && filteredCertificats.length > 0) {
+          <div class="table-card">
+            <div class="table-header">
+              <span class="table-count">
+                <strong>{{ filteredCertificats.length }}</strong> certificat(s) affiché(s)
+              </span>
+            </div>
+            <div class="table-wrap">
+              <table class="cert-table">
+                <thead>
+                  <tr>
+                    <th>Déclarant</th>
+                    <th>Document</th>
+                    <th>Identité dans le doc</th>
+                    <th>Date d'émission</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (cert of paginatedCertificats; track cert; let i = $index) {
+                    <tr
+                      class="cert-row"
+                      [style.animation-delay]="i * 0.04 + 's'">
+                      <!-- Déclarant -->
+                      <td>
+                        <div class="user-cell">
+                          <div class="user-avatar">
+                            {{ cert.declaration?.user?.FirstName?.charAt(0) }}{{ cert.declaration?.user?.LastName?.charAt(0) }}
+                          </div>
+                          <div>
+                            <span class="user-name">
+                              {{ cert.declaration?.user?.FirstName }}
+                              {{ cert.declaration?.user?.LastName }}
+                            </span>
+                            <span class="user-email">{{ cert.declaration?.user?.email }}</span>
+                          </div>
+                        </div>
+                      </td>
+                      <!-- Type document -->
+                      <td>
+                        <span class="type-badge">
+                          <i class="fas fa-id-card"></i>
+                          {{ cert.declaration?.document_type?.TypeName ?? '—' }}
+                        </span>
+                      </td>
+                      <!-- Identité -->
+                      <td>
+                        <div class="identity-cell">
+                          <span class="identity-name">
+                            {{ cert.declaration?.FirstNameInDoc }}
+                            {{ cert.declaration?.LastNameInDoc }}
+                          </span>
+                          @if (cert.declaration?.DocIdentification) {
+                            <span class="identity-ref">
+                              Réf: {{ cert.declaration?.DocIdentification }}
+                            </span>
+                          }
+                        </div>
+                      </td>
+                      <!-- Date -->
+                      <td>
+                        <div class="date-cell">
+                          <span class="date-main">{{ cert.created_at | date:'dd/MM/yyyy' }}</span>
+                          <span class="date-time">{{ cert.created_at | date:'HH:mm' }}</span>
+                        </div>
+                      </td>
+                      <!-- Actions -->
+                      <td>
+                        <div class="actions-cell">
+                          <button class="btn-voir"
                             (click)="voirCertificat(cert.uuid)"
                             aria-label="Voir le certificat">
-                      <i class="fas fa-eye"></i> Voir
-                    </button>
-                    <button class="btn-dl"
+                            <i class="fas fa-eye"></i> Voir
+                          </button>
+                          <button class="btn-dl"
                             (click)="telechargerCertificat(cert.uuid)"
                             aria-label="Télécharger le certificat">
-                      <i class="fas fa-download"></i>
-                    </button>
-                  </div>
-                </td>
-
-              </tr>
-            </tbody>
-          </table>
-        </div>
-
-        <!-- Pagination -->
-        <div class="pagination-wrap">
-          <span class="pagination-info">
-            Page <strong>{{ currentPage }}</strong> /
-            <strong>{{ totalPages }}</strong> —
-            <strong>{{ filteredCertificats.length }}</strong> résultat(s)
-          </span>
-          <div class="pagination-btns">
-            <button class="page-btn"
-                    [disabled]="currentPage === 1"
-                    (click)="changePage(currentPage - 1)"
-                    aria-label="Page précédente">
-              <i class="fas fa-chevron-left"></i>
-            </button>
-            <button class="page-btn"
-                    *ngFor="let p of pageNumbers"
+                            <i class="fas fa-download"></i>
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+            <!-- Pagination -->
+            <div class="pagination-wrap">
+              <span class="pagination-info">
+                Page <strong>{{ currentPage }}</strong> /
+                <strong>{{ totalPages }}</strong> —
+                <strong>{{ filteredCertificats.length }}</strong> résultat(s)
+              </span>
+              <div class="pagination-btns">
+                <button class="page-btn"
+                  [disabled]="currentPage === 1"
+                  (click)="changePage(currentPage - 1)"
+                  aria-label="Page précédente">
+                  <i class="fas fa-chevron-left"></i>
+                </button>
+                @for (p of pageNumbers; track p) {
+                  <button class="page-btn"
                     [class.active]="p === currentPage"
                     (click)="changePage(p)">
-              {{ p }}
-            </button>
-            <button class="page-btn"
-                    [disabled]="currentPage === totalPages"
-                    (click)="changePage(currentPage + 1)"
-                    aria-label="Page suivante">
-              <i class="fas fa-chevron-right"></i>
-            </button>
+                    {{ p }}
+                  </button>
+                }
+                <button class="page-btn"
+                  [disabled]="currentPage === totalPages"
+                  (click)="changePage(currentPage + 1)"
+                  aria-label="Page suivante">
+                  <i class="fas fa-chevron-right"></i>
+                </button>
+              </div>
+            </div>
           </div>
-        </div>
+        }
 
       </div>
-
     </div>
   </div>
-</div>

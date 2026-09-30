@@ -3,7 +3,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { PublicationsService } from './../services/publications.service';
 import { FooterComponent } from './../footer/footer.component';
 import { NavbarComponent } from './../navbar/navbar.component';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 export interface Document {
@@ -37,11 +37,11 @@ export interface Document {
 }
 
 @Component({
-  selector: 'app-document-list',
-  standalone: true,
-  imports: [NavbarComponent, FooterComponent, CommonModule, FormsModule],
-  templateUrl: './document-list.component.html',
-  styleUrls: ['./document-list.component.css'],
+    selector: 'app-document-list',
+    imports: [NavbarComponent, FooterComponent, CommonModule, FormsModule],
+    templateUrl: './document-list.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
+    styleUrls: ['./document-list.component.css']
 })
 export class DocumentListComponent implements OnInit {
   documents: Document[] = [];

@@ -1,7 +1,7 @@
 import { FooterComponent } from './../footer/footer.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NavbarComponent } from './../navbar/navbar.component';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { PublicationsService } from '../services/publications.service';
 import { CommonModule } from '@angular/common';
 import Swal from 'sweetalert2';
@@ -37,11 +37,11 @@ export interface Document {
 }
 
 @Component({
-  selector: 'app-mypublish',
-  standalone: true,
-  imports: [NavbarComponent, FormsModule, ReactiveFormsModule, FooterComponent, CommonModule],
-  templateUrl: './mypublish.component.html',
-  styleUrls: ['./mypublish.component.css']  // Corrigé de styleUrl à styleUrls
+    selector: 'app-mypublish',
+    imports: [NavbarComponent, FormsModule, ReactiveFormsModule, FooterComponent, CommonModule],
+    templateUrl: './mypublish.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
+    styleUrls: ['./mypublish.component.css'] // Corrigé de styleUrl à styleUrls
 })
 export class MypublishComponent implements OnInit {
   publications: Document[] = [];

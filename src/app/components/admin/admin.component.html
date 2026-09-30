@@ -82,36 +82,38 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let emailLog of paginatedEmailLogs">
-          <td data-label="ID">
-            <span class="id-badge">#{{ emailLog.id }}</span>
-          </td>
-          <td data-label="Destinataire">
-            <span class="email-chip">{{ emailLog.to }}</span>
-          </td>
-          <td data-label="Objet">
-            <span class="subject-badge"
-              [ngClass]="emailLog.subject?.includes('restitution') ? 'badge-orange' : 'badge-purple'">
-              {{ emailLog.subject }}
-            </span>
-          </td>
-          <td data-label="Document">
-            <span class="muted">{{ emailLog.document_id || 'Masqué' }}</span>
-          </td>
-          <td data-label="Demandeur">
-            <span class="muted">{{ emailLog.requester_user_id || '—' }}</span>
-          </td>
-          <td data-label="Publicateur">
-            <span class="muted">{{ emailLog.publisher_user_id || '—' }}</span>
-          </td>
-          <td data-label="Déclarant">
-            <span class="muted">{{ emailLog.declarant_user_id || '—' }}</span>
-          </td>
-          <td data-label="Contenu" class="body-cell">{{ emailLog.body }}</td>
-          <td data-label="Date">
-            <span class="date-chip">{{ emailLog.created_at | date:'dd/MM/yy' }}</span>
-          </td>
-        </tr>
+        @for (emailLog of paginatedEmailLogs; track emailLog) {
+          <tr>
+            <td data-label="ID">
+              <span class="id-badge">#{{ emailLog.id }}</span>
+            </td>
+            <td data-label="Destinataire">
+              <span class="email-chip">{{ emailLog.to }}</span>
+            </td>
+            <td data-label="Objet">
+              <span class="subject-badge"
+                [ngClass]="emailLog.subject?.includes('restitution') ? 'badge-orange' : 'badge-purple'">
+                {{ emailLog.subject }}
+              </span>
+            </td>
+            <td data-label="Document">
+              <span class="muted">{{ emailLog.document_id || 'Masqué' }}</span>
+            </td>
+            <td data-label="Demandeur">
+              <span class="muted">{{ emailLog.requester_user_id || '—' }}</span>
+            </td>
+            <td data-label="Publicateur">
+              <span class="muted">{{ emailLog.publisher_user_id || '—' }}</span>
+            </td>
+            <td data-label="Déclarant">
+              <span class="muted">{{ emailLog.declarant_user_id || '—' }}</span>
+            </td>
+            <td data-label="Contenu" class="body-cell">{{ emailLog.body }}</td>
+            <td data-label="Date">
+              <span class="date-chip">{{ emailLog.created_at | date:'dd/MM/yy' }}</span>
+            </td>
+          </tr>
+        }
       </tbody>
     </table>
   </div>

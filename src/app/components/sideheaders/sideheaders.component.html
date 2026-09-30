@@ -26,52 +26,57 @@
         <div class="hbtn-wrap" ngbDropdown>
           <button class="hbtn" ngbDropdownToggle>
             <i class="fas fa-bell"></i>
-            <span class="notif-badge" *ngIf="unreadCount > 0">{{ unreadCount }}</span>
+            @if (unreadCount > 0) {
+              <span class="notif-badge">{{ unreadCount }}</span>
+            }
           </button>
           <div ngbDropdownMenu class="notif-panel">
             <div class="np-header">
               <span class="np-title">Notifications</span>
             </div>
-            <ng-container *ngIf="notifications.length > 0; else noNotif">
-              <div *ngFor="let n of notifications" class="np-item"
-                   [routerLink]="n.type === 'document' ? ['/admin/adminpub'] : ['/admin/admindec']"
-                   (click)="markNotificationAsRead(n.id)">
-                <div class="np-dot"></div>
-                <div>
-                  <div class="np-msg">{{ n.message }}</div>
-                  <div class="np-time">{{ n.created_at | date:'shortTime' }}</div>
+            @if (notifications.length > 0) {
+              @for (n of notifications; track n) {
+                <div class="np-item"
+                  [routerLink]="n.type === 'document' ? ['/admin/adminpub'] : ['/admin/admindec']"
+                  (click)="markNotificationAsRead(n.id)">
+                  <div class="np-dot"></div>
+                  <div>
+                    <div class="np-msg">{{ n.message }}</div>
+                    <div class="np-time">{{ n.created_at | date:'shortTime' }}</div>
+                  </div>
                 </div>
-              </div>
-            </ng-container>
-            <ng-template #noNotif>
+              }
+            } @else {
               <div class="np-empty">Aucune nouvelle notification</div>
-            </ng-template>
+            }
           </div>
         </div>
 
-        <div class="hbtn-wrap" *ngIf="authService.isAuthenticated()" ngbDropdown>
-          <button class="hbtn" ngbDropdownToggle>
-            <!-- <div class="user-avatar">{{ userInitial }}</div> -->
-            <span>{{ authService.getUserName() }}</span>
-          </button>
-          <div ngbDropdownMenu class="user-panel">
-            <div class="dp-header">
-              <!-- <div class="dp-avatar">{{ userInitial }}</div> -->
-              <div>
-                <div class="dp-name">{{ authService.getUserName() }}</div>
-                <div class="dp-role">Administrateur</div>
+        @if (authService.isAuthenticated()) {
+          <div class="hbtn-wrap" ngbDropdown>
+            <button class="hbtn" ngbDropdownToggle>
+              <!-- <div class="user-avatar">{{ userInitial }}</div> -->
+              <span>{{ authService.getUserName() }}</span>
+            </button>
+            <div ngbDropdownMenu class="user-panel">
+              <div class="dp-header">
+                <!-- <div class="dp-avatar">{{ userInitial }}</div> -->
+                <div>
+                  <div class="dp-name">{{ authService.getUserName() }}</div>
+                  <div class="dp-role">Administrateur</div>
+                </div>
+              </div>
+              <a class="dp-item" routerLink="/admin/profil">
+                <i class="fas fa-user dp-icon"></i>
+                Modifier mon profil
+              </a>
+              <div class="dp-item danger" (click)="logout()">
+                <i class="fas fa-sign-out-alt dp-icon"></i>
+                Déconnexion
               </div>
             </div>
-            <a class="dp-item" routerLink="/admin/profil">
-              <i class="fas fa-user dp-icon"></i>
-              Modifier mon profil
-            </a>
-            <div class="dp-item danger" (click)="logout()">
-              <i class="fas fa-sign-out-alt dp-icon"></i>
-              Déconnexion
-            </div>
           </div>
-        </div>
+        }
 
       </div>
     </div>
