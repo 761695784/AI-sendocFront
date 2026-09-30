@@ -1,0 +1,107 @@
+@if (loading()) {
+  <app-loading />
+} @else if (error()) {
+  <app-error-state [message]="error()!"><a routerLink="/espace/retraits" class="btn btn-sm btn-outline-danger">Retour</a></app-error-state>
+} @else if (c(); as c) {
+  <app-page-header [title]="'Retrait — ' + (c.document?.document_type ?? 'document')" [subtitle]="(c.document?.reference ?? '') + (c.organization ? ' · ' + c.organization.name : '')">
+    <a routerLink="/espace/retraits" class="btn btn-outline-secondary">Retour</a>
+  </app-page-header>
+
+  @if (c.priority) {
+    <div class="dt-callout dt-callout--warning mt-0 mb-3"><i class="fas fa-star" aria-hidden="true"></i>
+      <div><strong>Prioritaire</strong> Le propriétaire a été identifié : il attend son document.</div></div>
+  }
+
+  <div class="row g-3">
+    <div class="col-lg-5">
+      <section class="dt-card">
+        <div class="dt-card__head"><h2 class="dt-card__title">Trouveur</h2><app-status-badge [status]="c.status" /></div>
+        <p class="fs-5 mb-1 mt-2"><b>{{ c.finder.name ?? 'Nom non indiqué' }}</b></p>
+        @if (c.finder.phone) {
+          <a class="btn btn-dt" [href]="'tel:' + c.finder.phone"><i class="fas fa-phone me-1" aria-hidden="true"></i> {{ c.finder.phone }}</a>
+          <small class="d-block dt-muted mt-1">La consultation de ce numéro est enregistrée.</small>
+        }
+        <p class="small dt-muted mt-3 mb-0">
+          {{ c.contact_attempts }} appel(s)@if (c.last_contact_outcome) { · dernier : {{ outcomes[c.last_contact_outcome] }} le {{ c.last_contact_at | date: 'd MMM, HH:mm' }} }
+        </p>
+      </section>
+
+      <section class="dt-card">
+        <h2 class="dt-card__title mb-2">Document</h2>
+        @if (c.document; as d) {
+          @if (d.image_url) { <img class="dt-photo mb-2" [src]="d.image_url" alt="Photo du document" /> }
+          <p class="mb-1"><b>{{ d.last_name }} {{ d.first_name }}</b></p>
+          <p class="small dt-muted mb-1">Trouvé à {{ d.found_place }}{{ d.territory ? ' (' + d.territory + ')' : '' }} · publié le {{ d.published_at | date: 'd MMM y' }}</p>
+          @if (d.latitude && d.longitude) {
+            <a class="small" target="_blank" rel="noopener" [href]="'https://www.openstreetmap.org/?mlat=' + d.latitude + '&mlon=' + d.longitude + '#map=17/' + d.latitude + '/' + d.longitude">
+              <i class="fas fa-map-marker-alt me-1" aria-hidden="true"></i>Voir le lieu sur la carte</a>
+          }
+          <p class="small dt-muted mt-2 mb-0">Attribué le {{ c.assigned_at | date: 'd MMM, HH:mm' }} — {{ reasonLabel(c.assignment_reason) }}@if (c.distance_km !== null) {, {{ c.distance_km | number: "1.0-1" }} km}</p>
+        }
+      </section>
+    </div>
+
+    <div class="col-lg-7">
+      @if (open() && canManage()) {
+        <section class="dt-card">
+          <h2 class="dt-card__title mb-2">1. Appeler le trouveur</h2>
+          <div class="d-flex flex-wrap gap-2">
+            <button type="button" class="btn btn-sm btn-outline-success" [disabled]="busy()" (click)="contact('reached')"><i class="fas fa-check me-1" aria-hidden="true"></i> Joint</button>
+            <button type="button" class="btn btn-sm btn-outline-secondary" [disabled]="busy()" (click)="contact('no_answer')">Pas de réponse</button>
+            <button type="button" class="btn btn-sm btn-outline-danger" [disabled]="busy()" (click)="contact('wrong_number')">Numéro erroné</button>
+          </div>
+        </section>
+
+        <section class="dt-card">
+          <h2 class="dt-card__title mb-2">2. Organiser la remise</h2>
+          @if (c.method && !showPlan()) {
+            <p class="mb-2">
+              {{ c.method === 'agent_pickup' ? 'Un agent va chercher le document' : 'Le trouveur dépose le document' }}
+              @if (c.scheduled_at) { le <b>{{ c.scheduled_at | date: 'EEEE d MMMM, HH:mm' }}</b> }
+              @if (c.meeting_place) { — {{ c.meeting_place }} }
+            </p>
+            <button type="button" class="btn btn-sm btn-outline-secondary" (click)="showPlan.set(true)">Modifier</button>
+          } @else {
+            <form class="dt-form" [formGroup]="plan" (ngSubmit)="savePlan()">
+              <div class="d-flex gap-3 mb-2">
+                <div class="form-check"><input class="form-check-input" type="radio" id="m-drop" value="drop_off" formControlName="method" /><label class="form-check-label" for="m-drop">Le trouveur passe le déposer</label></div>
+                <div class="form-check"><input class="form-check-input" type="radio" id="m-pick" value="agent_pickup" formControlName="method" /><label class="form-check-label" for="m-pick">Un agent va le chercher</label></div>
+              </div>
+              <div class="row g-2">
+                <div class="col-md-5"><label for="p-date">Date et heure</label><input id="p-date" class="form-control" type="datetime-local" formControlName="scheduled_at" /></div>
+                <div class="col-md-7"><label for="p-place">Lieu du rendez-vous</label><input id="p-place" class="form-control" formControlName="meeting_place" /></div>
+              </div>
+              <button type="submit" class="btn btn-sm btn-dt mt-2" [disabled]="busy()">Enregistrer le rendez-vous</button>
+            </form>
+          }
+        </section>
+
+        <section class="dt-card">
+          <h2 class="dt-card__title mb-2">3. Document reçu</h2>
+          <button type="button" class="btn btn-dt" [disabled]="busy()" (click)="collected()"><i class="fas fa-archive me-1" aria-hidden="true"></i> Le document est à la structure</button>
+          <div class="mt-3 pt-3 border-top d-flex flex-wrap gap-2">
+            <button type="button" class="btn btn-sm btn-link text-danger px-0" [disabled]="busy()" (click)="decline()">Nous ne pouvons pas nous en charger</button>
+            <button type="button" class="btn btn-sm btn-link px-0" [disabled]="busy()" (click)="transfer()">Transférer à une structure précise</button>
+          </div>
+        </section>
+      } @else if (c.status === 'collected') {
+        <div class="dt-callout dt-callout--success mt-0"><i class="fas fa-check-circle" aria-hidden="true"></i>
+          <div><strong>Document récupéré le {{ c.collected_at | date: 'd MMM y, HH:mm' }}.</strong>
+            @if (c.document) { <a [routerLink]="['/espace/documents', c.document.uuid]">Voir la fiche du document</a> }</div></div>
+      } @else if (c.closed_reason) {
+        <div class="dt-callout dt-callout--info mt-0"><i class="fas fa-info-circle" aria-hidden="true"></i><div>{{ c.closed_reason }}</div></div>
+      }
+
+      @if (c.history?.length) {
+        <section class="dt-card">
+          <h2 class="dt-card__title mb-2">Historique</h2>
+          <ul class="list-unstyled small mb-0">
+            @for (h of c.history; track $index) {
+              <li class="mb-1"><span class="dt-muted">{{ h.at | date: 'd MMM, HH:mm' }}</span> — {{ statusLabel(h.to) }}@if (h.reason) { : {{ h.reason }} }</li>
+            }
+          </ul>
+        </section>
+      }
+    </div>
+  </div>
+}

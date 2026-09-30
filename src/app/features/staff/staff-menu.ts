@@ -27,13 +27,13 @@ export const STAFF_MENU: StaffMenuSection[] = [
   {
     title: 'Guichet',
     items: [
-      { path: 'citoyens', label: 'Citoyens', icon: 'fa-user', abilities: ['citizens.search'], sprint: 'S4' },
-      { path: 'declarations', label: 'Déclarations de perte', icon: 'fa-file-alt', abilities: ['declarations.view'], sprint: 'S4' },
-      { path: 'documents', label: 'Documents trouvés', icon: 'fa-id-card', abilities: ['found_documents.view'], sprint: 'S4' },
-      { path: 'correspondances', label: 'Correspondances', icon: 'fa-link', abilities: ['matches.view'], sprint: 'S4' },
-      { path: 'retraits', label: 'Retraits', icon: 'fa-people-arrows', abilities: ['collections.view'], sprint: 'S4' },
-      { path: 'restitutions', label: 'Restitutions', icon: 'fa-handshake', abilities: ['restitutions.view'], sprint: 'S4' },
-      { path: 'frais', label: 'Frais', icon: 'fa-coins', abilities: ['billing.view', 'billing.collect'], sprint: 'S4' },
+      { path: 'citoyens', label: 'Citoyens', icon: 'fa-user', abilities: ['citizens.search'] },
+      { path: 'declarations', label: 'Déclarations de perte', icon: 'fa-file-alt', abilities: ['declarations.view'] },
+      { path: 'documents', label: 'Documents trouvés', icon: 'fa-id-card', abilities: ['found_documents.view'] },
+      { path: 'correspondances', label: 'Correspondances', icon: 'fa-link', abilities: ['matches.view'] },
+      { path: 'retraits', label: 'Retraits', icon: 'fa-people-arrows', abilities: ['collections.view'] },
+      { path: 'restitutions', label: 'Restitutions', icon: 'fa-handshake', abilities: ['restitutions.view'] },
+      { path: 'frais', label: 'Frais', icon: 'fa-coins', abilities: ['billing.view', 'billing.collect'] },
     ],
   },
   {

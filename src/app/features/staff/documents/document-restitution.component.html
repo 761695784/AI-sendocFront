@@ -1,0 +1,154 @@
+@if (loading()) {
+  <app-loading label="Préparation de la restitution…" />
+} @else if (error()) {
+  <app-error-state [message]="error()!"><a [routerLink]="['/espace/documents', uuid()]" class="btn btn-sm btn-outline-danger">Retour</a></app-error-state>
+} @else if (done(); as r) {
+  <!-- ── Restitution enregistrée ── -->
+  <app-page-header title="Restitution enregistrée" [subtitle]="'Décharge ' + r.reference" />
+  <div class="dt-card">
+    <div class="dt-callout dt-callout--success mt-0">
+      <i class="fas fa-check-circle" aria-hidden="true"></i>
+      <div>
+        <strong>{{ r.document?.document_type }} remis(e) à {{ r.recipient_type === 'proxy' ? r.proxy?.name + ' (procuration)' : r.owner.name }}.</strong>
+        Le propriétaire reçoit une confirmation par SMS. Code de vérification de la décharge : <span class="dt-mono">{{ r.verification_code }}</span>.
+      </div>
+    </div>
+    <ol class="mt-3">
+      <li class="mb-2">Imprimez la décharge et faites-la signer.
+        <button type="button" class="btn btn-sm btn-dt ms-2" (click)="printDischarge(r)"><i class="fas fa-print me-1" aria-hidden="true"></i> Imprimer la décharge</button>
+      </li>
+      <li class="mb-2">Photographiez ou scannez la décharge signée et joignez-la.
+        <label class="btn btn-sm btn-outline-secondary ms-2 mb-0" [class.disabled]="uploading()">
+          <i class="fas fa-paperclip me-1" aria-hidden="true"></i> {{ r.signed_scan ? 'Remplacer la décharge signée' : 'Joindre la décharge signée' }}
+          <input type="file" accept="image/*,application/pdf" capture="environment" hidden (change)="onSignedScan($event, r)" />
+        </label>
+        @if (r.signed_scan) { <span class="text-success small ms-2"><i class="fas fa-check" aria-hidden="true"></i> jointe</span> }
+      </li>
+    </ol>
+    <button type="button" class="btn btn-outline-secondary" (click)="finish(r)">Voir la fiche de restitution</button>
+  </div>
+} @else if (prep(); as p) {
+  <app-page-header [title]="'Restituer — ' + (p.document.document_type ?? 'document')" [subtitle]="'Référence ' + p.document.reference">
+    <a [routerLink]="['/espace/documents', uuid()]" class="btn btn-outline-secondary">Annuler</a>
+  </app-page-header>
+
+  @if (!p.can_restitute) {
+    <div class="dt-callout dt-callout--danger mt-0 mb-3"><i class="fas fa-ban" aria-hidden="true"></i><div><strong>Restitution bloquée</strong> {{ p.blocking_reason }}</div></div>
+  }
+
+  <div class="row g-3">
+    <div class="col-lg-4">
+      <section class="dt-card">
+        <h2 class="dt-card__title mb-2">Document</h2>
+        <p class="mb-1"><b>{{ p.document.owner_last_name }} {{ p.document.owner_first_name }}</b></p>
+        <p class="small dt-muted mb-2">
+          @if (p.document.birth_date) { Né(e) le {{ p.document.birth_date | date: 'd MMM y' }} · }
+          @if (p.document.doc_number_last4) { N° ••••{{ p.document.doc_number_last4 }} }
+        </p>
+        @if (p.confirmed_match; as m) {
+          <div class="dt-callout dt-callout--success"><i class="fas fa-user-check" aria-hidden="true"></i>
+            <div>Propriétaire identifié : <b>{{ m.declared_by }}</b><br /><small>Déclaration {{ m.declaration_reference }}</small></div></div>
+        } @else {
+          <div class="dt-callout dt-callout--warning"><i class="fas fa-exclamation-triangle" aria-hidden="true"></i>
+            <div>Aucune déclaration de perte liée : contrôlez l'identité avec une attention particulière.</div></div>
+        }
+      </section>
+      <section class="dt-card">
+        <h2 class="dt-card__title mb-2">À vérifier</h2>
+        <ul class="small ps-3 mb-0">
+          @for (r of p.requirements; track r) { <li>{{ r }}</li> }
+        </ul>
+      </section>
+    </div>
+
+    <form class="col-lg-8 dt-form" [formGroup]="form" (ngSubmit)="submit()" novalidate>
+      <section class="dt-card">
+        <p class="dt-step"><span>1</span> Qui retire le document ?</p>
+        <div class="d-flex gap-3">
+          <div class="form-check"><input class="form-check-input" type="radio" id="rt-owner" value="owner" formControlName="recipient_type" /><label class="form-check-label" for="rt-owner">Le titulaire</label></div>
+          @if (p.proxy_allowed) {
+            <div class="form-check"><input class="form-check-input" type="radio" id="rt-proxy" value="proxy" formControlName="recipient_type" /><label class="form-check-label" for="rt-proxy">Un mandataire (procuration)</label></div>
+          }
+        </div>
+      </section>
+
+      <section class="dt-card" formGroupName="owner">
+        <p class="dt-step"><span>2</span> Titulaire du document</p>
+        @if (!isProxy) {
+          <p class="small dt-muted">Photographiez la pièce d'identité présentée : les champs se remplissent et la lecture est gardée comme preuve.</p>
+          <app-photo-scan [scanner]="ownerScanner" takeLabel="Photographier sa pièce" (result)="onOwnerScan($event)" />
+        }
+        <div class="row g-2 mt-1">
+          <div class="col-md-4"><label for="o-last" class="dt-required">Nom</label><input id="o-last" class="form-control" formControlName="last_name" />
+            @if (fieldError(form.controls.owner.controls.last_name, 'Le nom'); as e) { <small class="dt-error">{{ e }}</small> }</div>
+          <div class="col-md-4"><label for="o-first" class="dt-required">Prénom(s)</label><input id="o-first" class="form-control" formControlName="first_name" />
+            @if (fieldError(form.controls.owner.controls.first_name, 'Le prénom'); as e) { <small class="dt-error">{{ e }}</small> }</div>
+          <div class="col-md-4"><label for="o-birth">Date de naissance</label><input id="o-birth" class="form-control" type="date" formControlName="birth_date" /></div>
+          @if (!isProxy) {
+            <div class="col-md-4">
+              <label for="o-idt">Pièce présentée</label>
+              <select id="o-idt" class="form-select" formControlName="id_type">
+                @for (t of idTypes; track t[0]) { <option [value]="t[0]">{{ t[1] }}</option> }
+              </select>
+            </div>
+            <div class="col-md-4"><label for="o-idn">Numéro de la pièce</label><input id="o-idn" class="form-control dt-mono" formControlName="id_number" autocomplete="off" /></div>
+          }
+          <div class="col-md-4"><label for="o-phone">Téléphone</label><input id="o-phone" class="form-control" type="tel" formControlName="phone" />
+            @if (fieldError(form.controls.owner.controls.phone, 'Le numéro'); as e) { <small class="dt-error">{{ e }}</small> }</div>
+        </div>
+      </section>
+
+      @if (isProxy) {
+        <section class="dt-card" formGroupName="proxy">
+          <p class="dt-step"><span>3</span> Mandataire</p>
+          <app-photo-scan [scanner]="proxyScanner" takeLabel="Photographier sa pièce" (result)="onProxyScan($event)" />
+          <div class="row g-2 mt-1">
+            <div class="col-md-4"><label for="p-last" class="dt-required">Nom</label><input id="p-last" class="form-control" formControlName="last_name" /></div>
+            <div class="col-md-4"><label for="p-first" class="dt-required">Prénom(s)</label><input id="p-first" class="form-control" formControlName="first_name" /></div>
+            <div class="col-md-4"><label for="p-rel">Lien avec le titulaire</label><input id="p-rel" class="form-control" formControlName="relationship" placeholder="Ex. frère" /></div>
+            <div class="col-md-4">
+              <label for="p-idt">Pièce présentée</label>
+              <select id="p-idt" class="form-select" formControlName="id_type">
+                @for (t of idTypes; track t[0]) { <option [value]="t[0]">{{ t[1] }}</option> }
+              </select>
+            </div>
+            <div class="col-md-4"><label for="p-idn">Numéro</label><input id="p-idn" class="form-control dt-mono" formControlName="id_number" autocomplete="off" /></div>
+            <div class="col-md-4"><label for="p-phone">Téléphone</label><input id="p-phone" class="form-control" type="tel" formControlName="phone" /></div>
+            <div class="col-md-6"><label for="p-poa">Référence de la procuration</label><input id="p-poa" class="form-control" formControlName="power_of_attorney_ref" placeholder="Ex. légalisée mairie de Pikine n° 1234" /></div>
+          </div>
+        </section>
+      }
+
+      <section class="dt-card">
+        <p class="dt-step"><span>{{ isProxy ? 4 : 3 }}</span> Contrôles</p>
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" id="chk-photo" formControlName="identity_photo_matches" />
+          <label class="form-check-label" for="chk-photo">J'ai vérifié que la photo de la pièce d'identité correspond à la personne présente.</label>
+        </div>
+        @if (isProxy) {
+          <div class="form-check mt-1">
+            <input class="form-check-input" type="checkbox" id="chk-poa" formControlName="power_of_attorney_verified" />
+            <label class="form-check-label" for="chk-poa">J'ai vérifié la procuration signée et je la conserve.</label>
+          </div>
+        }
+
+        @if (needNameOverride()) {
+          <div class="dt-callout dt-callout--warning"><i class="fas fa-user-edit" aria-hidden="true"></i><div>{{ needNameOverride() }}</div></div>
+          <label for="ov-name" class="mt-2 dt-required">Motif de la dérogation (responsable)</label>
+          <textarea id="ov-name" class="form-control" rows="2" formControlName="name_override_reason" placeholder="Ex. nom d'épouse, erreur de transcription vérifiée sur l'extrait de naissance"></textarea>
+        }
+        @if (needVigilanceOverride()) {
+          <div class="dt-callout dt-callout--danger"><i class="fas fa-shield-alt" aria-hidden="true"></i><div>{{ needVigilanceOverride() }}</div></div>
+          <label for="ov-vig" class="mt-2 dt-required">Motif de l'autorisation (responsable)</label>
+          <textarea id="ov-vig" class="form-control" rows="2" formControlName="vigilance_override_reason"></textarea>
+        }
+      </section>
+
+      <div class="d-flex justify-content-end">
+        <button type="submit" class="btn btn-dt btn-lg" [disabled]="saving() || !p.can_restitute">
+          <i class="fas fa-handshake me-1" aria-hidden="true"></i> {{ saving() ? 'Enregistrement…' : 'Enregistrer la restitution' }}
+        </button>
+      </div>
+    </form>
+  </div>
+}

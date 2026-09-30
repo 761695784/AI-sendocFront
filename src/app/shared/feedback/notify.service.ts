@@ -70,4 +70,33 @@ export class NotifyService {
     });
     return result.isConfirmed ? String(result.value ?? '').trim() : null;
   }
+
+  /** Saisie d'une valeur (montant, téléphone…). Renvoie la valeur, ou null si annulé. */
+  async prompt(options: {
+    title: string;
+    text?: string;
+    label?: string;
+    input?: 'text' | 'number' | 'tel';
+    value?: string;
+    placeholder?: string;
+    required?: boolean;
+    confirmText?: string;
+  }): Promise<string | null> {
+    const result = await Swal.fire({
+      title: options.title,
+      text: options.text,
+      input: options.input ?? 'text',
+      inputLabel: options.label,
+      inputValue: options.value ?? '',
+      inputPlaceholder: options.placeholder,
+      showCancelButton: true,
+      confirmButtonText: options.confirmText ?? 'Valider',
+      cancelButtonText: 'Annuler',
+      confirmButtonColor: COLORS.confirm,
+      cancelButtonColor: COLORS.cancel,
+      reverseButtons: true,
+      inputValidator: (value: unknown) => (options.required && !String(value ?? '').trim() ? 'Ce champ est obligatoire.' : null),
+    });
+    return result.isConfirmed ? String(result.value ?? '').trim() : null;
+  }
 }

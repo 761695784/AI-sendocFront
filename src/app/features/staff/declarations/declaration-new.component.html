@@ -1,0 +1,91 @@
+<app-page-header title="Nouvelle déclaration de perte" subtitle="Au guichet — le certificat est délivré à l'enregistrement">
+  <a routerLink="/espace/declarations" class="btn btn-outline-secondary">Annuler</a>
+</app-page-header>
+
+<!-- ── 1. La personne ── -->
+<section class="dt-card">
+  <p class="dt-step"><span>1</span> La personne qui déclare</p>
+  @if (citizen(); as c) {
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-2">
+      <div>
+        <b>{{ c.first_name }} {{ c.last_name }}</b>
+        <small class="d-block dt-muted">@if (c.birth_date) { Né(e) le {{ c.birth_date | date: 'd MMM y' }} · }{{ c.phone_masked }}</small>
+      </div>
+      <button type="button" class="btn btn-sm btn-outline-secondary" (click)="citizen.set(null)">Changer</button>
+    </div>
+  } @else {
+    <app-citizen-picker (picked)="choose($event)" />
+  }
+</section>
+
+@if (citizen()) {
+  <!-- ── 2. Les pièces ── -->
+  <section class="dt-card dt-form">
+    <p class="dt-step"><span>2</span> Pièce(s) perdue(s)</p>
+    @for (item of items.controls; track $index; let i = $index) {
+      <div class="border rounded-3 p-3 mb-2" [formGroup]="item">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+          <b class="small text-uppercase dt-muted">Pièce {{ i + 1 }}</b>
+          @if (items.length > 1) {
+            <button type="button" class="btn btn-sm btn-link text-danger" (click)="removeItem(i)">Retirer</button>
+          }
+        </div>
+        <div class="row g-2">
+          <div class="col-md-4">
+            <label [for]="'t' + i" class="dt-required">Type</label>
+            <select [id]="'t' + i" class="form-select" formControlName="document_type_id">
+              <option value="" disabled>Choisir…</option>
+              @for (t of types(); track t.id) { <option [value]="t.id">{{ t.TypeName }}</option> }
+            </select>
+            @if (fieldError(item.controls.document_type_id, 'Le type'); as e) { <small class="dt-error">{{ e }}</small> }
+          </div>
+          <div class="col-md-4">
+            <label [for]="'l' + i" class="dt-required">Nom sur la pièce</label>
+            <input [id]="'l' + i" class="form-control" formControlName="last_name" />
+            @if (fieldError(item.controls.last_name, 'Le nom'); as e) { <small class="dt-error">{{ e }}</small> }
+          </div>
+          <div class="col-md-4">
+            <label [for]="'f' + i" class="dt-required">Prénom(s) sur la pièce</label>
+            <input [id]="'f' + i" class="form-control" formControlName="first_name" />
+            @if (fieldError(item.controls.first_name, 'Le prénom'); as e) { <small class="dt-error">{{ e }}</small> }
+          </div>
+          <div class="col-md-4">
+            <label [for]="'b' + i">Date de naissance</label>
+            <input [id]="'b' + i" class="form-control" type="date" formControlName="birth_date" [max]="today" />
+          </div>
+          <div class="col-md-8">
+            <label [for]="'n' + i">Numéro de la pièce</label>
+            <input [id]="'n' + i" class="form-control dt-mono" formControlName="doc_number" autocomplete="off" />
+            <small class="form-text">Fortement conseillé : une correspondance par numéro est confirmée automatiquement.</small>
+          </div>
+        </div>
+      </div>
+    }
+    @if (items.length < 10) {
+      <button type="button" class="btn btn-sm btn-outline-secondary" (click)="addItem()"><i class="fas fa-plus me-1" aria-hidden="true"></i> Ajouter une pièce</button>
+    }
+  </section>
+
+  <!-- ── 3. Circonstances ── -->
+  <section class="dt-card dt-form" [formGroup]="context">
+    <p class="dt-step"><span>3</span> Circonstances</p>
+    <div class="row g-2">
+      <div class="col-md-3"><label for="c-date">Date de la perte</label><input id="c-date" class="form-control" type="date" formControlName="lost_at" [max]="today" /></div>
+      <div class="col-md-5"><label for="c-place">Lieu</label><input id="c-place" class="form-control" formControlName="lost_place" placeholder="Ex. Marché Tilène" /></div>
+      <div class="col-md-4">
+        <label for="c-dept">Département</label>
+        <select id="c-dept" class="form-select" formControlName="territory_code">
+          <option value="">—</option>
+          @for (d of departments(); track d.code) { <option [value]="d.code">{{ d.name }}</option> }
+        </select>
+      </div>
+      <div class="col-12"><label for="c-circ">Récit (facultatif)</label><textarea id="c-circ" class="form-control" rows="3" formControlName="circumstances"></textarea></div>
+    </div>
+  </section>
+
+  <div class="d-flex justify-content-end mt-3">
+    <button type="button" class="btn btn-dt btn-lg" [disabled]="saving()" (click)="submit()">
+      <i class="fas fa-check me-1" aria-hidden="true"></i> {{ saving() ? 'Enregistrement…' : 'Enregistrer la déclaration' }}
+    </button>
+  </div>
+}
