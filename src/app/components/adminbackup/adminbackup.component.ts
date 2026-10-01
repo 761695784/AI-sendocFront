@@ -2,11 +2,10 @@ import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit, ChangeDetectionStrategy } fr
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { BackupService } from '../services/backup.service';
-import { SideheadersComponent } from "../sideheaders/sideheaders.component";
 
 @Component({
     selector: 'app-adminbackup',
-    imports: [CommonModule, FormsModule, SideheadersComponent],
+    imports: [CommonModule, FormsModule],
     templateUrl: './adminbackup.component.html',
     styleUrls: ['./adminbackup.component.css'],
     changeDetection: ChangeDetectionStrategy.Eager,

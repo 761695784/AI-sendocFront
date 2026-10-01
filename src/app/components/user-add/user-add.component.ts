@@ -1,14 +1,13 @@
 import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormGroup, FormBuilder, Validators, ReactiveFormsModule, FormsModule } from '@angular/forms';
-import { SideheadersComponent } from '../sideheaders/sideheaders.component';
 import Swal from 'sweetalert2';
 import { AuthService } from '../services/auth.service';
 import { Router } from '@angular/router';
 
 @Component({
     selector: 'app-user-add',
-    imports: [CommonModule, FormsModule, SideheadersComponent, ReactiveFormsModule],
+    imports: [CommonModule, FormsModule, ReactiveFormsModule],
     templateUrl: './user-add.component.html',
     styleUrl: './user-add.component.css',
     changeDetection: ChangeDetectionStrategy.Eager,

@@ -3,7 +3,6 @@ import { FormsModule } from '@angular/forms';
 import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { PublicationsService } from '../services/publications.service';
 import { FooterComponent } from '../footer/footer.component';
-import { SideheadersComponent } from '../sideheaders/sideheaders.component';
 import { CommonModule } from '@angular/common';
 import Swal from 'sweetalert2';
 import { DocTypeService, DocType } from '../services/doc-type.service';
@@ -40,7 +39,7 @@ export interface Document {
 
 @Component({
     selector: 'app-adminpub',
-    imports: [SideheadersComponent, CommonModule, FormsModule],
+    imports: [CommonModule, FormsModule],
     templateUrl: './adminpub.component.html',
     changeDetection: ChangeDetectionStrategy.Eager,
     styleUrls: ['./adminpub.component.css']

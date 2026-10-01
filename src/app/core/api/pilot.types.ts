@@ -213,7 +213,7 @@ export interface ActivityReport {
   // Détail (GET /reports/{uuid})
   analysis?: ReportAnalysis;
   narrative?: ReportNarrative | null;
-  narrative_review?: { reviewed_at: string | null; note: string | null; attempts: number | null };
+  narrative_review?: { reviewed_at: string | null; note: string | null; attempts: { provider: string; model?: string; ok: boolean; error?: string }[] | null };
 }
 
 // ── Structures et membres ────────────────────────────────────────

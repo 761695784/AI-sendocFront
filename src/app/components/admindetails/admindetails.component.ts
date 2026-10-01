@@ -2,7 +2,6 @@ import { ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { Component, CUSTOM_ELEMENTS_SCHEMA, ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { SideheadersComponent } from '../sideheaders/sideheaders.component';
 import { FooterComponent } from '../footer/footer.component';
 import { Commentaire, DocumentDetails } from '../document-detail/document-detail.component';
 import { PublicationsService } from '../services/publications.service';
@@ -14,7 +13,7 @@ import { AuthService } from '../services/auth.service';
 
 @Component({
     selector: 'app-admindetails',
-    imports: [SideheadersComponent, CommonModule, FormsModule],
+    imports: [CommonModule, FormsModule],
     templateUrl: './admindetails.component.html',
     styleUrl: './admindetails.component.css',
     changeDetection: ChangeDetectionStrategy.Eager,

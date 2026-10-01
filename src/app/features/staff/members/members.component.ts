@@ -10,6 +10,7 @@ import { NotifyService } from '../../../shared/feedback/notify.service';
 import { PageHeaderComponent } from '../../../shared/ui/page-header.component';
 import { StatusBadgeComponent } from '../../../shared/ui/status-badge.component';
 import { EmptyStateComponent, ErrorStateComponent, LoadingComponent } from '../../../shared/ui/state.components';
+import { spaceBase } from '../shared/space-base';
 import { fieldError, normalizeSenegalPhone, personNameValidator, senegalPhoneValidator } from '../../../shared/forms/validators';
 
 /**
@@ -56,6 +57,7 @@ export class StaffMembersComponent {
   readonly saving = signal(false);
   readonly editing = signal<string | null>(null);
 
+  readonly base = spaceBase();
   readonly roleLabels = ROLE_LABELS;
   readonly fieldError = fieldError;
 

@@ -1,6 +1,5 @@
 import { AuthService } from './../services/auth.service';
 import { Component, ChangeDetectionStrategy } from '@angular/core';
-import { SideheadersComponent } from '../sideheaders/sideheaders.component';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
@@ -36,7 +35,6 @@ export interface Declaration {
 @Component({
     selector: 'app-admindeclaration',
     imports: [
-        SideheadersComponent,
         CommonModule,
         FormsModule,
         NgxPaginationModule,

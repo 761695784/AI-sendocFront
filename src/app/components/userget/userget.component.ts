@@ -3,7 +3,6 @@ import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 // import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
-import { SideheadersComponent } from "../sideheaders/sideheaders.component";
 import { Router } from '@angular/router';
 import Swal from 'sweetalert2';
 
@@ -20,7 +19,7 @@ interface User {
 
 @Component({
     selector: 'app-userget',
-    imports: [CommonModule, FormsModule, SideheadersComponent],
+    imports: [CommonModule, FormsModule],
     templateUrl: './userget.component.html',
     changeDetection: ChangeDetectionStrategy.Eager,
     styleUrls: ['./userget.component.css']

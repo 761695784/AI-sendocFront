@@ -4,7 +4,7 @@
   <app-error-state [message]="error()!"><button type="button" class="btn btn-sm btn-outline-danger" (click)="load()">Réessayer</button></app-error-state>
 } @else if (org(); as o) {
   <app-page-header title="Membres" [subtitle]="o.name + (o.type ? ' · ' + o.type.name : '')">
-    @if (isOther()) { <a routerLink="/espace/structures" class="btn btn-outline-secondary">Retour aux structures</a> }
+    @if (isOther()) { <a [routerLink]="base + '/structures'" class="btn btn-outline-secondary">Retour aux structures</a> }
     @if (canManage() && roles().length) {
       <button type="button" class="btn btn-dt" (click)="showAdd.set(!showAdd())" [attr.aria-expanded]="showAdd()">
         <i class="fas fa-user-plus me-1" aria-hidden="true"></i> Ajouter un membre

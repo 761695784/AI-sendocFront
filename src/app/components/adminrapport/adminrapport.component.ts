@@ -2,11 +2,10 @@ import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RapportService, Rapport } from '../services/rapport.service';
-import { SideheadersComponent } from '../sideheaders/sideheaders.component';
 
 @Component({
     selector: 'app-adminrapport',
-    imports: [CommonModule, FormsModule, SideheadersComponent],
+    imports: [CommonModule, FormsModule],
     templateUrl: './adminrapport.component.html',
     changeDetection: ChangeDetectionStrategy.Eager,
     styleUrl: './adminrapport.component.css'

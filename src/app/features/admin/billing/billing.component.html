@@ -1,0 +1,142 @@
+<app-page-header title="Tarifs et reversements" subtitle="Prix des démarches, part des autorités, et ce qui a été perçu ou offert pendant le pilote" />
+
+@if (services(); as sv) {
+  @if (sv.mode === 'pilot') {
+    <div class="dt-callout dt-callout--info mt-0 mb-3"><i class="fas fa-gift" aria-hidden="true"></i>
+      <div><strong>Mode pilote : tout est gratuit.</strong> Chaque démarche est quand même enregistrée avec sa valeur théorique,
+        pour montrer aux autorités ce que le service aurait rapporté. Le passage en mode payant se fait sur le serveur (BILLING_MODE=live).</div></div>
+  } @else {
+    <div class="dt-callout dt-callout--warning mt-0 mb-3"><i class="fas fa-coins" aria-hidden="true"></i>
+      <div><strong>Mode payant.</strong> Le certificat au guichet n'est délivré qu'une fois le paiement enregistré ou l'exonération accordée.</div></div>
+  }
+}
+
+<!-- ── Tarifs ── -->
+<h2 class="h6 text-uppercase text-muted mb-2">Tarifs en vigueur</h2>
+@if (loading()) {
+  <app-loading />
+} @else if (error()) {
+  <app-error-state [message]="error()!"><button type="button" class="btn btn-sm btn-outline-danger" (click)="loadServices()">Réessayer</button></app-error-state>
+} @else if (services(); as sv) {
+  <div class="row g-3 mb-2">
+    @for (s of sv.data; track s.code) {
+      <div class="col-lg-4">
+        <section class="dt-card h-100 mb-0">
+          <h3 class="dt-card__title mb-1">{{ s.name }}</h3>
+          @if (s.description) { <p class="small dt-muted">{{ s.description }}</p> }
+          <p class="bl-price mb-0">{{ fcfa(s.current.amount) }}</p>
+          <p class="small dt-muted">
+            {{ s.current.authority_share_pct }} % pour les autorités · {{ 100 - s.current.authority_share_pct }} % pour DocTrack
+            @if (s.current.valid_from) { <br />depuis le {{ s.current.valid_from | date: 'd MMM y' }} }
+          </p>
+
+          @if (editing() === s.code) {
+            <form class="dt-form border-top pt-2" [formGroup]="priceForm" (ngSubmit)="savePrice(s)" novalidate>
+              <div class="row g-2">
+                <div class="col-6"><label [for]="'p-am-' + s.code" class="dt-required small">Montant (FCFA)</label><input [id]="'p-am-' + s.code" type="number" min="0" step="100" class="form-control form-control-sm" formControlName="amount" /></div>
+                <div class="col-6"><label [for]="'p-pc-' + s.code" class="dt-required small">Part autorités (%)</label><input [id]="'p-pc-' + s.code" type="number" min="0" max="100" class="form-control form-control-sm" formControlName="authority_share_pct" /></div>
+                <div class="col-12"><label [for]="'p-in-' + s.code" class="small">S'applique à</label>
+                  <select [id]="'p-in-' + s.code" class="form-select form-select-sm" formControlName="institution_uuid">
+                    <option value="">Tout le pays (tarif national)</option>
+                    @for (i of institutions(); track i.uuid) { <option [value]="i.uuid">{{ i.name }} (tarif particulier)</option> }
+                  </select></div>
+                <div class="col-6"><label [for]="'p-vf-' + s.code" class="small">À partir du</label><input [id]="'p-vf-' + s.code" type="date" [min]="today" class="form-control form-control-sm" formControlName="valid_from" /></div>
+                <div class="col-6"><label [for]="'p-no-' + s.code" class="small">Motif</label><input [id]="'p-no-' + s.code" class="form-control form-control-sm" formControlName="note" placeholder="Ex. arrêté du …" /></div>
+              </div>
+              @if (priceForm.invalid && priceForm.touched) { <small class="dt-error">Montant entre 0 et 1 000 000, part entre 0 et 100 %.</small> }
+              <div class="d-flex gap-2 mt-2">
+                <button type="submit" class="btn btn-sm btn-dt" [disabled]="saving()">Appliquer</button>
+                <button type="button" class="btn btn-sm btn-outline-secondary" (click)="editing.set(null)">Annuler</button>
+              </div>
+            </form>
+          } @else {
+            <div class="d-flex flex-wrap gap-2">
+              <button type="button" class="btn btn-sm btn-outline-secondary" (click)="edit(s)">Modifier le tarif</button>
+              @if (s.history.length > 1) {
+                <button type="button" class="btn btn-sm btn-link px-0" (click)="showHistory.set(showHistory() === s.code ? null : s.code)" [attr.aria-expanded]="showHistory() === s.code">
+                  Historique ({{ s.history.length }})</button>
+              }
+            </div>
+          }
+
+          @if (showHistory() === s.code) {
+            <table class="table table-sm small mt-2 mb-0">
+              <thead><tr><th>Période</th><th>Portée</th><th class="text-end">Montant</th></tr></thead>
+              <tbody>
+                @for (h of s.history; track h.id) {
+                  <tr>
+                    <td class="text-nowrap">{{ h.valid_from ? (h.valid_from | date: 'd/MM/yy') : '—' }} → {{ h.valid_to ? (h.valid_to | date: 'd/MM/yy') : 'en cours' }}</td>
+                    <td>{{ h.institution?.name ?? 'National' }}@if (h.note) { <span class="d-block dt-muted">{{ h.note }}</span> }</td>
+                    <td class="text-end text-nowrap">{{ fcfa(h.amount) }} <span class="dt-muted">({{ h.authority_share_pct }} %)</span></td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          }
+        </section>
+      </div>
+    }
+  </div>
+}
+
+<!-- ── Rapport de reversement ── -->
+<section class="dt-card mt-4">
+  <div class="d-flex flex-wrap justify-content-between align-items-end gap-2 mb-3">
+    <h2 class="dt-card__title mb-0">Rapport de reversement</h2>
+    <form class="d-flex flex-wrap align-items-end gap-2" (ngSubmit)="loadReport()">
+      <div><label for="b-month" class="small">Mois</label><input id="b-month" name="month" type="month" class="form-control form-control-sm" [max]="today.slice(0, 7)" [(ngModel)]="month" /></div>
+      <div><label for="b-inst" class="small">Institution</label>
+        <select id="b-inst" name="inst" class="form-select form-select-sm" [(ngModel)]="institution">
+          <option value="">National (toutes)</option>
+          @for (i of institutions(); track i.uuid) { <option [value]="i.uuid">{{ i.name }}</option> }
+        </select></div>
+      <button type="submit" class="btn btn-sm btn-dt">Afficher</button>
+      <button type="button" class="btn btn-sm btn-outline-secondary" [disabled]="exporting() || !report()" (click)="exportCsv()"><i class="fas fa-file-csv me-1" aria-hidden="true"></i>Excel / CSV</button>
+    </form>
+  </div>
+
+  @if (reportLoading()) {
+    <app-loading />
+  } @else if (report(); as r) {
+    <p class="small dt-muted">Du {{ r.period.from | date: 'd MMM y' }} au {{ r.period.to | date: 'd MMM y' }} · {{ r.scope === 'national' ? 'National' : r.scope.name }}</p>
+    <div class="bl-grid mb-3">
+      <div class="bl-tile"><span>Démarches</span><strong>{{ r.totals.count | number }}</strong></div>
+      <div class="bl-tile"><span>Perçu</span><strong>{{ fcfa(r.totals.collected) }}</strong><small>{{ r.totals.paid_count }} paiement(s)</small></div>
+      <div class="bl-tile"><span>Part des autorités</span><strong>{{ fcfa(r.totals.authority_share) }}</strong></div>
+      <div class="bl-tile"><span>Part DocTrack</span><strong>{{ fcfa(r.totals.platform_share) }}</strong></div>
+      <div class="bl-tile"><span>Offert (pilote)</span><strong>{{ fcfa(r.totals.pilot_theoretical_value) }}</strong><small>{{ r.totals.pilot_count }} démarche(s) gratuites</small></div>
+      <div class="bl-tile"><span>Exonérations</span><strong>{{ r.totals.exempted_count | number }}</strong><small>{{ fcfa(r.totals.exempted_value) }}</small></div>
+      @if (r.totals.pending_count) {
+        <div class="bl-tile"><span>En attente de paiement</span><strong>{{ fcfa(r.totals.pending_amount) }}</strong><small>{{ r.totals.pending_count }} démarche(s)</small></div>
+      }
+    </div>
+
+    @if (!r.by_service.length) {
+      <p class="small dt-muted mb-0">Aucune démarche facturable sur cette période.</p>
+    } @else {
+      <div class="table-responsive">
+        <table class="table table-sm align-middle">
+          <thead class="table-light"><tr><th>Service</th><th class="text-end">Démarches</th><th class="text-end">Perçu</th><th class="text-end">Autorités</th><th class="text-end">DocTrack</th><th class="text-end">Pilote (valeur)</th><th class="text-end">Exonérées</th></tr></thead>
+          <tbody>
+            @for (row of r.by_service; track row.service) {
+              <tr><td>{{ row.name }}</td><td class="text-end">{{ row.count }}</td><td class="text-end">{{ fcfa(row.collected) }}</td><td class="text-end">{{ fcfa(row.authority_share) }}</td>
+                <td class="text-end">{{ fcfa(row.platform_share) }}</td><td class="text-end">{{ fcfa(row.pilot_theoretical_value) }}</td><td class="text-end">{{ row.exempted_count }}</td></tr>
+            }
+          </tbody>
+        </table>
+      </div>
+      <h3 class="h6 mt-3">Par institution</h3>
+      <div class="table-responsive">
+        <table class="table table-sm align-middle mb-0">
+          <thead class="table-light"><tr><th>Institution</th><th class="text-end">Démarches</th><th class="text-end">Perçu</th><th class="text-end">À reverser (autorités)</th><th class="text-end">Pilote (valeur)</th></tr></thead>
+          <tbody>
+            @for (row of r.by_institution; track row.institution) {
+              <tr><td>{{ row.institution }}</td><td class="text-end">{{ row.count }}</td><td class="text-end">{{ fcfa(row.collected) }}</td>
+                <td class="text-end fw-semibold">{{ fcfa(row.authority_share) }}</td><td class="text-end">{{ fcfa(row.pilot_theoretical_value) }}</td></tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  }
+</section>

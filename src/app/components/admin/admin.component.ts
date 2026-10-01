@@ -1,6 +1,5 @@
 import { PublicationTypeChartComponent } from './../publication-type-chart/publication-type-chart.component';
 import { FormsModule } from '@angular/forms';
-import { SideheadersComponent } from './../sideheaders/sideheaders.component';
 import { AuthService } from './../services/auth.service';
 import { SidebarComponent } from './../sidebar/sidebar.component';
 import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
@@ -10,7 +9,7 @@ import { EmailActivityChartComponent } from '../email-activity-chart/email-activ
 
 @Component({
     selector: 'app-admin',
-    imports: [CommonModule, SideheadersComponent, FormsModule, PublicationTypeChartComponent, EmailActivityChartComponent],
+    imports: [CommonModule, FormsModule, PublicationTypeChartComponent, EmailActivityChartComponent],
     templateUrl: './admin.component.html',
     changeDetection: ChangeDetectionStrategy.Eager,
     styleUrls: ['./admin.component.css']

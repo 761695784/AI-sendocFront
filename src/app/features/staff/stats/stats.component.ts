@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnInit, computed, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, computed, inject, input, signal } from '@angular/core';
 import { DatePipe, DecimalPipe, NgTemplateOutlet } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
@@ -68,6 +68,9 @@ export class StaffStatsComponent implements OnInit {
   ];
   readonly metrics = Object.entries(METRIC_LABELS) as [TimeseriesMetric, string][];
 
+  /** Espace super admin : chiffres nationaux, quelle que soit la structure active (donnée de route). */
+  readonly national = input(false);
+
   readonly period = signal<PeriodKey>('30');
   customFrom = lastDays(30).from;
   customTo = isoDate(new Date());
@@ -95,7 +98,7 @@ export class StaffStatsComponent implements OnInit {
 
   query(): StatsQuery {
     const range = this.period() === 'custom' ? { from: this.customFrom, to: this.customTo } : lastDays(Number(this.period()));
-    return { organization: this.session.activeOrganization()?.uuid ?? null, ...range };
+    return { organization: this.national() ? null : (this.session.activeOrganization()?.uuid ?? null), ...range };
   }
 
   selectPeriod(key: PeriodKey): void {

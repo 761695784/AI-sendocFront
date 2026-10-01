@@ -10,6 +10,7 @@ import { PageHeaderComponent } from '../../../shared/ui/page-header.component';
 import { StatusBadgeComponent } from '../../../shared/ui/status-badge.component';
 import { EmptyStateComponent, ErrorStateComponent, LoadingComponent } from '../../../shared/ui/state.components';
 import { PaginatorComponent } from '../../../shared/ui/paginator.component';
+import { spaceBase } from '../shared/space-base';
 
 /** Fiche liée à l'alerte (document trouvé, déclaration…) dans l'espace structure. */
 export function alertSubjectRoute(a: Pick<VigilanceAlert, 'subject'>): string[] | null {
@@ -246,10 +247,10 @@ export class StaffVigilanceComponent implements OnInit {
     @if (loading()) {
       <app-loading />
     } @else if (error()) {
-      <app-error-state [message]="error()!"><a routerLink="/espace/vigilance" class="btn btn-sm btn-outline-danger">Retour</a></app-error-state>
+      <app-error-state [message]="error()!"><a [routerLink]="base + '/vigilance'" class="btn btn-sm btn-outline-danger">Retour</a></app-error-state>
     } @else if (alert(); as a) {
       <app-page-header [title]="a.label" [subtitle]="'Signalée le ' + (a.created_at | date: 'd MMMM y à HH:mm')">
-        <a routerLink="/espace/vigilance" class="btn btn-outline-secondary">Retour</a>
+        <a [routerLink]="base + '/vigilance'" class="btn btn-outline-secondary">Retour</a>
       </app-page-header>
       <div class="row g-3">
         <div class="col-lg-7">
@@ -306,6 +307,7 @@ export class StaffVigilanceDetailComponent implements OnInit {
   private readonly session = inject(SessionStore);
 
   readonly uuid = input.required<string>();
+  readonly base = spaceBase();
   readonly levels = ALERT_LEVELS;
   readonly alert = signal<VigilanceAlert | null>(null);
   readonly loading = signal(true);

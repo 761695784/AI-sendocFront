@@ -81,3 +81,9 @@
   .navbar-wrap, .dt-hero, .dt-tabs, .dt-no-print, app-footer { display: none !important; }
   .dt-page { padding-top: 0; background: #fff; }
 }
+
+/* ── Écrans historiques (V1) affichés dans la mise en page de l'espace super admin (/admin) ──
+   Ils avaient leur propre menu fixe (240 px) et une barre du haut (64 px) : on neutralise ces décalages. */
+.dt-admin-main .page-content,
+.dt-admin-main .layout-right { margin-left: 0 !important; margin-top: 0 !important; }
+.dt-admin-main .layout-wrapper { min-height: 0 !important; display: block !important; }

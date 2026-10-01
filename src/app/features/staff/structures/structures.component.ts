@@ -11,6 +11,7 @@ import { PageHeaderComponent } from '../../../shared/ui/page-header.component';
 import { EmptyStateComponent, ErrorStateComponent, LoadingComponent } from '../../../shared/ui/state.components';
 import { PaginatorComponent } from '../../../shared/ui/paginator.component';
 import { currentPosition, isInSenegal } from '../../../shared/media/geolocation';
+import { spaceBase } from '../shared/space-base';
 import { fieldError, normalizeSenegalPhone, senegalPhoneValidator } from '../../../shared/forms/validators';
 
 /** Types qu'on peut créer sous un parent donné (une structure n'a pas d'enfant, une institution est une racine). */
@@ -21,7 +22,8 @@ export function childTypes(types: OrganizationType[], parentLevel: string | unde
   return types.filter((t) => t.level !== 'institution');
 }
 
-type FormMode = { kind: 'create'; parent: Organization } | { kind: 'edit'; org: Organization };
+/** Création sous un parent, ou d'une institution (racine, super admin : parent null). */
+type FormMode = { kind: 'create'; parent: Organization | null } | { kind: 'edit'; org: Organization };
 
 /**
  * Arbre des organisations du périmètre (institution → directions → structures) :
@@ -57,6 +59,7 @@ export class StaffStructuresComponent implements OnInit {
   search = '';
   showInactive = false;
 
+  readonly base = spaceBase();
   readonly levelLabels = LEVEL_LABELS;
   readonly fieldError = fieldError;
   readonly isSuperAdmin = this.session.isSuperAdmin;
@@ -73,7 +76,10 @@ export class StaffStructuresComponent implements OnInit {
     if (!m) {
       return [];
     }
-    return m.kind === 'create' ? childTypes(this.types(), m.parent.type?.level) : this.types().filter((t) => t.level === m.org.type?.level);
+    if (m.kind === 'edit') {
+      return this.types().filter((t) => t.level === m.org.type?.level);
+    }
+    return m.parent ? childTypes(this.types(), m.parent.type?.level) : this.types().filter((t) => t.level === 'institution');
   });
   readonly departments = computed(() => this.territories().filter((t) => t.level !== 'region'));
 
@@ -124,14 +130,15 @@ export class StaffStructuresComponent implements OnInit {
     return !!o.can?.create_child && o.is_active && o.type?.level !== 'structure';
   }
 
-  openCreate(parent: Organization): void {
+  openCreate(parent: Organization | null): void {
     this.mode.set({ kind: 'create', parent });
-    const firstType = childTypes(this.types(), parent.type?.level).find((t) => t.level === 'structure') ?? childTypes(this.types(), parent.type?.level)[0];
+    const types = this.formTypes();
+    const firstType = types.find((t) => t.level === 'structure') ?? types[0];
     this.form.reset({
       organization_type: firstType?.code ?? '',
       name: '',
       code: '',
-      territory_code: parent.territory?.code ?? '',
+      territory_code: parent?.territory?.code ?? '',
       address: '',
       phone: '',
       email: '',
@@ -212,7 +219,7 @@ export class StaffStructuresComponent implements OnInit {
     this.saving.set(true);
     const request =
       m.kind === 'create'
-        ? this.api.createOrganization({ ...payload, organization_type: v.organization_type, parent_uuid: m.parent.uuid })
+        ? this.api.createOrganization({ ...payload, organization_type: v.organization_type, parent_uuid: m.parent?.uuid ?? null })
         : this.api.updateOrganization(m.org.uuid, payload);
     request.subscribe({
       next: (res) => {

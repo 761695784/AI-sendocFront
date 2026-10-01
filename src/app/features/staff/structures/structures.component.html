@@ -1,4 +1,8 @@
-<app-page-header title="Structures" subtitle="Votre institution, ses directions et ses structures d'accueil (commissariats, brigades, mairies…)" />
+<app-page-header title="Structures" subtitle="Institutions, directions et structures d'accueil (commissariats, brigades, mairies…)">
+  @if (isSuperAdmin()) {
+    <button type="button" class="btn btn-dt" (click)="openCreate(null)"><i class="fas fa-plus me-1" aria-hidden="true"></i> Nouvelle institution</button>
+  }
+</app-page-header>
 
 <form class="dt-toolbar d-flex flex-wrap gap-2 align-items-center mb-3" (submit)="$event.preventDefault(); load(1)">
   <label for="org-q" class="visually-hidden">Rechercher</label>
@@ -14,7 +18,7 @@
 
 @if (mode(); as m) {
   <section class="dt-card" id="org-form">
-    <h2 class="dt-card__title mb-1">{{ m.kind === 'create' ? 'Nouvelle organisation sous « ' + m.parent.name + ' »' : 'Modifier « ' + m.org.name + ' »' }}</h2>
+    <h2 class="dt-card__title mb-1">{{ m.kind === 'edit' ? 'Modifier « ' + m.org.name + ' »' : m.parent ? 'Nouvelle organisation sous « ' + m.parent.name + ' »' : 'Nouvelle institution (Police nationale, Gendarmerie, mairies…)' }}</h2>
     <p class="small dt-muted">La position GPS permet d'attribuer automatiquement les retraits à la structure la plus proche du lieu où le document a été trouvé.</p>
     <form class="dt-form" [formGroup]="form" (ngSubmit)="save()" novalidate>
       <div class="row g-2">
@@ -87,7 +91,7 @@
                 </div>
               </td>
               <td class="small">{{ o.territory?.name ?? '—' }}</td>
-              <td class="text-end"><a [routerLink]="['/espace/membres']" [queryParams]="{ organisation: o.uuid }">{{ o.members_count ?? 0 }}</a></td>
+              <td class="text-end"> <a [routerLink]="[base + '/membres']" [queryParams]="{ organisation: o.uuid }">{{ o.members_count ?? 0 }}</a></td>
               <td class="text-end text-nowrap">
                 @if (canAddChild(o)) {
                   <button type="button" class="btn btn-sm btn-outline-primary" (click)="openCreate(o)" [attr.aria-label]="'Ajouter sous ' + o.name"><i class="fas fa-plus" aria-hidden="true"></i> Sous-structure</button>
@@ -95,7 +99,7 @@
                 @if (o.can?.update) {
                   <button type="button" class="btn btn-sm btn-outline-secondary ms-1" (click)="openEdit(o)" [attr.aria-label]="'Modifier ' + o.name">Modifier</button>
                 }
-                @if (canToggle() && o.uuid !== activeUuid() && o.depth > baseDepth()) {
+                @if (canToggle() && o.uuid !== activeUuid() && (isSuperAdmin() || o.depth > baseDepth())) {
                   <button type="button" class="btn btn-sm ms-1" [class.btn-outline-danger]="o.is_active" [class.btn-outline-success]="!o.is_active" [disabled]="busy() === o.uuid" (click)="toggle(o)">
                     {{ o.is_active ? 'Désactiver' : 'Réactiver' }}
                   </button>

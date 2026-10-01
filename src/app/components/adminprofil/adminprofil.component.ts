@@ -1,4 +1,3 @@
-import { SideheadersComponent } from './../sideheaders/sideheaders.component';
 import { Component, CUSTOM_ELEMENTS_SCHEMA, ChangeDetectionStrategy } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthService } from '../services/auth.service';
@@ -8,7 +7,7 @@ import Swal from 'sweetalert2';
 
 @Component({
     selector: 'app-adminprofil',
-    imports: [SideheadersComponent, RouterModule, ReactiveFormsModule],
+    imports: [RouterModule, ReactiveFormsModule],
     templateUrl: './adminprofil.component.html',
     styleUrl: './adminprofil.component.css',
     changeDetection: ChangeDetectionStrategy.Eager,

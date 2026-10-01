@@ -15,23 +15,11 @@ import { EvolutionChartComponent } from './components/evolution-chart/evolution-
 import { RestitutionChartComponent } from './components/restitution-chart/restitution-chart.component';
 import { PublicationTypeChartComponent } from './components/publication-type-chart/publication-type-chart.component';
 import { EmailActivityChartComponent } from './components/email-activity-chart/email-activity-chart.component';
-import { AdminComponent } from './components/admin/admin.component';
-import { AdminpubComponent } from './components/adminpub/adminpub.component';
-import { AdmindetailsComponent } from './components/admindetails/admindetails.component';
-import { AdmindeclarationComponent } from './components/admindeclaration/admindeclaration.component';
-import { UsergetComponent } from './components/userget/userget.component';
-import { UserAddComponent } from './components/user-add/user-add.component';
-import { AdminprofilComponent } from './components/adminprofil/adminprofil.component';
-import { AdminstatsComponent } from './components/adminstats/adminstats.component';
 import { AProposComponent } from './components/a-propos/a-propos.component';
 import { ResetPasswordComponent } from './components/reset-password/reset-password.component';
 import { NewpassComponent } from './components/newpass/newpass.component';
 import { PrivatePolicyComponent } from './components/private-policy/private-policy.component';
 import { QrcodeComponent } from './components/qrcode/qrcode.component';
-import { AdmincertifComponent } from './components/admincertif/admincertif.component';
-import { AdminlogsComponent } from './components/adminlogs/adminlogs.component';
-import { AdminbackupComponent } from './components/adminbackup/adminbackup.component';
-import { AdminrapportComponent } from './components/adminrapport/adminrapport.component';
 
 
 export const routes: Routes = [
@@ -64,24 +52,11 @@ export const routes: Routes = [
   { path: 'modify', component: ChangeprofilComponent, canActivate: [authGuard] },
   { path: 'code', component: QrcodeComponent,canActivate: [authGuard] },
 
-  // Routes pour un Administrateur
+  // Espace super admin (V2 + écrans historiques) — chargé à la demande
   {
     path: 'admin',
     canActivate: [superAdminGuard],
-    children: [
-      { path: '', component: AdminComponent },
-      { path: 'profil', component: AdminprofilComponent },
-      { path: 'adminpub', component: AdminpubComponent },
-      { path: 'admindec', component: AdmindeclarationComponent },
-      { path: 'adminuser', component: UsergetComponent },
-      { path: 'adminadd', component: UserAddComponent },
-      { path: 'adminstats', component: AdminstatsComponent },
-      { path: 'admindetails/:uuid', component: AdmindetailsComponent },
-      { path: 'admincertif', component: AdmincertifComponent },
-      { path: 'adminlogs', component: AdminlogsComponent },
-      { path: 'adminbackup', component: AdminbackupComponent },
-      { path: 'adminrapport', component: AdminrapportComponent },
-    ]
+    loadChildren: () => import('./features/admin/admin.routes').then(m => m.ADMIN_ROUTES)
   },
 
   // Routes pour les differents diagrammes

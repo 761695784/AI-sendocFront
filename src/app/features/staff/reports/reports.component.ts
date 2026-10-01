@@ -12,6 +12,8 @@ import { PageHeaderComponent } from '../../../shared/ui/page-header.component';
 import { EmptyStateComponent, ErrorStateComponent, LoadingComponent } from '../../../shared/ui/state.components';
 import { PaginatorComponent } from '../../../shared/ui/paginator.component';
 import { isoDate } from '../stats/stats.component';
+import { spaceBase } from '../shared/space-base';
+import { NarrativeReviewComponent } from '../../admin/narrative-review/narrative-review.component';
 
 /** Niveau global d'un rapport → couleur de statut + icône (jamais la couleur seule). */
 export function reportLevel(level: string | null | undefined): { tone: string; icon: string; label: string } {
@@ -73,12 +75,25 @@ export function previousMonth(today = new Date()): string {
       </form>
     </section>
 
+    @if (isSuperAdmin()) {
+      <ul class="nav nav-pills mb-3">
+        <li class="nav-item"><button type="button" class="nav-link" [class.active]="!narrativeFilter()" (click)="filterNarrative('')">Tous les rapports</button></li>
+        <li class="nav-item"><button type="button" class="nav-link" [class.active]="narrativeFilter() === 'pending'" (click)="filterNarrative('pending')"><i class="fas fa-robot me-1" aria-hidden="true"></i>Synthèses IA à valider</button></li>
+      </ul>
+    }
+
     @if (loading()) {
       <app-loading />
     } @else if (error()) {
       <app-error-state [message]="error()!"><button type="button" class="btn btn-sm btn-outline-danger" (click)="load(1)">Réessayer</button></app-error-state>
     } @else if (!page()?.data?.length) {
-      <div class="dt-card"><app-empty-state icon="fa-file-invoice" title="Aucun rapport pour le moment" text="Le rapport du mois écoulé est produit automatiquement au début de chaque mois." /></div>
+      <div class="dt-card">
+        @if (narrativeFilter() === 'pending') {
+          <app-empty-state icon="fa-robot" title="Aucune synthèse à valider" text="Quand l’IA rédige la synthèse d’un rapport mensuel, elle attend ici votre relecture avant l’envoi aux institutions." />
+        } @else {
+          <app-empty-state icon="fa-file-invoice" title="Aucun rapport pour le moment" text="Le rapport du mois écoulé est produit automatiquement au début de chaque mois." />
+        }
+      </div>
     } @else {
       <div class="dt-card p-0 overflow-hidden">
         <div class="table-responsive">
@@ -95,6 +110,7 @@ export function previousMonth(today = new Date()): string {
                       <span class="badge" [class]="'text-bg-' + level(r).tone"><i class="fas {{ level(r).icon }} me-1" aria-hidden="true"></i>{{ level(r).label }}</span>
                       <small class="dt-muted ms-1">{{ r.score }}/100</small>
                     } @else { — }
+                    @if (isSuperAdmin() && r.narrative_status === 'pending') { <span class="badge text-bg-warning d-table mt-1"><i class="fas fa-robot me-1" aria-hidden="true"></i>Synthèse à valider</span> }
                   </td>
                   <td class="text-end">{{ r.alerts_count }}</td>
                   <td class="text-end text-nowrap">
@@ -116,6 +132,7 @@ export class StaffReportsComponent implements OnInit {
   private readonly notify = inject(NotifyService);
   private readonly session = inject(SessionStore);
   private readonly router = inject(Router);
+  readonly base = spaceBase();
 
   readonly page = signal<LaravelPage<ActivityReport> | null>(null);
   readonly loading = signal(true);
@@ -132,16 +149,32 @@ export class StaffReportsComponent implements OnInit {
   from = '';
   to = this.today;
 
-  readonly scopeName = computed(() => this.session.activeOrganization()?.name ?? 'National');
+  /** Espace super admin : rapports nationaux et de toutes les institutions (donnée de route). */
+  readonly national = input(false);
+  readonly isSuperAdmin = this.session.isSuperAdmin;
+  readonly narrativeFilter = signal('');
+  readonly orgUuid = computed(() => (this.national() ? null : (this.session.activeOrganization()?.uuid ?? null)));
+  readonly scopeName = computed(() => (this.national() ? 'National' : (this.session.activeOrganization()?.name ?? 'National')));
+
+  /** ?filtre=syntheses : ouvre directement la file des synthèses IA à valider (lien de l'accueil admin). */
+  readonly filtre = input<string | undefined>();
 
   ngOnInit(): void {
+    if (this.filtre() === 'syntheses' && this.isSuperAdmin()) {
+      this.narrativeFilter.set('pending');
+    }
+    this.load(1);
+  }
+
+  filterNarrative(status: string): void {
+    this.narrativeFilter.set(status);
     this.load(1);
   }
 
   load(page: number): void {
     this.loading.set(true);
     this.error.set(null);
-    this.api.reports({ organization: this.session.activeOrganization()?.uuid ?? null, page }).subscribe({
+    this.api.reports({ organization: this.orgUuid(), narrative_status: this.narrativeFilter() || null, page }).subscribe({
       next: (p) => {
         this.page.set(p);
         this.loading.set(false);
@@ -162,7 +195,7 @@ export class StaffReportsComponent implements OnInit {
   }
 
   generate(): void {
-    const organization = this.session.activeOrganization()?.uuid ?? null;
+    const organization = this.orgUuid();
     let payload: Parameters<PilotApi['generateReport']>[0];
     if (this.kind === 'month') {
       if (!this.month) {
@@ -184,7 +217,7 @@ export class StaffReportsComponent implements OnInit {
       next: (r) => {
         this.generating.set(false);
         this.notify.success('Rapport prêt.');
-        this.router.navigate(['/espace/rapports', r.uuid]);
+        this.router.navigate([this.base + '/rapports', r.uuid]);
       },
       error: (e) => {
         this.generating.set(false);
@@ -211,16 +244,16 @@ export class StaffReportsComponent implements OnInit {
 /** Fiche d'un rapport : niveau, synthèse, alertes, points positifs, recommandations, synthèse rédigée (si validée). */
 @Component({
   selector: 'app-staff-report-detail',
-  imports: [DatePipe, RouterLink, PageHeaderComponent, LoadingComponent, ErrorStateComponent],
+  imports: [DatePipe, RouterLink, PageHeaderComponent, LoadingComponent, ErrorStateComponent, NarrativeReviewComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     @if (loading()) {
       <app-loading />
     } @else if (error()) {
-      <app-error-state [message]="error()!"><a routerLink="/espace/rapports" class="btn btn-sm btn-outline-danger">Retour</a></app-error-state>
+      <app-error-state [message]="error()!"><a [routerLink]="base + '/rapports'" class="btn btn-sm btn-outline-danger">Retour</a></app-error-state>
     } @else if (report(); as r) {
       <app-page-header [title]="r.title" [subtitle]="r.period.label + ' · ' + r.reference">
-        <a routerLink="/espace/rapports" class="btn btn-outline-secondary">Retour</a>
+        <a [routerLink]="base + '/rapports'" class="btn btn-outline-secondary">Retour</a>
         <button type="button" class="btn btn-dt" (click)="download('pdf')"><i class="fas fa-file-pdf me-1" aria-hidden="true"></i> PDF</button>
         <button type="button" class="btn btn-outline-secondary" (click)="download('xlsx')"><i class="fas fa-file-excel me-1" aria-hidden="true"></i> Excel</button>
         @if (isSuperAdmin()) {
@@ -229,7 +262,7 @@ export class StaffReportsComponent implements OnInit {
       </app-page-header>
 
       <div class="row g-3">
-        <div class="col-lg-8">
+        <div [class]="isSuperAdmin() ? 'col-lg-6' : 'col-lg-8'">
           @if (r.analysis; as a) {
             <section class="dt-card">
               <div class="d-flex align-items-center gap-3 mb-2">
@@ -272,7 +305,10 @@ export class StaffReportsComponent implements OnInit {
           }
         </div>
 
-        <div class="col-lg-4">
+        <div [class]="isSuperAdmin() ? 'col-lg-6' : 'col-lg-4'">
+          @if (isSuperAdmin()) {
+            <app-narrative-review [report]="r" (updated)="report.set($event)" />
+          } @else {
           <section class="dt-card">
             <h2 class="dt-card__title mb-2">Synthèse rédigée</h2>
             @if (r.narrative; as n) {
@@ -289,6 +325,7 @@ export class StaffReportsComponent implements OnInit {
               <p class="small dt-muted mb-0">{{ narrativeText(r.narrative_status) }}</p>
             }
           </section>
+          }
           <section class="dt-card small">
             <p class="mb-1"><span class="dt-muted">Périmètre :</span> {{ r.scope === 'national' ? 'National' : r.scope.name }}</p>
             <p class="mb-1"><span class="dt-muted">Produit :</span> {{ r.automatic ? 'automatiquement' : 'à la demande' }}, le {{ r.created_at | date: 'd MMM y, HH:mm' }}</p>
@@ -311,6 +348,7 @@ export class StaffReportDetailComponent implements OnInit {
   private readonly notify = inject(NotifyService);
   private readonly session = inject(SessionStore);
   private readonly router = inject(Router);
+  readonly base = spaceBase();
 
   readonly uuid = input.required<string>();
   readonly report = signal<ActivityReport | null>(null);
@@ -368,7 +406,7 @@ export class StaffReportDetailComponent implements OnInit {
     this.api.deleteReport(this.uuid()).subscribe({
       next: () => {
         this.notify.success('Rapport supprimé.');
-        this.router.navigate(['/espace/rapports']);
+        this.router.navigate([this.base + '/rapports']);
       },
       error: (e) => void this.notify.error(e),
     });

@@ -1,12 +1,11 @@
 import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { SideheadersComponent } from '../sideheaders/sideheaders.component';
 import { DeclarationService } from '../services/declaration.service';
 
 @Component({
     selector: 'app-admincertif',
-    imports: [CommonModule, FormsModule, SideheadersComponent],
+    imports: [CommonModule, FormsModule],
     templateUrl: './admincertif.component.html',
     styleUrls: ['./admincertif.component.css'],
     schemas: [CUSTOM_ELEMENTS_SCHEMA],

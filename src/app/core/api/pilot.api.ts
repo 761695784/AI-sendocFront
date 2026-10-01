@@ -93,7 +93,7 @@ export class PilotApi {
   }
 
   // ── Rapports d'activité ──────────────────────────────────────────
-  reports(query: { organization?: string | null; national?: boolean; page?: number } = {}): Observable<LaravelPage<ActivityReport>> {
+  reports(query: { organization?: string | null; national?: boolean; narrative_status?: string | null; page?: number } = {}): Observable<LaravelPage<ActivityReport>> {
     return this.api.get<LaravelPage<ActivityReport>>(['reports'], { ...query, national: query.national ? 1 : null });
   }
 
