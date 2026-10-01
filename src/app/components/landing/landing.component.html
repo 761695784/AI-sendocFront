@@ -225,7 +225,7 @@
             </div>
           </div>
           <div class="howto-text">
-            <div class="howto-num">01</div>
+            <div aria-hidden="true" class="howto-num">01</div>
             <h3>Publications et Déclarations</h3>
             <div class="howto-divider"></div>
             <p>Si un citoyen perd un document ou en trouve un, la vidéo ci-contre détaille le processus pour déclarer ou publier le document. Suivez les étapes simples pour une gestion rapide et sécurisée.</p>
@@ -249,7 +249,7 @@
             </div>
           </div>
           <div class="howto-text orange">
-            <div class="howto-num orange">02</div>
+            <div aria-hidden="true" class="howto-num orange">02</div>
             <h3>Recherche et Restitution</h3>
             <div class="howto-divider orange"></div>
             <p>Si un citoyen désire rechercher son document ou demander la restitution, la vidéo ci-contre détaille le processus de recherche et de demande de restitution. Suivez les étapes simples pour récupérer votre document.</p>
@@ -273,7 +273,12 @@
           <p>Visualisez la répartition géographique des documents publiés sur DocTrack</p>
         </div>
         <div class="map-wrap">
-          <app-map></app-map>
+          <!-- Carte chargée seulement quand elle arrive à l'écran : la bibliothèque de cartes (lourde) ne ralentit plus l'ouverture du site -->
+          @defer (on viewport) {
+            <app-map></app-map>
+          } @placeholder {
+            <div style="min-height: 320px; display: grid; place-items: center; color: #6b7684;">Chargement de la carte…</div>
+          }
         </div>
       </div>
     </div>

@@ -1,41 +1,24 @@
-import { FoundQrComponent } from './components/found-qr/found-qr.component';
 import { Routes } from '@angular/router';
 import { authGuard, superAdminGuard, staffGuard } from './core/guards/access.guards';
 import { LandingComponent } from './components/landing/landing.component';
-import { NavbarComponent } from './components/navbar/navbar.component';
-import { LoginComponent } from './components/login/login.component';
-import { RegisterComponent } from './components/register/register.component';
-import { DocumentListComponent } from './components/document-list/document-list.component';
-import { DocumentDetailComponent } from './components/document-detail/document-detail.component';
-import { DeclarationformComponent } from './components/declarationform/declarationform.component';
-import { LostdeclarationComponent } from './components/lostdeclaration/lostdeclaration.component';
-import { MypublishComponent } from './components/mypublish/mypublish.component';
-import { ChangeprofilComponent } from './components/changeprofil/changeprofil.component';
-import { EvolutionChartComponent } from './components/evolution-chart/evolution-chart.component';
-import { RestitutionChartComponent } from './components/restitution-chart/restitution-chart.component';
-import { PublicationTypeChartComponent } from './components/publication-type-chart/publication-type-chart.component';
-import { EmailActivityChartComponent } from './components/email-activity-chart/email-activity-chart.component';
-import { AProposComponent } from './components/a-propos/a-propos.component';
-import { ResetPasswordComponent } from './components/reset-password/reset-password.component';
-import { NewpassComponent } from './components/newpass/newpass.component';
-import { PrivatePolicyComponent } from './components/private-policy/private-policy.component';
-import { QrcodeComponent } from './components/qrcode/qrcode.component';
 
-
+/**
+ * Routes de l'application. Seule la page d'accueil est dans le paquet initial ;
+ * toutes les autres pages sont chargées à la demande (premier affichage plus rapide sur mobile).
+ * Chaque page a un titre (lu par les lecteurs d'écran et affiché dans l'onglet).
+ */
 export const routes: Routes = [
-  { path: '', component: LandingComponent },
-  { path: 'navbar', component: NavbarComponent },
-  { path: 'accueil', component: LandingComponent },
-  { path: 'connexion', component: LoginComponent },
-  { path: 'inscription', component: RegisterComponent },
-  { path: 'liste', component: DocumentListComponent },
-  { path: 'apropos', component: AProposComponent},
-  { path: 'reset',component: ResetPasswordComponent},
-  { path: 'newpass', component: NewpassComponent },
-  { path: 'private-policy', component: PrivatePolicyComponent },
-  { path: 'found-qr', component: FoundQrComponent },
-
-
+  { path: '', component: LandingComponent, title: 'DocTrack — documents perdus et retrouvés au Sénégal' },
+  { path: 'accueil', component: LandingComponent, title: 'DocTrack — documents perdus et retrouvés au Sénégal' },
+  { path: 'connexion', title: 'Connexion — DocTrack', loadComponent: () => import('./components/login/login.component').then(m => m.LoginComponent) },
+  { path: 'inscription', title: 'Créer un compte — DocTrack', loadComponent: () => import('./components/register/register.component').then(m => m.RegisterComponent) },
+  { path: 'liste', title: 'Documents retrouvés — DocTrack', loadComponent: () => import('./components/document-list/document-list.component').then(m => m.DocumentListComponent) },
+  { path: 'apropos', title: 'À propos — DocTrack', loadComponent: () => import('./components/a-propos/a-propos.component').then(m => m.AProposComponent) },
+  { path: 'reset', title: 'Mot de passe oublié — DocTrack', loadComponent: () => import('./components/reset-password/reset-password.component').then(m => m.ResetPasswordComponent) },
+  { path: 'newpass', title: 'Nouveau mot de passe — DocTrack', loadComponent: () => import('./components/newpass/newpass.component').then(m => m.NewpassComponent) },
+  { path: 'private-policy', title: 'Confidentialité — DocTrack', loadComponent: () => import('./components/private-policy/private-policy.component').then(m => m.PrivatePolicyComponent) },
+  // Anciens QR codes imprimés (V1) : conservés pour que les codes déjà distribués fonctionnent toujours.
+  { path: 'found-qr', title: 'Document trouvé — DocTrack', loadComponent: () => import('./components/found-qr/found-qr.component').then(m => m.FoundQrComponent) },
 
   // Routes avec Authentification pour un user simple
   // Publier un document trouvé (avec lecture automatique de la pièce)
@@ -45,12 +28,12 @@ export const routes: Routes = [
     title: 'Publier un document trouvé — DocTrack',
     loadComponent: () => import('./features/citizen/publish/publish-found.component').then(m => m.PublishFoundComponent)
   },
-  { path: 'document/:uuid', component: DocumentDetailComponent, canActivate: [authGuard] },
-  { path: 'declarer', component: DeclarationformComponent, canActivate: [authGuard] },
-  { path: 'lost', component: LostdeclarationComponent, canActivate: [authGuard] },
-  { path: 'mypub', component: MypublishComponent, canActivate: [authGuard] },
-  { path: 'modify', component: ChangeprofilComponent, canActivate: [authGuard] },
-  { path: 'code', component: QrcodeComponent,canActivate: [authGuard] },
+  { path: 'document/:uuid', canActivate: [authGuard], title: 'Document — DocTrack', loadComponent: () => import('./components/document-detail/document-detail.component').then(m => m.DocumentDetailComponent) },
+  { path: 'declarer', canActivate: [authGuard], title: 'Déclarer une perte — DocTrack', loadComponent: () => import('./components/declarationform/declarationform.component').then(m => m.DeclarationformComponent) },
+  { path: 'lost', canActivate: [authGuard], title: 'Mes déclarations — DocTrack', loadComponent: () => import('./components/lostdeclaration/lostdeclaration.component').then(m => m.LostdeclarationComponent) },
+  { path: 'mypub', canActivate: [authGuard], title: 'Mes publications — DocTrack', loadComponent: () => import('./components/mypublish/mypublish.component').then(m => m.MypublishComponent) },
+  { path: 'modify', canActivate: [authGuard], title: 'Mon profil — DocTrack', loadComponent: () => import('./components/changeprofil/changeprofil.component').then(m => m.ChangeprofilComponent) },
+  { path: 'code', canActivate: [authGuard], title: 'Mon QR code — DocTrack', loadComponent: () => import('./components/qrcode/qrcode.component').then(m => m.QrcodeComponent) },
 
   // Espace super admin (V2 + écrans historiques) — chargé à la demande
   {
@@ -58,12 +41,6 @@ export const routes: Routes = [
     canActivate: [superAdminGuard],
     loadChildren: () => import('./features/admin/admin.routes').then(m => m.ADMIN_ROUTES)
   },
-
-  // Routes pour les differents diagrammes
-  { path: 'statistiques', component: EvolutionChartComponent, canActivate: [authGuard] },
-  { path: 'restitution', component: RestitutionChartComponent, canActivate: [authGuard] },
-  { path: 'publication-types', component: PublicationTypeChartComponent, canActivate: [authGuard] },
-  { path: 'email-activity', component: EmailActivityChartComponent, canActivate: [authGuard] },
 
   // Espace citoyen : déclarations, remises, documents trouvés, QR codes, paiements
   {
@@ -109,6 +86,14 @@ export const routes: Routes = [
   // Lazy Loading pour la carte
   {
     path: 'map',
+    title: 'Carte — DocTrack',
     loadComponent: () => import('./components/map/map.component').then(m => m.MapComponent)
+  },
+
+  // Adresse inconnue : page « introuvable » (au lieu d'une page blanche)
+  {
+    path: '**',
+    title: 'Page introuvable — DocTrack',
+    loadComponent: () => import('./features/public/not-found/not-found.component').then(m => m.NotFoundComponent)
   }
 ];

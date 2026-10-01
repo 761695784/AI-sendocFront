@@ -59,7 +59,7 @@ body { font-family: Arial, sans-serif; }
 
 .profile-email {
   font-size: 12px;
-  color: #aaa;
+  color: #5f6b7a;
   text-align: center;
   word-break: break-all;
 }
@@ -155,7 +155,7 @@ form {
 .form-section-title {
   font-size: 11px;
   font-weight: 700;
-  color: #aaa;
+  color: #5f6b7a;
   letter-spacing: 1.2px;
   text-transform: uppercase;
   margin-bottom: 14px;
@@ -249,7 +249,7 @@ input:focus {
 
 .btn-save:disabled {
   background: #ddd;
-  color: #aaa;
+  color: #5f6b7a;
   cursor: not-allowed;
 }
 
@@ -323,7 +323,7 @@ input:focus {
   align-items: center;
   gap: 6px;
   font-size: 11px;
-  color: #888;
+  color: #5f6b7a;
   background: #fff;
   border: 1px solid #e8e6f5;
   border-radius: 20px;
@@ -341,7 +341,7 @@ input:focus {
   background: #f4f3fb;
   border-radius: 12px;
   border: 2px dashed #e8e6f5;
-  color: #bbb;
+  color: #5f6b7a;
   font-size: 13px;
   text-align: center;
 }
@@ -359,7 +359,7 @@ input:focus {
 }
 
 .qr-info i { color: #F6A500; font-size: 12px; flex-shrink: 0; }
-.qr-info span { font-size: 11px; color: #777; line-height: 1.4; }
+.qr-info span { font-size: 11px; color: #5f6b7a; line-height: 1.4; }
 
 .qr-actions {
   display: flex;

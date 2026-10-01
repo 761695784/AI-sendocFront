@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="fr">
 <head>
   <meta charset="utf-8">
   <title>DocTrack</title>
@@ -30,13 +30,16 @@
 
 
   <link rel="manifest" href="manifest.webmanifest">
-  <link rel="icon" type="image/x-icon" href="assets/logoo4.png">
-
-  <link rel="apple-touch-icon" href="assets/logoo4.png">
+  <link rel="icon" type="image/png" sizes="48x48" href="assets/icons/favicon-48.png">
+  <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
 
   <!-- Lien vers Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
   <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-75C1G1R71K"></script>
@@ -48,7 +51,9 @@
   gtag('config', 'G-75C1G1R71K');
 </script>
 
-<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5016250599189182" crossorigin="anonymous"></script>
+<!-- Publicités Google AdSense retirées (S7) : une plateforme qui manipule des pièces d'identité et travaille
+     avec les forces de sécurité ne doit pas afficher de publicités ni charger de traceurs publicitaires.
+     Pour les remettre : réinsérer le script adsbygoogle (client ca-pub-5016250599189182). -->
 
 <script type="module" src="https://cdn.jsdelivr.net/npm/ldrs/dist/auto/ring2.js"></script>
 
@@ -56,6 +61,6 @@
 </head>
 <body>
   <app-root></app-root>
-  <noscript>Please enable JavaScript to continue using this application.</noscript>
+  <noscript>DocTrack a besoin de JavaScript pour fonctionner. Activez-le dans votre navigateur.</noscript>
 </body>
 </html>

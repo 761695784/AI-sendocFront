@@ -56,7 +56,7 @@ body { font-family: 'Poppins', Arial, sans-serif; }
 
 .page-header-left p {
   font-size: 13px;
-  color: #aaa;
+  color: #5f6b7a;
   margin-top: 2px;
 }
 
@@ -96,7 +96,7 @@ form { padding: 28px 24px; }
 .form-section-title {
   font-size: 11px;
   font-weight: 700;
-  color: #aaa;
+  color: #5f6b7a;
   letter-spacing: 1.2px;
   text-transform: uppercase;
   margin-bottom: 16px;
@@ -189,7 +189,7 @@ input:focus, select:focus {
   height: auto;
   background: none;
   border: none;
-  color: #aaa;
+  color: #5f6b7a;
   cursor: pointer;
   padding: 4px;
   font-size: 14px;
@@ -276,7 +276,7 @@ input:focus, select:focus {
 
 .btn-submit:disabled {
   background: #ddd;
-  color: #aaa;
+  color: #5f6b7a;
   cursor: not-allowed;
 }
 

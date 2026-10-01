@@ -21,7 +21,8 @@
               "@angular/localize/init"
             ],
             "allowedCommonJsDependencies": [
-              "maplibre-gl"
+              "maplibre-gl",
+              "sweetalert2"
             ],
             "tsConfig": "tsconfig.app.json",
             "assets": [

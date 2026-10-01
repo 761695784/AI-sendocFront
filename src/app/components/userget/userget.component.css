@@ -45,7 +45,7 @@ body { font-family: Arial, sans-serif; }
 
 .page-subtitle {
   font-size: 13px;
-  color: #aaa;
+  color: #5f6b7a;
   margin-top: 2px;
 }
 
@@ -186,7 +186,7 @@ body { font-family: Arial, sans-serif; }
 
 .muted {
   font-size: 12px;
-  color: #888;
+  color: #5f6b7a;
 }
 
 .phone-chip {
@@ -249,7 +249,7 @@ body { font-family: Arial, sans-serif; }
 
 .pagination-controls button:disabled {
   background: #ddd;
-  color: #aaa;
+  color: #5f6b7a;
   cursor: not-allowed;
 }
 

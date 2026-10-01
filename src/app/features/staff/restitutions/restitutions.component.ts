@@ -43,7 +43,7 @@ import { PaginatorComponent } from '../../../shared/ui/paginator.component';
                   <td class="small">{{ r.recipient_type === 'proxy' ? r.proxy?.name + ' (procuration)' : r.owner.name }}</td>
                   <td class="small text-nowrap">{{ r.handed_over_at | date: 'd MMM y, HH:mm' }}</td>
                   <td><app-status-badge [status]="r.status === 'completed' ? 'completed' : r.status" [label]="r.status === 'completed' ? 'Remis' : null" />
-                    @if (!r.signed_scan && r.status === 'completed') { <i class="fas fa-exclamation-circle text-warning ms-1" title="Décharge signée non jointe" aria-label="Décharge signée non jointe"></i> }</td>
+                    @if (!r.signed_scan && r.status === 'completed') { <i role="img" class="fas fa-exclamation-circle text-warning ms-1" title="Décharge signée non jointe" aria-label="Décharge signée non jointe"></i> }</td>
                 </tr>
               }
             </tbody>

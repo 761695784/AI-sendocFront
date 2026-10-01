@@ -1,7 +1,6 @@
 import { PublicationTypeChartComponent } from './../publication-type-chart/publication-type-chart.component';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from './../services/auth.service';
-import { SidebarComponent } from './../sidebar/sidebar.component';
 import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { EmailActivityChartComponent } from '../email-activity-chart/email-activity-chart.component';

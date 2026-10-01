@@ -160,7 +160,7 @@ body {
 
 .section-subtitle {
   font-size: 13px;
-  color: #aaa;
+  color: #5f6b7a;
   margin-top: 2px;
 }
 
@@ -182,7 +182,7 @@ body {
   margin-bottom: 8px;
 }
 
-.empty-state p { font-size: 14px; color: #aaa; margin-bottom: 20px; }
+.empty-state p { font-size: 14px; color: #5f6b7a; margin-bottom: 20px; }
 
 .btn-declare-empty {
   display: inline-flex;
@@ -309,7 +309,7 @@ body {
 .meta-label {
   font-size: 11px;
   font-weight: 600;
-  color: #aaa;
+  color: #5f6b7a;
   text-transform: uppercase;
   letter-spacing: 0.4px;
   flex-shrink: 0;

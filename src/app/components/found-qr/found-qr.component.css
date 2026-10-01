@@ -61,7 +61,7 @@
   border-radius: 50%;
   background: #f4f3fb;
   border: 1px solid #e8e6f5;
-  color: #aaa;
+  color: #5f6b7a;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -135,7 +135,7 @@
 
 .card-header p {
   font-size: 13px;
-  color: #888;
+  color: #5f6b7a;
   line-height: 1.6;
   max-width: 320px;
   margin: 0 auto;
@@ -262,7 +262,7 @@ label.required::after {
 
 .btn-submit:disabled {
   background: #ddd;
-  color: #aaa;
+  color: #5f6b7a;
   cursor: not-allowed;
 }
 
@@ -282,7 +282,7 @@ label.required::after {
 .card-footer-text {
   text-align: center;
   font-size: 11px;
-  color: #bbb;
+  color: #5f6b7a;
   display: flex;
   align-items: center;
   justify-content: center;

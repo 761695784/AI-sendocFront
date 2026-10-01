@@ -44,7 +44,7 @@ const TABS = [
               @for (c of page()!.data; track c.uuid) {
                 <tr [routerLink]="[c.uuid]" style="cursor: pointer">
                   <td>
-                    @if (c.priority) { <i class="fas fa-star text-warning me-1" title="Propriétaire identifié : prioritaire" aria-label="Prioritaire"></i> }
+                    @if (c.priority) { <i class="fas fa-star text-warning me-1" title="Propriétaire identifié : prioritaire" role="img" aria-label="Prioritaire"></i> }
                     <a [routerLink]="[c.uuid]">{{ c.document?.document_type }}</a>
                     <small class="d-block dt-muted">{{ c.document?.last_name }} {{ c.document?.first_name }}</small>
                   </td>

@@ -191,7 +191,7 @@ body {
   align-items: center;
   gap: 10px;
   font-size: 13px;
-  color: #888;
+  color: #5f6b7a;
 }
 
 .publisher i { color: #F6A500; font-size: 16px; }
@@ -219,7 +219,7 @@ body {
 .meta-label {
   font-size: 10px;
   font-weight: 700;
-  color: #aaa;
+  color: #5f6b7a;
   text-transform: uppercase;
   letter-spacing: 0.8px;
   display: flex;
@@ -340,7 +340,7 @@ body {
 .empty-comments {
   text-align: center;
   padding: 24px;
-  color: #bbb;
+  color: #5f6b7a;
   font-size: 13px;
   display: flex;
   flex-direction: column;
@@ -395,7 +395,7 @@ body {
 
 .comment-date {
   font-size: 11px;
-  color: #bbb;
+  color: #5f6b7a;
 }
 
 .comment-text {
@@ -423,7 +423,7 @@ body {
 .comment-input-icon {
   position: absolute;
   left: 14px;
-  color: #aaa;
+  color: #5f6b7a;
   font-size: 13px;
   pointer-events: none;
 }
@@ -472,7 +472,7 @@ body {
 
 .btn-comment:disabled {
   background: #ddd;
-  color: #aaa;
+  color: #5f6b7a;
   cursor: not-allowed;
 }
 

@@ -5,6 +5,7 @@ import localeFr from '@angular/common/locales/fr';
 import { provideRouter, withComponentInputBinding, withInMemoryScrolling } from '@angular/router';
 import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/http';
 import { provideServiceWorker } from '@angular/service-worker';
+import { provideClientHydration, withEventReplay } from '@angular/platform-browser';
 import { routes } from './app.routes';
 import { authInterceptor } from './core/http/auth.interceptor';
 import { organizationInterceptor } from './core/http/organization.interceptor';
@@ -25,6 +26,9 @@ export const appConfig: ApplicationConfig = {
     // Jeton, structure active et erreurs communes ajoutés à chaque appel de l'API.
     provideHttpClient(withFetch(), withInterceptors([authInterceptor, organizationInterceptor, errorInterceptor])),
     { provide: LOCALE_ID, useValue: 'fr' },
+    // Pages rendues par le serveur (accueil, liste) : le navigateur reprend le HTML au lieu de tout redessiner,
+    // et les clics faits pendant le chargement sont rejoués.
+    provideClientHydration(withEventReplay()),
     provideServiceWorker('ngsw-worker.js', {
       enabled: !isDevMode(),
       registrationStrategy: 'registerWhenStable:30000'

@@ -202,7 +202,7 @@ body { font-family: 'Poppins', Arial, sans-serif; }
   margin-bottom: 4px;
 }
 
-.auth-card-header p { font-size: 13px; color: #aaa; }
+.auth-card-header p { font-size: 13px; color: #5f6b7a; }
 
 /* Champs */
 .form-row {
@@ -278,7 +278,7 @@ input:focus {
   height: auto !important;
   background: none !important;
   border: none !important;
-  color: #aaa;
+  color: #5f6b7a;
   cursor: pointer;
   padding: 4px;
   font-size: 13px;
@@ -354,7 +354,7 @@ input:focus {
 
 .btn-submit:disabled {
   background: #ddd;
-  color: #aaa;
+  color: #5f6b7a;
   cursor: not-allowed;
 }
 
@@ -362,7 +362,7 @@ input:focus {
 .login-link {
   text-align: center;
   font-size: 13px;
-  color: #888;
+  color: #5f6b7a;
   margin-top: 16px;
 }
 

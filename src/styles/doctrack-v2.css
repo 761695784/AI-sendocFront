@@ -87,3 +87,27 @@
 .dt-admin-main .page-content,
 .dt-admin-main .layout-right { margin-left: 0 !important; margin-top: 0 !important; }
 .dt-admin-main .layout-wrapper { min-height: 0 !important; display: block !important; }
+
+/* ── Accessibilité ─────────────────────────────────────────────── */
+/* Lien d'évitement : invisible jusqu'à ce qu'on arrive dessus au clavier. */
+.dt-skip { position: absolute; left: .5rem; top: -3rem; z-index: 3000; padding: .5rem 1rem; border-radius: .4rem;
+  background: #13294b; color: #fff; font-weight: 600; text-decoration: none; transition: top .15s; }
+.dt-skip:focus { top: .5rem; color: #fff; }
+main[tabindex="-1"]:focus { outline: none; }
+/* Contour visible pour la navigation au clavier, sur tous les éléments interactifs. */
+a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible,
+[tabindex]:not([tabindex="-1"]):focus-visible { outline: 3px solid #f6a500; outline-offset: 2px; }
+/* Moins d'animations pour les personnes qui le demandent dans leur système. */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important; scroll-behavior: auto !important; }
+}
+/* Cibles tactiles confortables sur téléphone. */
+@media (pointer: coarse) {
+  .btn-sm { min-height: 2.25rem; }
+}
+/* Contrastes suffisants (WCAG AA, 4,5:1) pour les boutons et onglets Bootstrap sur fond gris clair. */
+.btn-outline-secondary { --bs-btn-color: #4a5560; --bs-btn-border-color: #8a94a0; --bs-btn-hover-bg: #4a5560; --bs-btn-hover-border-color: #4a5560; }
+.nav-pills .nav-link:not(.active) { color: #1a4f8b; }
+.btn-link { --bs-btn-color: #1a4f8b; }
+.btn-outline-danger { --bs-btn-color: #a52834; --bs-btn-border-color: #c0392b; }

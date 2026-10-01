@@ -58,7 +58,7 @@ import { PaginatorComponent } from '../../../shared/ui/paginator.component';
                   <td class="small text-nowrap">{{ doc.custody?.since | date: 'd MMM y' }}</td>
                   <td>
                     <app-status-badge [status]="doc.lifecycle_status" />
-                    @if (hasConfirmedMatch(doc)) { <i class="fas fa-user-check text-success ms-1" title="Propriétaire identifié" aria-label="Propriétaire identifié"></i> }
+                    @if (hasConfirmedMatch(doc)) { <i role="img" class="fas fa-user-check text-success ms-1" title="Propriétaire identifié" aria-label="Propriétaire identifié"></i> }
                   </td>
                 </tr>
               }

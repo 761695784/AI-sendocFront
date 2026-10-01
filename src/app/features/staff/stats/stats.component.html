@@ -141,7 +141,7 @@
               @for (c of od.data; track c.uuid) {
                 <tr>
                   <td>
-                    @if (c.priority) { <i class="fas fa-star text-warning me-1" title="Propriétaire identifié" aria-label="Prioritaire"></i> }
+                    @if (c.priority) { <i class="fas fa-star text-warning me-1" title="Propriétaire identifié" role="img" aria-label="Prioritaire"></i> }
                     <a [routerLink]="['/espace/retraits', c.uuid]">{{ c.document_type ?? 'Document' }}</a>
                     <small class="d-block dt-muted dt-mono">{{ c.reference }}</small>
                   </td>

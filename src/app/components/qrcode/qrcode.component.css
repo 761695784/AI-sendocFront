@@ -61,7 +61,7 @@
 
 .not-connected-card p {
   font-size: 14px;
-  color: #aaa;
+  color: #5f6b7a;
   margin-bottom: 24px;
   line-height: 1.6;
 }
@@ -220,7 +220,7 @@
   align-items: center;
   justify-content: center;
   gap: 12px;
-  color: #aaa;
+  color: #5f6b7a;
   font-size: 13px;
 }
 

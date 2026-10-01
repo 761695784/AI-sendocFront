@@ -34,7 +34,7 @@
 }
 
 .page-header-left h1 { font-size: 20px; font-weight: 800; color: #31287C; }
-.page-header-left p  { font-size: 13px; color: #aaa; margin-top: 2px; }
+.page-header-left p  { font-size: 13px; color: #5f6b7a; margin-top: 2px; }
 
 /* ── Stats ── */
 .stats-row {
@@ -79,7 +79,7 @@
   line-height: 1;
 }
 
-.stat-label { font-size: 12px; color: #aaa; }
+.stat-label { font-size: 12px; color: #5f6b7a; }
 
 /* ── Filtres ── */
 .filters-card {
@@ -103,7 +103,7 @@
 .filter-group label {
   font-size: 11px;
   font-weight: 700;
-  color: #aaa;
+  color: #5f6b7a;
   text-transform: uppercase;
   letter-spacing: 0.8px;
   display: flex;
@@ -116,7 +116,7 @@
 .search-ico {
   position: absolute;
   left: 12px;
-  color: #aaa;
+  color: #5f6b7a;
   font-size: 13px;
   pointer-events: none;
 }
@@ -178,7 +178,7 @@
   align-items: center;
   gap: 12px;
   padding: 60px;
-  color: #aaa;
+  color: #5f6b7a;
   font-size: 13px;
 }
 
@@ -193,7 +193,7 @@
 
 .empty-icon { font-size: 40px; color: #ddd; margin-bottom: 12px; }
 .empty-state h3 { font-size: 17px; color: #31287C; font-weight: 700; margin-bottom: 6px; }
-.empty-state p  { font-size: 13px; color: #aaa; margin-bottom: 16px; }
+.empty-state p  { font-size: 13px; color: #5f6b7a; margin-bottom: 16px; }
 
 .btn-reset-empty {
   display: inline-flex;
@@ -227,7 +227,7 @@
   background: #faf9ff;
 }
 
-.table-count { font-size: 13px; color: #888; }
+.table-count { font-size: 13px; color: #5f6b7a; }
 .table-count strong { color: #31287C; }
 
 .table-wrap { overflow-x: auto; }
@@ -288,7 +288,7 @@
 }
 
 .user-name  { display: block; font-size: 13px; font-weight: 600; color: #31287C; }
-.user-email { display: block; font-size: 11px; color: #aaa; }
+.user-email { display: block; font-size: 11px; color: #5f6b7a; }
 
 .type-badge {
   display: inline-flex;
@@ -308,11 +308,11 @@
 
 .identity-cell { display: flex; flex-direction: column; gap: 3px; }
 .identity-name { font-size: 13px; font-weight: 600; color: #333; }
-.identity-ref  { font-size: 11px; color: #aaa; }
+.identity-ref  { font-size: 11px; color: #5f6b7a; }
 
 .date-cell { display: flex; flex-direction: column; gap: 2px; }
 .date-main { font-size: 13px; font-weight: 600; color: #333; }
-.date-time { font-size: 11px; color: #aaa; }
+.date-time { font-size: 11px; color: #5f6b7a; }
 
 .actions-cell {
   display: flex;
@@ -374,7 +374,7 @@
   gap: 12px;
 }
 
-.pagination-info { font-size: 13px; color: #888; }
+.pagination-info { font-size: 13px; color: #5f6b7a; }
 .pagination-info strong { color: #31287C; }
 
 .pagination-btns { display: flex; gap: 6px; flex-wrap: wrap; }

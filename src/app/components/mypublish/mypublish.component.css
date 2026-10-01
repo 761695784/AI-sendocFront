@@ -158,7 +158,7 @@ body {
   color: #31287C;
 }
 
-.section-subtitle { font-size: 13px; color: #aaa; margin-top: 2px; }
+.section-subtitle { font-size: 13px; color: #5f6b7a; margin-top: 2px; }
 
 /* ── Empty state ── */
 .empty-state {
@@ -171,7 +171,7 @@ body {
 
 .empty-icon { font-size: 48px; margin-bottom: 16px; }
 .empty-state h3 { font-size: 18px; color: #31287C; font-weight: 700; margin-bottom: 8px; }
-.empty-state p { font-size: 14px; color: #aaa; margin-bottom: 20px; }
+.empty-state p { font-size: 14px; color: #5f6b7a; margin-bottom: 20px; }
 
 .btn-action-empty {
   display: inline-flex;
@@ -303,7 +303,7 @@ body {
 .meta-label {
   font-size: 11px;
   font-weight: 600;
-  color: #aaa;
+  color: #5f6b7a;
   text-transform: uppercase;
   letter-spacing: 0.4px;
   flex-shrink: 0;

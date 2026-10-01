@@ -142,7 +142,7 @@ body {
 .search-icon {
   position: absolute;
   left: 14px;
-  color: #aaa;
+  color: #5f6b7a;
   font-size: 14px;
   pointer-events: none;
 }
@@ -219,7 +219,7 @@ body {
 
 .results-count {
   font-size: 13px;
-  color: #888;
+  color: #5f6b7a;
 }
 
 .results-count strong { color: #31287C; }
@@ -317,7 +317,7 @@ body {
   align-items: center;
   justify-content: center;
   background: #f4f3fb;
-  color: #aaa;
+  color: #5f6b7a;
   font-size: 14px;
   gap: 8px;
 }
@@ -333,7 +333,7 @@ body {
 
 .published-by {
   font-size: 12px;
-  color: #888;
+  color: #5f6b7a;
   display: flex;
   align-items: center;
   gap: 6px;
@@ -342,7 +342,7 @@ body {
 
 .published-by i { color: #F6A500; }
 .published-by strong { color: #31287C; }
-.pub-date { color: #bbb; font-size: 11px; }
+.pub-date { color: #5f6b7a; font-size: 11px; }
 
 .card-info {
   display: flex;
@@ -358,7 +358,7 @@ body {
 }
 
 .info-label {
-  color: #aaa;
+  color: #5f6b7a;
   font-size: 11px;
   font-weight: 600;
   text-transform: uppercase;
@@ -437,7 +437,7 @@ body {
 
 .pagination-controls button:disabled {
   background: #ddd;
-  color: #aaa;
+  color: #5f6b7a;
   cursor: not-allowed;
 }
 

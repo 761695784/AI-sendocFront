@@ -199,7 +199,7 @@ body { font-family: 'Poppins', Arial, sans-serif; }
   margin-bottom: 6px;
 }
 
-.auth-card-header p { font-size: 13px; color: #aaa; }
+.auth-card-header p { font-size: 13px; color: #5f6b7a; }
 
 /* Champs */
 .field-group {
@@ -267,7 +267,7 @@ input.input-error { border-color: #e53935; }
   height: auto !important;
   background: none !important;
   border: none !important;
-  color: #aaa;
+  color: #5f6b7a;
   cursor: pointer;
   padding: 4px;
   font-size: 14px;
@@ -287,7 +287,7 @@ input.input-error { border-color: #e53935; }
 .strength-label {
   font-size: 11px;
   font-weight: 700;
-  color: #aaa;
+  color: #5f6b7a;
   text-transform: uppercase;
   letter-spacing: 0.5px;
   margin-bottom: 6px;
@@ -348,7 +348,7 @@ input.input-error { border-color: #e53935; }
 
 .btn-submit:disabled {
   background: #ddd;
-  color: #aaa;
+  color: #5f6b7a;
   cursor: not-allowed;
 }
 

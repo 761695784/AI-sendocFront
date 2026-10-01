@@ -42,9 +42,9 @@ import { CitizenBadges } from '../citizen-badges.service';
           </nav>
         </div>
       </section>
-      <div class="dt-container">
+      <main class="dt-container" id="contenu" tabindex="-1">
         <router-outlet />
-      </div>
+      </main>
     </div>
     <app-footer />
   `,

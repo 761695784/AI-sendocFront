@@ -1,3 +1,4 @@
+<a class="dt-skip" href="#contenu">Aller au contenu</a>
 <div class="staff" [class.staff--menu-open]="menuOpen()">
   <aside class="staff__side" aria-label="Menu de l'espace structure">
     <a routerLink="/espace" class="staff__brand">
@@ -63,7 +64,7 @@
       </div>
     </header>
 
-    <main class="staff__content">
+    <main class="staff__content" id="contenu" tabindex="-1">
       <router-outlet />
     </main>
   </div>

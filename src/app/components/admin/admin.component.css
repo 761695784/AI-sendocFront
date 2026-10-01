@@ -145,7 +145,7 @@ body { font-family: Arial, sans-serif; }
 
 .section-subtitle {
   font-size: 13px;
-  color: #aaa;
+  color: #5f6b7a;
   margin-top: 2px;
 }
 
@@ -226,7 +226,7 @@ tbody td {
 }
 
 .muted {
-  color: #aaa;
+  color: #5f6b7a;
   font-size: 12px;
 }
 
@@ -275,7 +275,7 @@ tbody td {
 
 .pagination-controls button:disabled {
   background: #ddd;
-  color: #aaa;
+  color: #5f6b7a;
   cursor: not-allowed;
 }
 

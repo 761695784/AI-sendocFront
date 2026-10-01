@@ -1,59 +1,77 @@
 {
-  "name": "DocTrack",
+  "name": "DocTrack — documents perdus et retrouvés",
   "short_name": "DocTrack",
-  "description": "Plateforme nationale de declaration et restitution de documents perdus au Senegal",
-  "theme_color": "#31287C",
-  "background_color": "#31287C",
+  "description": "Plateforme sénégalaise de déclaration, de recherche et de restitution des documents officiels perdus.",
+  "id": "/",
+  "start_url": "/?source=pwa",
+  "scope": "/",
   "display": "standalone",
-  "orientation": "portrait",
-  "scope": "./",
-  "start_url": "./",
+  "orientation": "any",
+  "theme_color": "#31287C",
+  "background_color": "#FFFFFF",
   "lang": "fr",
+  "dir": "ltr",
+  "categories": [
+    "government",
+    "utilities"
+  ],
   "icons": [
     {
-      "src": "assets/logoo4.png",
+      "src": "assets/icons/icon-72x72.png",
       "sizes": "72x72",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "assets/logoo4.png",
+      "src": "assets/icons/icon-96x96.png",
       "sizes": "96x96",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "assets/logoo4.png",
+      "src": "assets/icons/icon-128x128.png",
       "sizes": "128x128",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "assets/logoo4.png",
+      "src": "assets/icons/icon-144x144.png",
       "sizes": "144x144",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "assets/logoo4.png",
+      "src": "assets/icons/icon-152x152.png",
       "sizes": "152x152",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "assets/logoo4.png",
+      "src": "assets/icons/icon-192x192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "assets/logoo4.png",
+      "src": "assets/icons/icon-384x384.png",
       "sizes": "384x384",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "assets/logoo4.png",
+      "src": "assets/icons/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/icons/icon-maskable-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "assets/icons/icon-maskable-512x512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"
@@ -61,20 +79,52 @@
   ],
   "shortcuts": [
     {
-      "name": "Nouvelle declaration",
-      "short_name": "Declarer",
-      "description": "Declarer une perte de document",
-      "url": "./lostform",
-      "icons": [{ "src": "assets/logoo4.png", "sizes": "192x192" }]
+      "name": "Déclarer une perte",
+      "short_name": "Déclarer",
+      "description": "Déclarer un document perdu",
+      "url": "/declarer",
+      "icons": [
+        {
+          "src": "assets/icons/icon-192x192.png",
+          "sizes": "192x192"
+        }
+      ]
     },
     {
-      "name": "Publier un document trouve",
+      "name": "Publier un document trouvé",
       "short_name": "Publier",
-      "description": "Signaler un document retrouve",
-      "url": "./publishform",
-      "icons": [{ "src": "assets/logoo4.png", "sizes": "192x192" }]
+      "description": "Photographier et publier un document trouvé",
+      "url": "/publier",
+      "icons": [
+        {
+          "src": "assets/icons/icon-192x192.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "Mon espace",
+      "short_name": "Mon espace",
+      "description": "Mes déclarations, correspondances et remises",
+      "url": "/mon-espace",
+      "icons": [
+        {
+          "src": "assets/icons/icon-192x192.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "Vérifier un certificat",
+      "short_name": "Vérifier",
+      "description": "Vérifier un certificat de perte ou une décharge",
+      "url": "/verifier",
+      "icons": [
+        {
+          "src": "assets/icons/icon-192x192.png",
+          "sizes": "192x192"
+        }
+      ]
     }
-  ],
-  "categories": ["government", "utilities"],
-  "screenshots": []
+  ]
 }

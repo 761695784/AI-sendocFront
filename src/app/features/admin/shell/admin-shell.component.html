@@ -1,3 +1,4 @@
+<a class="dt-skip" href="#contenu">Aller au contenu</a>
 <div class="staff admin" [class.staff--menu-open]="menuOpen()">
   <aside class="staff__side" aria-label="Menu de l'administration">
     <a routerLink="/admin" class="staff__brand">
@@ -61,7 +62,7 @@
       </div>
     </header>
 
-    <main class="staff__content dt-admin-main">
+    <main class="staff__content dt-admin-main" id="contenu" tabindex="-1">
       <router-outlet />
     </main>
   </div>

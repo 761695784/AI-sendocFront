@@ -50,7 +50,7 @@ export function niceMax(max: number): number {
         </table>
       </div>
     } @else {
-      <div class="cc" role="img" [attr.aria-label]="ariaLabel()">
+      <div class="cc" role="group" [attr.aria-label]="ariaLabel()">
         <div class="cc__axis" aria-hidden="true">
           @for (t of ticks(); track t) { <span [style.bottom.%]="(t / max()) * 100">{{ t | number }}</span> }
         </div>

@@ -1,0 +1,57 @@
+# DocTrack sur Netlify (hébergement statique, sans rendu serveur).
+# Les pages sont dessinées dans le navigateur ; les pages fixes (à propos, connexion…) sont pré-générées.
+# Pour le rendu serveur complet (meilleur référencement de l'accueil), utiliser plutôt le Dockerfile.
+
+[build]
+  command = "npx ng build"
+  publish = "dist/doc-track-front/browser"
+
+[build.environment]
+  NODE_VERSION = "24"
+  PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD = "1"
+
+# Toute adresse sans fichier correspondant → application Angular (routage côté navigateur).
+[[redirects]]
+  from = "/*"
+  to = "/index.csr.html"
+  status = 200
+
+# Fichiers avec empreinte : en cache un an. Service worker, manifeste et pages : toujours revalidés.
+[[headers]]
+  for = "/*.js"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+[[headers]]
+  for = "/*.css"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+[[headers]]
+  for = "/ngsw*"
+  [headers.values]
+    Cache-Control = "no-cache"
+[[headers]]
+  for = "/ngsw-worker.js"
+  [headers.values]
+    Cache-Control = "no-cache"
+[[headers]]
+  for = "/safety-worker.js"
+  [headers.values]
+    Cache-Control = "no-cache"
+[[headers]]
+  for = "/manifest.webmanifest"
+  [headers.values]
+    Cache-Control = "no-cache"
+    Content-Type = "application/manifest+json"
+[[headers]]
+  for = "/*.html"
+  [headers.values]
+    Cache-Control = "no-cache"
+
+# En-têtes de sécurité (identiques à ceux du serveur Node).
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "SAMEORIGIN"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "camera=(self), geolocation=(self), microphone=(self), payment=()"

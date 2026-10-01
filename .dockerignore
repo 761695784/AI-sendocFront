@@ -2,3 +2,7 @@ node_modules
 dist
 .angular
 .git
+test-results
+playwright-report
+coverage
+*.log
