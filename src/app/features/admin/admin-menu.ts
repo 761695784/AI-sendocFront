@@ -7,6 +7,8 @@ export interface AdminMenuItem {
   label: string;
   icon: string;
   legacy?: boolean;
+  /** Lien hors de /admin (ex. /espace). */
+  href?: string;
 }
 
 export interface AdminMenuSection {
@@ -16,7 +18,7 @@ export interface AdminMenuSection {
 
 export const ADMIN_MENU: AdminMenuSection[] = [
   {
-    title: '',
+    title: 'Principal',
     items: [
       { path: '', label: 'Accueil', icon: 'fa-home' },
       { path: 'messages', label: 'Boîte de réception', icon: 'fa-inbox' },
@@ -37,6 +39,7 @@ export const ADMIN_MENU: AdminMenuSection[] = [
       { path: 'structures', label: 'Structures', icon: 'fa-sitemap' },
       { path: 'types-structure', label: 'Types de structure', icon: 'fa-tags' },
       { path: 'facturation', label: 'Tarifs et reversements', icon: 'fa-coins' },
+      { path: 'voix-assistant', label: "Voix de l'assistant", icon: 'fa-volume-up' },
     ],
   },
   {
@@ -49,6 +52,13 @@ export const ADMIN_MENU: AdminMenuSection[] = [
       { path: 'adminstats', label: 'Statistiques (historique)', icon: 'fa-chart-bar', legacy: true },
       { path: 'adminlogs', label: "Journal d'activités", icon: 'fa-history', legacy: true },
       { path: 'adminbackup', label: 'Sauvegardes', icon: 'fa-database', legacy: true },
+    ],
+  },
+  {
+    title: 'Compte',
+    items: [
+      { path: 'profil', label: 'Mon profil', icon: 'fa-user' },
+      { path: 'espace', label: 'Espace des structures', icon: 'fa-building', href: '/espace' },
     ],
   },
 ];

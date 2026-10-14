@@ -124,7 +124,7 @@ export class PilotApi {
   }
 
   // ── Structures ───────────────────────────────────────────────────
-  organizations(query: { type?: string; level?: string; parent?: string; territory?: string; q?: string; include_inactive?: boolean; page?: number } = {}): Observable<ResourcePage<Organization>> {
+  organizations(query: { type?: string; level?: string; parent?: string; institution?: string; region?: string; territory?: string; q?: string; include_inactive?: boolean; page?: number } = {}): Observable<ResourcePage<Organization>> {
     return this.api.get<ResourcePage<Organization>>(['organizations'], { ...query, include_inactive: query.include_inactive ? 1 : null });
   }
 

@@ -1,70 +1,101 @@
 <a class="dt-skip" href="#contenu">Aller au contenu</a>
-<div class="staff" [class.staff--menu-open]="menuOpen()">
-  <aside class="staff__side" aria-label="Menu de l'espace structure">
-    <a routerLink="/espace" class="staff__brand">
-      <img src="/assets/logoo2.webp" alt="" width="36" height="36" />
-      <span>DocTrack <small>Structures</small></span>
+<div class="ad dt-bo" [class.ad--menu-open]="menuOpen()">
+  <!-- ── Menu latéral : même identité que l'administration (violet, élément actif doré) ── -->
+  <aside class="ad-side" aria-label="Menu de l'espace structure">
+    <a routerLink="/espace" class="ad-brand">
+      <img src="/assets/logoo2.webp" alt="" width="40" height="40" />
+      <span class="ad-brand__name">DocTrack <small>Espace des structures</small></span>
     </a>
 
-    <nav class="staff__nav">
-      @for (section of menu(); track section.title) {
-        @if (section.title) {
-          <p class="staff__section">{{ section.title }}</p>
-        }
-        @for (item of section.items; track item.path) {
-          <a [routerLink]="item.path ? ['/espace', item.path] : ['/espace']"
-             routerLinkActive="active" [routerLinkActiveOptions]="{ exact: !item.path }" class="staff__link">
-            <i class="fas {{ item.icon }}" aria-hidden="true"></i>
-            <span>{{ item.label }}</span>
-            @if (item.path === 'messages' && unread() > 0) {
-              <span class="staff__count">{{ unread() }}</span>
-            }
-          </a>
+    <nav class="ad-nav">
+      @for (section of menu(); track section.title; let last = $last) {
+        <div class="ad-section">
+          <span class="ad-section__label">{{ section.title || 'Principal' }}</span>
+          @for (item of section.items; track item.path) {
+            <a [routerLink]="item.path ? ['/espace', item.path] : ['/espace']"
+               routerLinkActive="active" [routerLinkActiveOptions]="{ exact: !item.path }" class="ad-item">
+              <span class="ad-item__icon"><i class="fas {{ item.icon }}" aria-hidden="true"></i></span>
+              <span class="ad-item__label">{{ item.label }}</span>
+              @if (item.path === 'messages' && unread() > 0) {
+                <span class="ad-item__count">{{ unread() > 99 ? '99+' : unread() }}</span>
+              }
+            </a>
+          }
+        </div>
+        @if (!last) {
+          <div class="ad-divider"></div>
         }
       }
+      @if (isSuperAdmin()) {
+        <div class="ad-divider"></div>
+        <div class="ad-section">
+          <span class="ad-section__label">Compte</span>
+          <a routerLink="/admin" class="ad-item">
+            <span class="ad-item__icon"><i class="fas fa-user-shield" aria-hidden="true"></i></span>
+            <span class="ad-item__label">Administration</span>
+          </a>
+        </div>
+      }
     </nav>
-
-    @if (isSuperAdmin()) {
-      <a routerLink="/admin" class="staff__link staff__link--muted">
-        <i class="fas fa-user-shield" aria-hidden="true"></i><span>Administration</span>
-      </a>
-    }
   </aside>
 
-  <div class="staff__backdrop" (click)="toggleMenu()" aria-hidden="true"></div>
+  <div class="ad-backdrop" (click)="toggleMenu()" aria-hidden="true"></div>
 
-  <div class="staff__main">
-    <header class="staff__top">
-      <button type="button" class="staff__burger" (click)="toggleMenu()" aria-label="Ouvrir le menu">
+  <div class="ad-main">
+    <!-- ── Barre du haut : bandeau doré, structure active, notifications et compte ── -->
+    <header class="ad-top">
+      <button type="button" class="ad-btn ad-burger" (click)="toggleMenu()" aria-label="Ouvrir le menu">
         <i class="fas fa-bars" aria-hidden="true"></i>
       </button>
 
-      <app-org-switcher (changed)="onOrganizationChanged()" />
+      <app-org-switcher class="ad-org" (changed)="onOrganizationChanged()" />
 
-      <div class="staff__top-right">
-        <a routerLink="/espace/messages" class="staff__icon" aria-label="Boîte de réception">
+      <div class="ad-marquee d-none d-xl-block" aria-hidden="true">
+        <div class="ad-marquee__track">
+          @for (copy of [1, 2]; track copy) {
+            <span class="ad-marquee__text">
+              DocTrack — Simplifiez la gestion des documents perdus et retrouvés !
+              <span class="ad-marquee__dot"></span>
+              Ensemble, construisons un monde où chaque document trouve sa place.
+              <span class="ad-marquee__dot"></span>
+            </span>
+          }
+        </div>
+      </div>
+
+      <div class="ad-top__right">
+        <a routerLink="/espace/messages" class="ad-btn" aria-label="Boîte de réception">
           <i class="fas fa-bell" aria-hidden="true"></i>
           @if (unread() > 0) {
-            <span class="staff__dot">{{ unread() > 99 ? '99+' : unread() }}</span>
+            <span class="ad-badge">{{ unread() > 99 ? '99+' : unread() }}</span>
           }
         </a>
 
-        <div ngbDropdown placement="bottom-end">
-          <button type="button" class="staff__user" ngbDropdownToggle>
-            <i class="fas fa-user-circle" aria-hidden="true"></i>
+        <div ngbDropdown placement="bottom-end" container="body">
+          <button type="button" class="ad-btn" ngbDropdownToggle>
+            <span class="ad-avatar" aria-hidden="true">{{ initials() }}</span>
             <span class="d-none d-sm-inline">{{ displayName() }}</span>
           </button>
-          <div ngbDropdownMenu>
-            <a ngbDropdownItem routerLink="/modify"><i class="fas fa-user-edit me-2"></i>Mon profil</a>
-            <a ngbDropdownItem routerLink="/accueil"><i class="fas fa-globe me-2"></i>Site public</a>
-            <div class="dropdown-divider"></div>
-            <button ngbDropdownItem type="button" (click)="logout()"><i class="fas fa-sign-out-alt me-2"></i>Déconnexion</button>
+          <div ngbDropdownMenu class="ad-panel">
+            <div class="ad-panel__head">
+              <span class="ad-avatar ad-avatar--lg" aria-hidden="true">{{ initials() }}</span>
+              <div>
+                <div class="ad-panel__name">{{ displayName() }}</div>
+                <div class="ad-panel__role">{{ roleLabel() }}</div>
+              </div>
+            </div>
+            <a ngbDropdownItem class="ad-panel__item" routerLink="/modify"><i class="fas fa-user" aria-hidden="true"></i>Modifier mon profil</a>
+            @if (isSuperAdmin()) {
+              <a ngbDropdownItem class="ad-panel__item" routerLink="/admin"><i class="fas fa-user-shield" aria-hidden="true"></i>Administration</a>
+            }
+            <a ngbDropdownItem class="ad-panel__item" routerLink="/accueil"><i class="fas fa-globe" aria-hidden="true"></i>Site public</a>
+            <button ngbDropdownItem type="button" class="ad-panel__item ad-panel__item--danger" (click)="logout()"><i class="fas fa-sign-out-alt" aria-hidden="true"></i>Déconnexion</button>
           </div>
         </div>
       </div>
     </header>
 
-    <main class="staff__content" id="contenu" tabindex="-1">
+    <main class="ad-content" id="contenu" tabindex="-1">
       <router-outlet />
     </main>
   </div>

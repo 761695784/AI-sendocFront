@@ -27,79 +27,57 @@
 } @else if (overview(); as o) {
 
   <!-- ── Délais de réaction (engagements de service) ── -->
-  <h2 class="st-h">Délais de réaction</h2>
-  <section class="st-grid">
-    <article class="st-tile">
-      <span class="st-tile__label">Premier appel au trouveur (médiane)</span>
-      <strong>{{ hours(o.collections.median_first_contact_hours) }}</strong>
-      <ng-container *ngTemplateOutlet="tone; context: { $implicit: slaTone(o.collections.median_first_contact_hours, o.sla.first_contact_hours), goal: 'objectif ' + o.sla.first_contact_hours + ' h' }" />
-    </article>
-    <article class="st-tile">
-      <span class="st-tile__label">Trouveurs appelés dans le délai</span>
-      <strong>{{ o.collections.contacted_within_sla_pct === null ? '—' : (o.collections.contacted_within_sla_pct | number: '1.0-1') + ' %' }}</strong>
-      <ng-container *ngTemplateOutlet="tone; context: { $implicit: pctTone(o.collections.contacted_within_sla_pct), goal: 'objectif 90 %' }" />
-    </article>
-    <article class="st-tile">
-      <span class="st-tile__label">Récupération du document (médiane)</span>
-      <strong>{{ hours(o.collections.median_hours_to_collect) }}</strong>
-      <ng-container *ngTemplateOutlet="tone; context: { $implicit: slaTone(o.collections.median_hours_to_collect, o.sla.collection_hours), goal: 'objectif ' + o.sla.collection_hours + ' h' }" />
-    </article>
-    <article class="st-tile">
-      <span class="st-tile__label">Examen d'une correspondance (médiane)</span>
-      <strong>{{ hours(o.matches.median_review_hours) }}</strong>
-      <ng-container *ngTemplateOutlet="tone; context: { $implicit: slaTone(o.matches.median_review_hours, o.sla.review_hours), goal: 'objectif ' + o.sla.review_hours + ' h' }" />
-    </article>
+  <h2 class="st-h dt-section-title">Délais de réaction</h2>
+  <section class="st-sla">
+    <ng-container *ngTemplateOutlet="sla; context: { icon: 'fa-phone-alt', label: 'Premier appel au trouveur', sub: 'médiane', value: hours(o.collections.median_first_contact_hours), tone: slaTone(o.collections.median_first_contact_hours, o.sla.first_contact_hours), goal: 'objectif ' + o.sla.first_contact_hours + ' h' }" />
+    <ng-container *ngTemplateOutlet="sla; context: { icon: 'fa-stopwatch', label: 'Trouveurs appelés dans le délai', sub: 'part des retraits', value: o.collections.contacted_within_sla_pct === null ? '—' : (o.collections.contacted_within_sla_pct | number: '1.0-1') + ' %', tone: pctTone(o.collections.contacted_within_sla_pct), goal: 'objectif 90 %' }" />
+    <ng-container *ngTemplateOutlet="sla; context: { icon: 'fa-people-arrows', label: 'Récupération du document', sub: 'médiane', value: hours(o.collections.median_hours_to_collect), tone: slaTone(o.collections.median_hours_to_collect, o.sla.collection_hours), goal: 'objectif ' + o.sla.collection_hours + ' h' }" />
+    <ng-container *ngTemplateOutlet="sla; context: { icon: 'fa-search', label: 'Examen d\'une correspondance', sub: 'médiane', value: hours(o.matches.median_review_hours), tone: slaTone(o.matches.median_review_hours, o.sla.review_hours), goal: 'objectif ' + o.sla.review_hours + ' h' }" />
   </section>
 
   <!-- ── À traiter maintenant ── -->
-  <h2 class="st-h">À traiter maintenant</h2>
-  <section class="st-grid">
-    <a class="st-tile st-tile--link" routerLink="/espace/retraits" [class.st-tile--alert]="o.collections.overdue_now > 0">
-      <span class="st-tile__label">Retraits sans appel en retard</span>
-      <strong>{{ o.collections.overdue_now | number }}</strong>
-      <small>sur {{ o.collections.open_now | number }} en cours</small>
+  <h2 class="st-h dt-section-title">À traiter maintenant</h2>
+  <section class="dt-stats">
+    <a class="dt-stat st-link" routerLink="/espace/retraits" [class.dt-stat--alert]="o.collections.overdue_now > 0">
+      <span class="dt-stat__icon dt-stat__icon--red"><i class="fas fa-phone-slash" aria-hidden="true"></i></span>
+      <div class="dt-stat__body"><strong class="dt-stat__num">{{ o.collections.overdue_now | number }}</strong><span class="dt-stat__label">Retraits sans appel en retard</span>
+        <small class="dt-stat__hint">sur {{ o.collections.open_now | number }} en cours</small></div>
     </a>
-    <a class="st-tile st-tile--link" routerLink="/espace/correspondances" [class.st-tile--alert]="o.matches.overdue_reviews_now > 0">
-      <span class="st-tile__label">Correspondances à examiner</span>
-      <strong>{{ o.matches.pending_review_now | number }}</strong>
-      <small>dont {{ o.matches.overdue_reviews_now | number }} en retard</small>
+    <a class="dt-stat st-link" routerLink="/espace/correspondances" [class.dt-stat--alert]="o.matches.overdue_reviews_now > 0">
+      <span class="dt-stat__icon dt-stat__icon--gold"><i class="fas fa-link" aria-hidden="true"></i></span>
+      <div class="dt-stat__body"><strong class="dt-stat__num">{{ o.matches.pending_review_now | number }}</strong><span class="dt-stat__label">Correspondances à examiner</span>
+        <small class="dt-stat__hint">dont {{ o.matches.overdue_reviews_now | number }} en retard</small></div>
     </a>
-    <a class="st-tile st-tile--link" routerLink="/espace/documents">
-      <span class="st-tile__label">Documents sous garde</span>
-      <strong>{{ o.found_documents.in_custody_now | number }}</strong>
-      <small>{{ o.found_documents.custody_age.over_90_days | number }} depuis plus de 90 jours</small>
+    <a class="dt-stat st-link" routerLink="/espace/documents">
+      <span class="dt-stat__icon dt-stat__icon--purple"><i class="fas fa-archive" aria-hidden="true"></i></span>
+      <div class="dt-stat__body"><strong class="dt-stat__num">{{ o.found_documents.in_custody_now | number }}</strong><span class="dt-stat__label">Documents sous garde</span>
+        <small class="dt-stat__hint">{{ o.found_documents.custody_age.over_90_days | number }} depuis plus de 90 jours</small></div>
     </a>
     @if (o.collections.unassigned_now !== undefined) {
-      <article class="st-tile" [class.st-tile--alert]="o.collections.unassigned_now > 0">
-        <span class="st-tile__label">Retraits sans structure</span>
-        <strong>{{ o.collections.unassigned_now | number }}</strong>
-        <small>aucune structure proche disponible</small>
-      </article>
+      <div class="dt-stat" [class.dt-stat--alert]="o.collections.unassigned_now > 0">
+        <span class="dt-stat__icon dt-stat__icon--blue"><i class="fas fa-map-marker-alt" aria-hidden="true"></i></span>
+        <div class="dt-stat__body"><strong class="dt-stat__num">{{ o.collections.unassigned_now | number }}</strong><span class="dt-stat__label">Retraits sans structure</span>
+          <small class="dt-stat__hint">aucune structure proche disponible</small></div>
+      </div>
     }
   </section>
 
   <!-- ── Activité de la période ── -->
-  <h2 class="st-h">Activité de la période</h2>
-  <section class="st-grid st-grid--dense">
-    <article class="st-tile"><span class="st-tile__label">Déclarations au guichet</span><strong>{{ o.declarations.counter | number }}</strong>
-      @if (o.declarations.cancelled) { <small>{{ o.declarations.cancelled }} annulée(s)</small> }</article>
+  <h2 class="st-h dt-section-title">Activité de la période</h2>
+  <section class="st-activity dt-card">
+    <ng-container *ngTemplateOutlet="act; context: { icon: 'fa-file-alt', label: 'Déclarations au guichet', value: o.declarations.counter, hint: o.declarations.cancelled ? o.declarations.cancelled + ' annulée(s)' : '' }" />
     @if (o.declarations.online !== null) {
-      <article class="st-tile"><span class="st-tile__label">Déclarations en ligne</span><strong>{{ o.declarations.online | number }}</strong></article>
+      <ng-container *ngTemplateOutlet="act; context: { icon: 'fa-globe-africa', label: 'Déclarations en ligne', value: o.declarations.online }" />
     }
-    <article class="st-tile"><span class="st-tile__label">Dépôts au guichet</span><strong>{{ o.found_documents.deposited_at_counter | number }}</strong></article>
-    <article class="st-tile"><span class="st-tile__label">Récupérés chez les trouveurs</span><strong>{{ o.found_documents.collected_from_finders | number }}</strong></article>
+    <ng-container *ngTemplateOutlet="act; context: { icon: 'fa-inbox', label: 'Dépôts au guichet', value: o.found_documents.deposited_at_counter }" />
+    <ng-container *ngTemplateOutlet="act; context: { icon: 'fa-people-arrows', label: 'Récupérés chez les trouveurs', value: o.found_documents.collected_from_finders }" />
     @if (o.found_documents.published_online !== null) {
-      <article class="st-tile"><span class="st-tile__label">Publiés par des citoyens</span><strong>{{ o.found_documents.published_online | number }}</strong></article>
+      <ng-container *ngTemplateOutlet="act; context: { icon: 'fa-newspaper', label: 'Publiés par des citoyens', value: o.found_documents.published_online }" />
     }
-    <article class="st-tile"><span class="st-tile__label">Correspondances trouvées</span><strong>{{ o.matches.created | number }}</strong>
-      <small>{{ o.matches.auto_confirmed }} automatiques · {{ o.matches.confirmed_by_agents }} confirmées · {{ o.matches.rejected }} rejetées</small></article>
-    <article class="st-tile"><span class="st-tile__label">Restitutions</span><strong>{{ o.restitutions.completed | number }}</strong>
-      <small>{{ o.restitutions.by_proxy }} par procuration · {{ o.restitutions.name_derogations }} dérogation(s)</small></article>
-    <article class="st-tile"><span class="st-tile__label">Taux de restitution</span>
-      <strong>{{ o.found_documents.restitution_rate_pct === null ? '—' : (o.found_documents.restitution_rate_pct | number: '1.0-1') + ' %' }}</strong>
-      <small>des {{ o.found_documents.entered_custody }} documents entrés sous garde</small></article>
-    <article class="st-tile"><span class="st-tile__label">SMS envoyés</span><strong>{{ o.sms.sent | number }}</strong>
-      @if (o.sms.failed) { <small class="text-danger"><i class="fas fa-exclamation-triangle" aria-hidden="true"></i> {{ o.sms.failed }} en échec</small> }</article>
+    <ng-container *ngTemplateOutlet="act; context: { icon: 'fa-link', label: 'Correspondances trouvées', value: o.matches.created, hint: o.matches.auto_confirmed + ' auto · ' + o.matches.confirmed_by_agents + ' confirmées · ' + o.matches.rejected + ' rejetées' }" />
+    <ng-container *ngTemplateOutlet="act; context: { icon: 'fa-hands-helping', label: 'Restitutions', value: o.restitutions.completed, hint: o.restitutions.by_proxy + ' par procuration · ' + o.restitutions.name_derogations + ' dérogation(s)' }" />
+    <ng-container *ngTemplateOutlet="act; context: { icon: 'fa-percentage', label: 'Taux de restitution', text: o.found_documents.restitution_rate_pct === null ? '—' : (o.found_documents.restitution_rate_pct | number: '1.0-1') + ' %', hint: 'des ' + o.found_documents.entered_custody + ' documents entrés sous garde' }" />
+    <ng-container *ngTemplateOutlet="act; context: { icon: 'fa-sms', label: 'SMS envoyés', value: o.sms.sent, hint: o.sms.failed ? o.sms.failed + ' en échec' : '', alert: o.sms.failed > 0 }" />
   </section>
 
   <!-- ── Évolution ── -->
@@ -160,55 +138,110 @@
   <!-- ── Comparaison des structures ── -->
   @if (showStructures()) {
     <section class="dt-card mt-4 p-0 overflow-hidden">
-      <div class="p-3 pb-2 d-flex justify-content-between align-items-center flex-wrap gap-2">
-        <h2 class="dt-card__title mb-0">Comparaison des structures</h2>
-        <button type="button" class="btn btn-sm btn-outline-secondary" [disabled]="exporting()" (click)="exportCsv()">
-          <i class="fas fa-file-csv me-1" aria-hidden="true"></i> {{ exporting() ? 'Export…' : 'Exporter (Excel / CSV)' }}
-        </button>
+      <div class="st-cmp-head">
+        <div>
+          <h2 class="dt-card__title mb-0">Comparaison des structures</h2>
+          <small class="dt-muted">{{ structureRows().length }} structure(s) affichée(s) sur {{ structures()!.data.length }} · les plus actives en premier</small>
+        </div>
+        <div class="st-cmp-tools">
+          <label class="visually-hidden" for="st-cmp-q">Rechercher une structure</label>
+          <input id="st-cmp-q" class="form-control form-control-sm" placeholder="Rechercher une structure…" [value]="structureSearch()" (input)="structureSearch.set($any($event.target).value)" />
+          <div class="form-check form-switch mb-0">
+            <input class="form-check-input" type="checkbox" role="switch" id="st-cmp-active" [checked]="onlyWithActivity()" (change)="onlyWithActivity.set(!onlyWithActivity())" />
+            <label class="form-check-label small" for="st-cmp-active">Avec activité seulement</label>
+          </div>
+          <button type="button" class="btn btn-sm btn-outline-secondary" [disabled]="exporting()" (click)="exportCsv()">
+            <i class="fas fa-file-csv me-1" aria-hidden="true"></i> {{ exporting() ? 'Export…' : 'Exporter' }}
+          </button>
+        </div>
       </div>
-      <div class="table-responsive">
-        <table class="table table-sm table-hover align-middle mb-0 st-table">
-          <thead class="table-light">
-            <tr>
-              <th>Structure</th>
-              <th class="text-end">Retraits reçus</th>
-              <th class="text-end">1er appel (médiane)</th>
-              <th class="text-end">Dans le délai</th>
-              <th class="text-end">En retard</th>
-              <th class="text-end">Récupérés</th>
-              <th class="text-end">Sous garde</th>
-              <th class="text-end">À examiner</th>
-              <th class="text-end">Déclarations</th>
-              <th class="text-end">Restitutions</th>
-            </tr>
-          </thead>
-          <tbody>
-            @for (s of structures()!.data; track s.uuid) {
-              <tr [class.text-muted]="!s.is_active">
-                <td>{{ s.name }}@if (!s.is_active) { <span class="badge text-bg-secondary ms-1">désactivée</span> }<small class="d-block dt-muted">{{ s.parent }}</small></td>
-                <td class="text-end">{{ s.collections_assigned }}</td>
-                <td class="text-end">{{ hours(s.median_first_contact_hours) }}</td>
-                <td class="text-end">{{ s.contacted_within_sla_pct === null ? '—' : (s.contacted_within_sla_pct | number: '1.0-0') + ' %' }}</td>
-                <td class="text-end" [class.fw-bold]="s.collections_overdue_now > 0" [class.text-danger]="s.collections_overdue_now > 0">{{ s.collections_overdue_now }}</td>
-                <td class="text-end">{{ s.collected }}</td>
-                <td class="text-end">{{ s.in_custody_now }}</td>
-                <td class="text-end">{{ s.pending_reviews_now }}</td>
-                <td class="text-end">{{ s.counter_declarations }}</td>
-                <td class="text-end">{{ s.restitutions }}</td>
+      @if (!structureRows().length) {
+        <p class="px-3 pb-3 mb-0 dt-muted"><i class="fas fa-info-circle me-1" aria-hidden="true"></i>
+          {{ onlyWithActivity() ? 'Aucune structure n\'a d\'activité sur la période.' : 'Aucune structure ne correspond à la recherche.' }}</p>
+      } @else {
+        <div class="table-responsive st-cmp">
+          <table class="table table-sm align-middle mb-0 st-table">
+            <thead>
+              <tr>
+                <th class="st-cmp__name">Structure</th>
+                <th class="text-center" title="Retraits attribués sur la période">Retraits</th>
+                <th class="text-center" title="Délai médian avant le premier appel au trouveur">1er appel</th>
+                <th class="text-center" title="Trouveurs appelés dans le délai">Dans le délai</th>
+                <th class="text-center" title="Retraits sans appel en retard aujourd'hui">En retard</th>
+                <th class="text-center">Récupérés</th>
+                <th class="text-center">Sous garde</th>
+                <th class="text-center" title="Correspondances à examiner">À examiner</th>
+                <th class="text-center" title="Déclarations au guichet">Déclarations</th>
+                <th class="text-center">Restitutions</th>
               </tr>
-            }
-          </tbody>
-        </table>
-      </div>
+            </thead>
+            <tbody>
+              @for (s of visibleStructureRows(); track s.uuid) {
+                <tr [class.st-cmp__off]="!s.is_active">
+                  <td class="st-cmp__name">
+                    <span class="st-cmp__title" [title]="s.name">{{ s.name }}</span>
+                    <small>{{ s.parent }}@if (!s.is_active) { · désactivée }</small>
+                  </td>
+                  <td class="text-center" [class.st-zero]="!s.collections_assigned">{{ s.collections_assigned }}</td>
+                  <td class="text-center" [class.st-zero]="s.median_first_contact_hours === null">{{ hours(s.median_first_contact_hours) }}</td>
+                  <td class="text-center" [class.st-zero]="s.contacted_within_sla_pct === null">
+                    @if (s.contacted_within_sla_pct === null) { — } @else {
+                      <span class="st-pill" [class]="'st-pill st-pill--' + pctTone(s.contacted_within_sla_pct)">{{ s.contacted_within_sla_pct | number: '1.0-0' }} %</span>
+                    }
+                  </td>
+                  <td class="text-center" [class.st-zero]="!s.collections_overdue_now">
+                    @if (s.collections_overdue_now) { <span class="st-pill st-pill--bad">{{ s.collections_overdue_now }}</span> } @else { 0 }
+                  </td>
+                  <td class="text-center" [class.st-zero]="!s.collected">{{ s.collected }}</td>
+                  <td class="text-center" [class.st-zero]="!s.in_custody_now">{{ s.in_custody_now }}</td>
+                  <td class="text-center" [class.st-zero]="!s.pending_reviews_now">{{ s.pending_reviews_now }}</td>
+                  <td class="text-center" [class.st-zero]="!s.counter_declarations">{{ s.counter_declarations }}</td>
+                  <td class="text-center" [class.st-zero]="!s.restitutions">{{ s.restitutions }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+        @if (structureRows().length > structuresPage) {
+          <div class="st-cmp-more">
+            <button type="button" class="btn btn-sm btn-outline-secondary" (click)="showAllStructures.set(!showAllStructures())">
+              {{ showAllStructures() ? 'Afficher les ' + structuresPage + ' premières' : 'Afficher les ' + structureRows().length + ' structures' }}
+            </button>
+          </div>
+        }
+      }
     </section>
   }
 }
 
-<ng-template #tone let-t let-goal="goal">
-  @switch (t) {
-    @case ('good') { <small class="st-tone st-tone--good"><i class="fas fa-check-circle" aria-hidden="true"></i> Respecté · {{ goal }}</small> }
-    @case ('warn') { <small class="st-tone st-tone--warn"><i class="fas fa-exclamation-triangle" aria-hidden="true"></i> À surveiller · {{ goal }}</small> }
-    @case ('bad') { <small class="st-tone st-tone--bad"><i class="fas fa-times-circle" aria-hidden="true"></i> Dépassé · {{ goal }}</small> }
-    @default { <small class="st-tone">Pas encore de mesure · {{ goal }}</small> }
-  }
+<!-- Carte d'un délai : valeur, objectif et pastille « respecté / à surveiller / dépassé » -->
+<ng-template #sla let-icon="icon" let-label="label" let-sub="sub" let-value="value" let-tone="tone" let-goal="goal">
+  <article class="st-sla__card" [class]="'st-sla__card st-sla__card--' + tone">
+    <div class="st-sla__top">
+      <span class="st-sla__icon"><i class="fas {{ icon }}" aria-hidden="true"></i></span>
+      <span class="st-sla__label">{{ label }}<small>{{ sub }}</small></span>
+    </div>
+    <strong class="st-sla__value">{{ value }}</strong>
+    <div class="st-sla__foot">
+      @switch (tone) {
+        @case ('good') { <span class="st-pill st-pill--good"><i class="fas fa-check-circle" aria-hidden="true"></i> Respecté</span> }
+        @case ('warn') { <span class="st-pill st-pill--warn"><i class="fas fa-exclamation-triangle" aria-hidden="true"></i> À surveiller</span> }
+        @case ('bad') { <span class="st-pill st-pill--bad"><i class="fas fa-times-circle" aria-hidden="true"></i> Dépassé</span> }
+        @default { <span class="st-pill st-pill--none">Pas encore de mesure</span> }
+      }
+      <small>{{ goal }}</small>
+    </div>
+  </article>
+</ng-template>
+
+<!-- Ligne d'activité : icône, libellé, valeur -->
+<ng-template #act let-icon="icon" let-label="label" let-value="value" let-text="text" let-hint="hint" let-alert="alert">
+  <div class="st-act">
+    <span class="st-act__icon"><i class="fas {{ icon }}" aria-hidden="true"></i></span>
+    <div class="st-act__body">
+      <span class="st-act__label">{{ label }}</span>
+      @if (hint) { <small [class.text-danger]="alert">{{ hint }}</small> }
+    </div>
+    <strong class="st-act__value">{{ text ?? (value | number) }}</strong>
+  </div>
 </ng-template>

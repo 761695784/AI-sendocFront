@@ -7,6 +7,11 @@ import { environment } from '../../../environments/environment';
 import { narrativeEdits } from '../../features/admin/narrative-review/narrative-review.component';
 import { slugCode } from '../../features/admin/organization-types/organization-types.component';
 import { fcfa } from '../../features/admin/billing/billing.component';
+import { voicesToGenerate } from '../../features/admin/assistant-voices/assistant-voices.component';
+import { toBars } from '../../features/admin/home/admin-home.component';
+import { initialsOf } from '../../features/admin/shell/admin-shell.component';
+import { filterStructureRows } from '../../features/staff/stats/stats.component';
+import { StructureRow } from './pilot.types';
 
 const V2 = `${environment.apiUrl}/v2`;
 
@@ -45,6 +50,15 @@ describe('AdminApi', () => {
     expect(http.expectOne((r) => r.url === `${V2}/reports`).request.params.get('narrative_status')).toBe('pending');
   });
 
+  it('voix de l’assistant : état, génération et retrait d’une phrase', () => {
+    api.assistantVoices().subscribe();
+    expect(http.expectOne((r) => r.url === `${V2}/assistant/voices`).request.params.get('lang')).toBe('wo');
+    api.generateVoice('wo', 'welcome').subscribe();
+    expect(http.expectOne(`${V2}/assistant/voices/wo/welcome`).request.method).toBe('POST');
+    api.removeVoice('wo', 'welcome').subscribe();
+    expect(http.expectOne(`${V2}/assistant/voices/wo/welcome`).request.method).toBe('DELETE');
+  });
+
   it('tarifs et rapport de reversement (JSON et CSV)', () => {
     api.setPrice({ service: 'counter_declaration', amount: 2000, authority_share_pct: 60, institution_uuid: null }).subscribe();
     expect(http.expectOne(`${V2}/billing/prices`).request.body.amount).toBe(2000);
@@ -78,8 +92,32 @@ describe('Administration : règles d’affichage', () => {
     expect(slugCode('Échelon régional')).toBe('echelon_regional');
   });
 
+  it('voix à générer : phrases sans audio ou dont le texte a changé', () => {
+    expect(voicesToGenerate([{ key: 'a', state: 'ready' }, { key: 'b', state: 'missing' }, { key: 'c', state: 'stale' }, { key: 'd', state: 'manual' }])).toEqual(['b', 'c']);
+  });
+
   it('montants en FCFA', () => {
     expect(fcfa(3000)).toBe('3 000 FCFA');
     expect(fcfa(0)).toBe('0 FCFA');
+  });
+
+  it('initiales du compte', () => {
+    expect(initialsOf('Malang Marna')).toBe('MM');
+    expect(initialsOf('awa')).toBe('AW');
+    expect(initialsOf('')).toBe('?');
+  });
+
+  it('répartitions de l’accueil : réponses des anciens services', () => {
+    expect(toBars({ data: [{ typeName: 'Passeport', count: '3' }] }, 'typeName')).toEqual([{ label: 'Passeport', value: 3 }]);
+    expect(toBars([{ subject: 'Demande de restitution', count: 5 }], 'subject')).toEqual([{ label: 'Demande de restitution', value: 5 }]);
+    expect(toBars(null, 'subject')).toEqual([]);
+  });
+
+  it('comparaison des structures : actives d’abord, recherche sans accents', () => {
+    const r = (name: string, n: number): StructureRow => ({ uuid: name, name, parent: 'Gendarmerie nationale', is_active: true, collections_assigned: n, median_first_contact_hours: null,
+      contacted_within_sla_pct: null, collections_overdue_now: 0, collected: 0, median_hours_to_collect: null, in_custody_now: 0, pending_reviews_now: 0, counter_declarations: 0, restitutions: 0 });
+    const rows = [r('Brigade de Kédougou', 0), r('Brigade de Thiès', 2), r('Brigade de Mbour', 5)];
+    expect(filterStructureRows(rows, '', true).map((x) => x.name)).toEqual(['Brigade de Mbour', 'Brigade de Thiès']);
+    expect(filterStructureRows(rows, 'kedougou', false).map((x) => x.name)).toEqual(['Brigade de Kédougou']);
   });
 });

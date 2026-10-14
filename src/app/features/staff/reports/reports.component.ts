@@ -336,7 +336,7 @@ export class StaffReportsComponent implements OnInit {
     }
   `,
   styles: `
-    .rp-score { font-size: 2.4rem; font-weight: 700; line-height: 1; color: #13294b; }
+    .rp-score { font-size: 2.4rem; font-weight: 700; line-height: 1; color: var(--bo-ink, #13294b); }
     .rp-score small { font-size: .9rem; color: #5f6b7a; font-weight: 400; }
     .rp-score--success { color: #1e7a46; }
     .rp-score--warning { color: #9a6200; }

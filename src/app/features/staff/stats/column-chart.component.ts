@@ -75,9 +75,9 @@ export function niceMax(max: number): number {
     }
   `,
   styles: `
-    :host { display: block; --cc-series: #1d5b99; --cc-grid: #e7ebf0; --cc-ink: #5f6b7a; }
+    :host { display: block; --cc-series: var(--bo-chart, #1d5b99); --cc-grid: #e7ebf0; --cc-ink: #5f6b7a; }
     .cc__bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: .5rem; font-size: .88rem; color: var(--cc-ink); }
-    .cc__total b { color: #13294b; }
+    .cc__total b { color: var(--bo-ink, #13294b); }
     .cc { display: grid; grid-template-columns: 2.6rem 1fr; grid-template-rows: 200px auto; column-gap: .4rem; }
     .cc__axis { position: relative; font-size: .72rem; color: var(--cc-ink); }
     .cc__axis span { position: absolute; right: 0; transform: translateY(50%); line-height: 1; }
@@ -89,7 +89,7 @@ export function niceMax(max: number): number {
     .cc__col { width: min(24px, 70%); background: var(--cc-series); border-radius: 4px 4px 0 0; min-height: 0; }
     .cc__col--zero { height: 0 !important; }
     .cc__tip { position: absolute; bottom: calc(100% - 2.5rem); left: 50%; transform: translate(-50%, -100%); z-index: 2; white-space: nowrap;
-      background: #13294b; color: #fff; font-size: .78rem; padding: .35rem .55rem; border-radius: .4rem; pointer-events: none; text-align: center; }
+      background: var(--bo-ink, #13294b); color: #fff; font-size: .78rem; padding: .35rem .55rem; border-radius: .4rem; pointer-events: none; text-align: center; }
     .cc__labels { grid-column: 2; display: flex; gap: 2px; font-size: .7rem; color: var(--cc-ink); padding-top: .3rem; }
     .cc__labels span { flex: 1; text-align: center; white-space: nowrap; overflow: visible; min-width: 0; }
     .cc__table { max-height: 260px; overflow-y: auto; }

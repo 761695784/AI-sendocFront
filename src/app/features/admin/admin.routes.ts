@@ -1,7 +1,7 @@
 import { Routes } from '@angular/router';
 import { AdminShellComponent } from './shell/admin-shell.component';
 
-/** Données de route : les écrans de pilotage partagés affichent le périmètre national. */
+/** Données de route : les écrans de pilotage partagés affichent le périmètre national ; `icon` = pastille de l'en-tête de page. */
 const NATIONAL = { national: true };
 
 /**
@@ -16,22 +16,23 @@ export const ADMIN_ROUTES: Routes = [
     path: '',
     component: AdminShellComponent,
     children: [
-      { path: '', title: 'Administration — DocTrack', loadComponent: () => import('./home/admin-home.component').then((m) => m.AdminHomeComponent) },
+      { path: '', data: { icon: 'fa-home' }, title: 'Administration — DocTrack', loadComponent: () => import('./home/admin-home.component').then((m) => m.AdminHomeComponent) },
 
       // ── Pilotage national (écrans partagés) ──
-      { path: 'messages', title: 'Boîte de réception — DocTrack', loadComponent: () => import('../staff/messages/messages.component').then((m) => m.StaffMessagesComponent) },
-      { path: 'statistiques', data: NATIONAL, title: 'Statistiques nationales — DocTrack', loadComponent: () => import('../staff/stats/stats.component').then((m) => m.StaffStatsComponent) },
-      { path: 'vigilance', title: 'Vigilance — DocTrack', loadComponent: () => import('../staff/vigilance/vigilance.component').then((m) => m.StaffVigilanceComponent) },
-      { path: 'vigilance/:uuid', title: 'Alerte de vigilance — DocTrack', loadComponent: () => import('../staff/vigilance/vigilance.component').then((m) => m.StaffVigilanceDetailComponent) },
-      { path: 'rapports', data: NATIONAL, title: 'Rapports — DocTrack', loadComponent: () => import('../staff/reports/reports.component').then((m) => m.StaffReportsComponent) },
-      { path: 'rapports/:uuid', title: 'Rapport — DocTrack', loadComponent: () => import('../staff/reports/reports.component').then((m) => m.StaffReportDetailComponent) },
-      { path: 'envois', title: 'Suivi des envois — DocTrack', loadComponent: () => import('../staff/deliveries/deliveries.component').then((m) => m.StaffDeliveriesComponent) },
+      { path: 'messages', data: { icon: 'fa-inbox' }, title: 'Boîte de réception — DocTrack', loadComponent: () => import('../staff/messages/messages.component').then((m) => m.StaffMessagesComponent) },
+      { path: 'statistiques', data: { ...NATIONAL, icon: 'fa-chart-line' }, title: 'Statistiques nationales — DocTrack', loadComponent: () => import('../staff/stats/stats.component').then((m) => m.StaffStatsComponent) },
+      { path: 'vigilance', data: { icon: 'fa-shield-alt' }, title: 'Vigilance — DocTrack', loadComponent: () => import('../staff/vigilance/vigilance.component').then((m) => m.StaffVigilanceComponent) },
+      { path: 'vigilance/:uuid', data: { icon: 'fa-shield-alt' }, title: 'Alerte de vigilance — DocTrack', loadComponent: () => import('../staff/vigilance/vigilance.component').then((m) => m.StaffVigilanceDetailComponent) },
+      { path: 'rapports', data: { ...NATIONAL, icon: 'fa-file-invoice' }, title: 'Rapports — DocTrack', loadComponent: () => import('../staff/reports/reports.component').then((m) => m.StaffReportsComponent) },
+      { path: 'rapports/:uuid', data: { icon: 'fa-file-invoice' }, title: 'Rapport — DocTrack', loadComponent: () => import('../staff/reports/reports.component').then((m) => m.StaffReportDetailComponent) },
+      { path: 'envois', data: { icon: 'fa-paper-plane' }, title: 'Suivi des envois — DocTrack', loadComponent: () => import('../staff/deliveries/deliveries.component').then((m) => m.StaffDeliveriesComponent) },
 
       // ── Organisation ──
-      { path: 'structures', title: 'Structures — DocTrack', loadComponent: () => import('../staff/structures/structures.component').then((m) => m.StaffStructuresComponent) },
-      { path: 'membres', title: 'Membres — DocTrack', loadComponent: () => import('../staff/members/members.component').then((m) => m.StaffMembersComponent) },
-      { path: 'types-structure', title: 'Types de structure — DocTrack', loadComponent: () => import('./organization-types/organization-types.component').then((m) => m.AdminOrganizationTypesComponent) },
-      { path: 'facturation', title: 'Tarifs et reversements — DocTrack', loadComponent: () => import('./billing/billing.component').then((m) => m.AdminBillingComponent) },
+      { path: 'structures', data: { icon: 'fa-sitemap' }, title: 'Structures — DocTrack', loadComponent: () => import('../staff/structures/structures.component').then((m) => m.StaffStructuresComponent) },
+      { path: 'membres', data: { icon: 'fa-users' }, title: 'Membres — DocTrack', loadComponent: () => import('../staff/members/members.component').then((m) => m.StaffMembersComponent) },
+      { path: 'types-structure', data: { icon: 'fa-tags' }, title: 'Types de structure — DocTrack', loadComponent: () => import('./organization-types/organization-types.component').then((m) => m.AdminOrganizationTypesComponent) },
+      { path: 'facturation', data: { icon: 'fa-coins' }, title: 'Tarifs et reversements — DocTrack', loadComponent: () => import('./billing/billing.component').then((m) => m.AdminBillingComponent) },
+      { path: 'voix-assistant', data: { icon: 'fa-volume-up' }, title: "Voix de l'assistant — DocTrack", loadComponent: () => import('./assistant-voices/assistant-voices.component').then((m) => m.AdminAssistantVoicesComponent) },
 
       // ── Écrans historiques (API V1), mêmes adresses qu'avant ──
       { path: 'profil', title: 'Mon profil — DocTrack', loadComponent: () => import('../../components/adminprofil/adminprofil.component').then((m) => m.AdminprofilComponent) },

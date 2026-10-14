@@ -33,8 +33,8 @@ export class LoadingComponent {
   styles: `
     .dt-empty { display: flex; flex-direction: column; align-items: center; text-align: center; gap: .4rem;
       padding: 2.5rem 1rem; color: #5f6b7a; }
-    .dt-empty i { font-size: 2rem; color: #b5bdc8; margin-bottom: .25rem; }
-    .dt-empty strong { color: #1c2430; }
+    .dt-empty i { font-size: 2rem; color: var(--bo-empty-icon, #b5bdc8); margin-bottom: .25rem; }
+    .dt-empty strong { color: var(--bo-ink, #1c2430); }
     .dt-empty p { margin: 0; max-width: 32rem; }
   `,
 })

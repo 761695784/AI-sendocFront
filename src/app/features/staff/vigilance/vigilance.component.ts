@@ -148,7 +148,7 @@ async function askDecision(notify: NotifyService, decision: 'confirm' | 'dismiss
     .vg-item--warning { border-left-color: #d98e04; }
     .vg-item--info { border-left-color: #1d5b99; }
     .vg-item__head { display: flex; flex-wrap: wrap; gap: .5rem; align-items: center; }
-    .vg-item__title { font-weight: 600; color: #13294b; }
+    .vg-item__title { font-weight: 600; color: var(--bo-ink, #13294b); }
   `,
 })
 export class StaffVigilanceComponent implements OnInit {

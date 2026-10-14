@@ -27,12 +27,7 @@ export function fcfa(amount: number | null | undefined): string {
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './billing.component.html',
   styles: `
-    .bl-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: .75rem; }
-    .bl-tile { background: #fff; border: 1px solid #e3e8ef; border-radius: .75rem; padding: .8rem 1rem; display: flex; flex-direction: column; }
-    .bl-tile span { color: #5f6b7a; font-size: .85rem; }
-    .bl-tile strong { font-size: 1.35rem; color: #13294b; }
-    .bl-tile small { color: #5f6b7a; }
-    .bl-price { font-size: 1.6rem; font-weight: 700; color: #13294b; }
+    .bl-price { font-size: 1.6rem; font-weight: 800; color: var(--bo-ink, #13294b); }
   `,
 })
 export class AdminBillingComponent implements OnInit {

@@ -28,16 +28,19 @@ const CHANNELS: Partial<Record<string, { label: string; icon: string }>> = {
     <app-page-header title="Suivi des envois" subtitle="SMS, emails et messages envoyés aux citoyens et aux agents sur 30 jours" />
 
     @if (summary(); as s) {
-      <section class="dv-grid mb-3">
-        <div class="dv-tile"><span>SMS envoyés</span><strong>{{ s.sms_sent | number }}</strong></div>
-        <div class="dv-tile" [class.dv-tile--alert]="s.sms_failed > 0"><span>SMS en échec</span><strong>{{ s.sms_failed | number }}</strong><small>{{ s.sms_fail_rate | number: '1.0-1' }} % des SMS</small></div>
+      <section class="dt-stats mb-3">
+        <div class="dt-stat"><span class="dt-stat__icon dt-stat__icon--green"><i class="fas fa-sms" aria-hidden="true"></i></span>
+          <div class="dt-stat__body"><strong class="dt-stat__num">{{ s.sms_sent | number }}</strong><span class="dt-stat__label">SMS envoyés</span></div></div>
+        <div class="dt-stat" [class.dt-stat--alert]="s.sms_failed > 0"><span class="dt-stat__icon dt-stat__icon--red"><i class="fas fa-exclamation-triangle" aria-hidden="true"></i></span>
+          <div class="dt-stat__body"><strong class="dt-stat__num">{{ s.sms_failed | number }}</strong><span class="dt-stat__label">SMS en échec</span><small class="dt-stat__hint">{{ s.sms_fail_rate | number: '1.0-1' }} % des SMS</small></div></div>
         @for (c of channelTotals(); track c.key) {
-          <div class="dv-tile"><span><i class="fas {{ c.icon }} me-1" aria-hidden="true"></i>{{ c.label }}</span><strong>{{ c.total | number }}</strong></div>
+          <div class="dt-stat"><span class="dt-stat__icon dt-stat__icon--purple"><i class="fas {{ c.icon }}" aria-hidden="true"></i></span>
+            <div class="dt-stat__body"><strong class="dt-stat__num">{{ c.total | number }}</strong><span class="dt-stat__label">{{ c.label }}</span></div></div>
         }
       </section>
     }
 
-    <div class="d-flex flex-wrap gap-2 mb-3" role="group" aria-label="Filtres">
+    <div class="dt-filters" role="group" aria-label="Filtres">
       <select class="form-select form-select-sm w-auto" aria-label="Canal" [value]="channel()" (change)="channel.set($any($event.target).value); load(1)">
         <option value="">Tous les canaux</option>
         @for (c of channelKeys; track c) { <option [value]="c">{{ channels[c]?.label }}</option> }
@@ -83,14 +86,6 @@ const CHANNELS: Partial<Record<string, { label: string; icon: string }>> = {
       </div>
       <app-paginator [page]="page()" (pageChange)="load($event)" />
     }
-  `,
-  styles: `
-    .dv-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: .75rem; }
-    .dv-tile { background: #fff; border: 1px solid #e3e8ef; border-radius: .75rem; padding: .8rem 1rem; display: flex; flex-direction: column; }
-    .dv-tile span { color: #5f6b7a; font-size: .85rem; }
-    .dv-tile strong { font-size: 1.6rem; color: #13294b; }
-    .dv-tile small { color: #5f6b7a; }
-    .dv-tile--alert { border-color: #f1b8b8; }
   `,
 })
 export class StaffDeliveriesComponent implements OnInit {

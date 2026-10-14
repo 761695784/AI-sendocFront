@@ -3,6 +3,8 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
 import { filter, timer } from 'rxjs';
+import { MEMBERSHIP_ROLE_LABELS } from '../../../core/session/session.models';
+import { initialsOf } from '../../admin/shell/admin-shell.component';
 import { SessionStore } from '../../../core/session/session.store';
 import { AuthService } from '../../../components/services/auth.service';
 import { OrgSwitcherComponent } from '../../../shared/org-switcher/org-switcher.component';
@@ -12,13 +14,15 @@ import { InboxBadgeService } from '../shared/inbox-badge.service';
 /**
  * Mise en page de l'espace des structures : menu latéral selon les droits,
  * barre du haut (structure active, messages non lus, compte).
+ * Même identité visuelle que l'administration (styles partagés de admin-shell.component.css,
+ * thème « dt-bo » de doctrack-v2.css).
  */
 @Component({
   selector: 'app-staff-shell',
   imports: [RouterOutlet, RouterLink, RouterLinkActive, NgbDropdownModule, OrgSwitcherComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './staff-shell.component.html',
-  styleUrl: './staff-shell.component.css',
+  styleUrls: ['../../admin/shell/admin-shell.component.css', './staff-shell.component.css'],
 })
 export class StaffShellComponent implements OnInit {
   private readonly session = inject(SessionStore);
@@ -31,6 +35,11 @@ export class StaffShellComponent implements OnInit {
   readonly isSuperAdmin = this.session.isSuperAdmin;
   readonly unread = this.badge.unread;
   readonly menuOpen = signal(false);
+  readonly initials = computed(() => initialsOf(this.displayName()));
+  readonly roleLabel = computed(() => {
+    const m = this.session.activeMembership();
+    return m ? (MEMBERSHIP_ROLE_LABELS[m.role] ?? m.role) : 'Agent';
+  });
 
   /** Menu filtré selon les droits de la structure active. */
   readonly menu = computed<StaffMenuSection[]>(() => {

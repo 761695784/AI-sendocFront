@@ -4,16 +4,42 @@
   }
 </app-page-header>
 
-<form class="dt-toolbar d-flex flex-wrap gap-2 align-items-center mb-3" (submit)="$event.preventDefault(); load(1)">
-  <label for="org-q" class="visually-hidden">Rechercher</label>
-  <input id="org-q" name="q" class="form-control" style="max-width: 320px" placeholder="Nom ou code" [value]="search" (input)="search = $any($event.target).value" />
-  <button type="submit" class="btn btn-outline-secondary"><i class="fas fa-search" aria-hidden="true"></i> Rechercher</button>
-  @if (isSuperAdmin()) {
-    <div class="form-check ms-2">
-      <input class="form-check-input" type="checkbox" id="org-inactive" [checked]="showInactive" (change)="showInactive = !showInactive; load(1)" />
-      <label class="form-check-label small" for="org-inactive">Afficher les désactivées</label>
+<form class="dt-filters st-filters" (submit)="$event.preventDefault(); load(1)" aria-label="Filtres">
+  @if (institutions().length > 1) {
+    <div class="btn-group flex-wrap" role="group" aria-label="Institution">
+      <button type="button" class="btn btn-sm" [class.btn-dt]="!institution()" [class.btn-outline-secondary]="institution()"
+        [attr.aria-pressed]="!institution()" (click)="setInstitution('')">Toutes</button>
+      @for (i of institutions(); track i.uuid) {
+        <button type="button" class="btn btn-sm" [class.btn-dt]="institution() === i.uuid" [class.btn-outline-secondary]="institution() !== i.uuid"
+          [attr.aria-pressed]="institution() === i.uuid" (click)="setInstitution(i.uuid)">{{ i.name }}</button>
+      }
     </div>
   }
+  <label for="org-region" class="visually-hidden">Région</label>
+  <select id="org-region" class="form-select form-select-sm w-auto" [value]="region()" (change)="region.set($any($event.target).value); load(1)">
+    <option value="">Toutes les régions</option>
+    @for (r of regions(); track r.code) { <option [value]="r.code">{{ r.name }}</option> }
+  </select>
+  <label for="org-type" class="visually-hidden">Type de structure</label>
+  <select id="org-type" class="form-select form-select-sm w-auto" [value]="typeFilter()" (change)="typeFilter.set($any($event.target).value); load(1)">
+    <option value="">Tous les types</option>
+    @for (t of structureTypes(); track t.code) { <option [value]="t.code">{{ t.name }}</option> }
+  </select>
+  <div class="input-group input-group-sm st-search">
+    <label for="org-q" class="visually-hidden">Rechercher</label>
+    <input id="org-q" name="q" class="form-control" placeholder="Nom ou code" [value]="search" (input)="search = $any($event.target).value" />
+    <button type="submit" class="btn btn-outline-secondary" aria-label="Rechercher"><i class="fas fa-search" aria-hidden="true"></i></button>
+  </div>
+  @if (isSuperAdmin()) {
+    <div class="form-check mb-0">
+      <input class="form-check-input" type="checkbox" id="org-inactive" [checked]="showInactive" (change)="showInactive = !showInactive; load(1)" />
+      <label class="form-check-label small" for="org-inactive">Désactivées</label>
+    </div>
+  }
+  <span class="st-count small dt-muted">
+    @if (page(); as p) { {{ p.meta.total }} résultat(s) }
+    @if (filtered() || search) { · <button type="button" class="btn btn-link btn-sm p-0 align-baseline" (click)="resetFilters()">Effacer les filtres</button> }
+  </span>
 </form>
 
 @if (mode(); as m) {

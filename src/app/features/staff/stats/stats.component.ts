@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { forkJoin } from 'rxjs';
 import { PilotApi, StatsQuery } from '../../../core/api/pilot.api';
-import { METRIC_LABELS, OverdueCollections, StatsOverview, StructuresStats, TimeseriesMetric } from '../../../core/api/pilot.types';
+import { METRIC_LABELS, OverdueCollections, StatsOverview, StructureRow, StructuresStats, TimeseriesMetric } from '../../../core/api/pilot.types';
 import { apiErrorMessage, saveBlob } from '../../../core/api/api-v2.client';
 import { SessionStore } from '../../../core/session/session.store';
 import { NotifyService } from '../../../shared/feedback/notify.service';
@@ -13,6 +13,22 @@ import { ErrorStateComponent, LoadingComponent } from '../../../shared/ui/state.
 import { ColumnChartComponent, ColumnPoint } from './column-chart.component';
 
 export type PeriodKey = '7' | '30' | '90' | '365' | 'custom';
+
+const STRUCTURES_PAGE = 25;
+
+/** Volume d'activité d'une structure (pour classer le tableau comparatif). */
+export function structureActivity(r: StructureRow): number {
+  return r.collections_assigned + r.collected + r.in_custody_now + r.pending_reviews_now + r.counter_declarations + r.restitutions + r.collections_overdue_now;
+}
+
+/** Recherche par nom ou rattachement ; les structures les plus actives d'abord ; sans activité masquées si demandé. */
+export function filterStructureRows(rows: StructureRow[], search: string, onlyWithActivity: boolean): StructureRow[] {
+  const q = search.trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+  return rows
+    .filter((r) => !onlyWithActivity || structureActivity(r) > 0)
+    .filter((r) => !q || `${r.name} ${r.parent ?? ''}`.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').includes(q))
+    .sort((a, b) => structureActivity(b) - structureActivity(a) || a.name.localeCompare(b.name, 'fr'));
+}
 
 const MONTHS = ['janv.', 'févr.', 'mars', 'avr.', 'mai', 'juin', 'juil.', 'août', 'sept.', 'oct.', 'nov.', 'déc.'];
 
@@ -91,6 +107,14 @@ export class StaffStatsComponent implements OnInit {
   readonly metricLabel = computed(() => METRIC_LABELS[this.metric()]);
   /** Tableau comparatif utile seulement s'il y a plusieurs structures. */
   readonly showStructures = computed(() => (this.structures()?.data.length ?? 0) > 1);
+
+  // ── Comparaison des structures : recherche, structures actives d'abord, affichage par 25 ──
+  readonly structureSearch = signal('');
+  readonly onlyWithActivity = signal(true);
+  readonly showAllStructures = signal(false);
+  readonly structureRows = computed(() => filterStructureRows(this.structures()?.data ?? [], this.structureSearch(), this.onlyWithActivity()));
+  readonly visibleStructureRows = computed(() => (this.showAllStructures() ? this.structureRows() : this.structureRows().slice(0, STRUCTURES_PAGE)));
+  readonly structuresPage = STRUCTURES_PAGE;
 
   ngOnInit(): void {
     this.loadAll();

@@ -2,7 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ApiV2Client } from './api-v2.client';
 import { ActivityReport, OrganizationType } from './pilot.types';
-import { BillingReport, BillingServices, NarrativeEdits, NewPrice, PriceRule } from './admin.types';
+import { AssistantVoice, AssistantVoices, BillingReport, BillingServices, NarrativeEdits, NewPrice, PriceRule } from './admin.types';
 
 /** Période d'un rapport de reversement : un mois (AAAA-MM) ou from/to, et une institution facultative. */
 export interface BillingQuery {
@@ -61,5 +61,19 @@ export class AdminApi {
 
   billingReportCsv(q: BillingQuery = {}): Observable<Blob> {
     return this.api.blob(['billing', 'report'], { ...q, format: 'csv' });
+  }
+
+  // ── Voix de l'assistant (phrases lues une fois par Adia_TTS, puis servies en MP3) ──
+  assistantVoices(lang = 'wo'): Observable<AssistantVoices> {
+    return this.api.get<AssistantVoices>(['assistant', 'voices'], { lang });
+  }
+
+  /** Appel long : 30 s à 2 min par phrase sur un service gratuit. */
+  generateVoice(lang: string, key: string): Observable<AssistantVoice> {
+    return this.api.post<AssistantVoice>(['assistant', 'voices', lang, key]);
+  }
+
+  removeVoice(lang: string, key: string): Observable<AssistantVoice> {
+    return this.api.delete<AssistantVoice>(['assistant', 'voices', lang, key]);
   }
 }

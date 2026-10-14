@@ -86,7 +86,131 @@
    Ils avaient leur propre menu fixe (240 px) et une barre du haut (64 px) : on neutralise ces décalages. */
 .dt-admin-main .page-content,
 .dt-admin-main .layout-right { margin-left: 0 !important; margin-top: 0 !important; }
-.dt-admin-main .layout-wrapper { min-height: 0 !important; display: block !important; }
+.dt-admin-main .layout-wrapper { min-height: 0 !important; display: block !important; background: transparent !important; }
+.dt-admin-main .page-content { padding: 0 !important; min-height: 0 !important; background: transparent !important; }
+
+/* Cartes de chiffres avec pastille d'icône (Tarifs, Voix de l'assistant…) */
+.dt-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 16px; }
+.dt-stat { display: flex; align-items: center; gap: 14px; padding: 18px 20px; background: #fff;
+  border: 1px solid var(--bo-border, #e3e8ef); border-radius: var(--bo-radius, .75rem); box-shadow: var(--bo-shadow, none); }
+.dt-stat--warn { border-color: rgba(246, 165, 0, .6); background: #fffaf0; }
+.dt-stat--alert { border-color: #f1b8b8; background: #fffafa; }
+.dt-stat__icon { flex-shrink: 0; width: 44px; height: 44px; border-radius: 12px; display: grid; place-items: center; font-size: 18px; }
+.dt-stat__icon--purple { background: #f0eeff; color: #31287c; }
+.dt-stat__icon--gold { background: #fff3e0; color: #c98400; }
+.dt-stat__icon--green { background: #e8f5e9; color: #2e7d32; }
+.dt-stat__icon--red { background: #ffebee; color: #c62828; }
+.dt-stat__icon--blue { background: #e3f2fd; color: #1565c0; }
+.dt-stat__body { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.dt-stat__num { font-size: 21px; font-weight: 800; line-height: 1.1; color: var(--bo-ink, #13294b); }
+.dt-stat__label { font-size: 12.5px; color: var(--dt-muted); }
+.dt-stat__hint { font-size: 11.5px; color: var(--dt-muted); opacity: .85; }
+
+/* Chiffres clés en tuiles pleines violet / or (tableaux de bord de l'administration et des structures) */
+.dt-kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; }
+.dt-kpi { position: relative; overflow: hidden; display: flex; align-items: center; gap: 16px; padding: 22px 24px; border-radius: 16px;
+  box-shadow: 0 6px 18px rgba(49, 40, 124, .12); color: #fff; background: #31287c; text-decoration: none; }
+.dt-kpi::after { content: ''; position: absolute; right: -28px; top: -28px; width: 110px; height: 110px; border-radius: 50%;
+  background: rgba(255, 255, 255, .08); pointer-events: none; }
+.dt-kpi--gold { background: #f6a500; color: #31287c; }
+.dt-kpi__icon { flex-shrink: 0; width: 52px; height: 52px; border-radius: 14px; display: grid; place-items: center; font-size: 22px;
+  background: rgba(255, 255, 255, .1); color: #f6a500; }
+.dt-kpi--gold .dt-kpi__icon { background: rgba(49, 40, 124, .12); color: #31287c; }
+.dt-kpi__num { display: block; font-size: 30px; font-weight: 800; line-height: 1.05; }
+.dt-kpi__label { display: block; font-size: 13.5px; font-weight: 600; }
+.dt-kpi__hint { display: block; margin-top: 2px; font-size: 12px; opacity: .85; }
+.dt-kpi--alert .dt-kpi__hint { font-weight: 700; opacity: 1; }
+
+/* Raccourcis (« Accès rapide ») */
+.dt-links { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; }
+.dt-link { display: flex; align-items: center; gap: 12px; padding: 12px 14px; background: #fff; border: 1px solid rgba(49, 40, 124, .08);
+  border-radius: 14px; box-shadow: 0 2px 10px rgba(49, 40, 124, .05); color: #1f1a4d; font-weight: 600; font-size: 14px; text-decoration: none;
+  transition: border-color .15s, background .15s; }
+.dt-link:hover { border-color: #f6a500; background: #fffaf0; color: #31287c; }
+.dt-link__icon { flex-shrink: 0; width: 36px; height: 36px; border-radius: 10px; display: grid; place-items: center; background: #31287c; color: #f6a500; font-size: 14px; }
+.dt-link__go { margin-left: auto; font-size: 11px; color: #b7b2d9; }
+
+/* Barre de filtres : une ligne simple dans l'espace des structures, une carte blanche dans l'administration. */
+.dt-filters { display: flex; flex-wrap: wrap; gap: .5rem; align-items: center; margin-bottom: 1rem; }
+
+/* ══════════════════════════════════════════════════════════════════
+   Thème du back-office (administration /admin et espace des structures /espace) — appliqué par
+   la classe « dt-bo » posée sur les deux mises en page. Les écrans lisent ces variables (--bo-*) ;
+   hors de ces espaces, ils gardent leurs couleurs par défaut.
+   Identité : violet #31287C, or #F6A500, fond #F4F3FB, cartes blanches arrondies, en-têtes de tableau violets.
+   ══════════════════════════════════════════════════════════════════ */
+.dt-bo {
+  --bo-ink: #31287c;            /* titres et chiffres */
+  --bo-muted: #5f6b7a;
+  --bo-accent: #f6a500;
+  --bo-soft: #f0eeff;           /* fond des pastilles d'icône */
+  --bo-border: rgba(49, 40, 124, .08);
+  --bo-radius: 14px;
+  --bo-shadow: 0 2px 10px rgba(49, 40, 124, .06);
+  --bo-row-hover: #faf9ff;
+  --bo-unread: #f6f4ff;
+  --bo-empty-icon: #c9c3ee;
+  --bo-org-border: transparent;
+  --bo-chart: #31287c;
+  --bo-h1-size: 1.4rem;
+  --dt-ink: #1f1a4d;
+  --bs-link-color-rgb: 49, 40, 124;
+  --bs-link-hover-color-rgb: 246, 165, 0;
+}
+
+/* Cartes */
+.dt-bo .dt-card { border-radius: var(--bo-radius); border: 1px solid var(--bo-border); box-shadow: var(--bo-shadow); padding: 1.25rem 1.4rem; }
+.dt-bo .dt-card__title { color: var(--bo-ink); font-weight: 700; }
+.dt-bo .dt-filters { background: #fff; padding: .85rem 1rem; border-radius: var(--bo-radius); border: 1px solid var(--bo-border); box-shadow: var(--bo-shadow); }
+
+/* Titres de section (« À traiter », « Délais de réaction »…) : violet, petit trait doré */
+.dt-bo h2.dt-section-title { display: flex; align-items: center; gap: .55rem; margin: 1.75rem 0 .85rem;
+  font-size: 15px; font-weight: 700; letter-spacing: 0; text-transform: none; color: var(--bo-ink); }
+.dt-bo h2.dt-section-title::before { content: ''; width: 4px; height: 18px; border-radius: 4px; background: var(--bo-accent); }
+
+/* Tableaux : en-tête violet, lignes aérées (comme les écrans Utilisateurs, Certificats, Emails) */
+.dt-bo .table { --bs-table-bg: transparent; margin-bottom: 0; font-size: .9rem; }
+.dt-bo .table > thead > tr > th {
+  background: var(--bo-ink); color: #fff; border: 0; padding: 14px 16px; white-space: nowrap;
+  font-size: 11.5px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase;
+}
+.dt-bo .table > tbody > tr > td { padding: 12px 16px; border-color: #f0eef8; vertical-align: middle; }
+.dt-bo .table > tbody > tr:hover > td { background: var(--bo-row-hover); }
+.dt-bo .table.table-sm > thead > tr > th { padding: 11px 12px; }
+.dt-bo .table.table-sm > tbody > tr > td { padding: 9px 12px; }
+/* Petits tableaux à l'intérieur d'une carte : en-tête clair, pour ne pas alourdir. */
+.dt-bo .dt-card:not(.p-0) .table > thead > tr > th { background: var(--bo-soft); color: var(--bo-ink); }
+
+/* Boutons */
+.dt-bo .btn { border-radius: 10px; font-weight: 600; }
+.dt-bo .btn-dt { background: var(--bo-ink); border-color: var(--bo-ink); color: #fff; }
+.dt-bo .btn-dt:hover, .dt-bo .btn-dt:focus-visible { background: var(--bo-accent); border-color: var(--bo-accent); color: var(--bo-ink); }
+.dt-bo .btn-dt-gold { background: var(--bo-accent); border-color: var(--bo-accent); color: var(--bo-ink); font-weight: 700; }
+.dt-bo .btn-dt-gold:hover { background: #e09800; border-color: #e09800; color: var(--bo-ink); }
+.dt-bo .btn-outline-secondary { --bs-btn-color: var(--bo-ink); --bs-btn-border-color: rgba(49, 40, 124, .28);
+  --bs-btn-hover-bg: var(--bo-ink); --bs-btn-hover-border-color: var(--bo-ink); --bs-btn-hover-color: #fff;
+  --bs-btn-active-bg: var(--bo-ink); --bs-btn-active-border-color: var(--bo-ink); background: #fff; }
+.dt-bo .btn-outline-primary { --bs-btn-color: var(--bo-ink); --bs-btn-border-color: rgba(49, 40, 124, .35); --bs-btn-hover-bg: var(--bo-ink);
+  --bs-btn-hover-border-color: var(--bo-ink); --bs-btn-hover-color: #fff; --bs-btn-active-bg: var(--bo-ink); background: #fff; }
+.dt-bo .btn-primary { --bs-btn-bg: var(--bo-ink); --bs-btn-border-color: var(--bo-ink); --bs-btn-hover-bg: var(--bo-accent);
+  --bs-btn-hover-border-color: var(--bo-accent); --bs-btn-hover-color: var(--bo-ink); }
+.dt-bo .btn-link { --bs-btn-color: var(--bo-ink); --bs-btn-hover-color: #1f1a4d; font-weight: 600; }
+
+/* Formulaires */
+.dt-bo .form-control, .dt-bo .form-select { border-radius: 10px; border-color: #e2dff3; }
+.dt-bo .form-control:focus, .dt-bo .form-select:focus { border-color: var(--bo-ink); box-shadow: 0 0 0 .2rem rgba(49, 40, 124, .12); }
+.dt-bo .form-check-input:checked { background-color: var(--bo-ink); border-color: var(--bo-ink); }
+.dt-bo .dt-form label { color: #3a3560; font-weight: 600; }
+
+/* Pastilles et encadrés */
+.dt-bo .badge { border-radius: 999px; padding: .4em .75em; font-weight: 600; letter-spacing: .01em; }
+.dt-bo .dt-chip { background: var(--bo-soft); color: var(--bo-ink); font-weight: 600; }
+.dt-bo .dt-callout { border-radius: 12px; }
+.dt-bo .dt-callout--info { background: var(--bo-soft); color: var(--bo-ink); }
+.dt-bo .nav-pills .nav-link.active { background: var(--bo-ink); }
+.dt-bo .nav-pills .nav-link:not(.active) { color: var(--bo-ink); }
+.dt-bo .progress-bar { background-color: var(--bo-ink); }
+.dt-bo .pagination { --bs-pagination-color: var(--bo-ink); --bs-pagination-active-bg: var(--bo-ink); --bs-pagination-active-border-color: var(--bo-ink); }
 
 /* ── Accessibilité ─────────────────────────────────────────────── */
 /* Lien d'évitement : invisible jusqu'à ce qu'on arrive dessus au clavier. */

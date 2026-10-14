@@ -108,7 +108,8 @@ export class PublicationsService {
 
   // Récupérer toutes les publications publiques (sans token)
   getAllPublications(): Observable<Document[]> {
-    return this.http.get<any>(`${apiUrl}/document`).pipe(
+    // Liste publique (100 dernières publications ; la pagination se fait à l'écran).
+    return this.http.get<any>(`${apiUrl}/documents`, { params: { per_page: 100 } }).pipe(
       tap(response => console.log('Réponse complète du serveur pour getAllPublications:', response)),
       map(response => {
         const documents = Array.isArray(response)

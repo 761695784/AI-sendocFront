@@ -99,15 +99,15 @@
     <app-loading />
   } @else if (report(); as r) {
     <p class="small dt-muted">Du {{ r.period.from | date: 'd MMM y' }} au {{ r.period.to | date: 'd MMM y' }} · {{ r.scope === 'national' ? 'National' : r.scope.name }}</p>
-    <div class="bl-grid mb-3">
-      <div class="bl-tile"><span>Démarches</span><strong>{{ r.totals.count | number }}</strong></div>
-      <div class="bl-tile"><span>Perçu</span><strong>{{ fcfa(r.totals.collected) }}</strong><small>{{ r.totals.paid_count }} paiement(s)</small></div>
-      <div class="bl-tile"><span>Part des autorités</span><strong>{{ fcfa(r.totals.authority_share) }}</strong></div>
-      <div class="bl-tile"><span>Part DocTrack</span><strong>{{ fcfa(r.totals.platform_share) }}</strong></div>
-      <div class="bl-tile"><span>Offert (pilote)</span><strong>{{ fcfa(r.totals.pilot_theoretical_value) }}</strong><small>{{ r.totals.pilot_count }} démarche(s) gratuites</small></div>
-      <div class="bl-tile"><span>Exonérations</span><strong>{{ r.totals.exempted_count | number }}</strong><small>{{ fcfa(r.totals.exempted_value) }}</small></div>
+    <div class="dt-stats mb-3">
+      <div class="dt-stat"><span class="dt-stat__icon dt-stat__icon--purple"><i class="fas fa-clipboard-list" aria-hidden="true"></i></span><div class="dt-stat__body"><strong class="dt-stat__num">{{ r.totals.count | number }}</strong><span class="dt-stat__label">Démarches</span></div></div>
+      <div class="dt-stat"><span class="dt-stat__icon dt-stat__icon--green"><i class="fas fa-money-bill-wave" aria-hidden="true"></i></span><div class="dt-stat__body"><strong class="dt-stat__num">{{ fcfa(r.totals.collected) }}</strong><span class="dt-stat__label">Perçu</span><small class="dt-stat__hint">{{ r.totals.paid_count }} paiement(s)</small></div></div>
+      <div class="dt-stat"><span class="dt-stat__icon dt-stat__icon--blue"><i class="fas fa-landmark" aria-hidden="true"></i></span><div class="dt-stat__body"><strong class="dt-stat__num">{{ fcfa(r.totals.authority_share) }}</strong><span class="dt-stat__label">Part des autorités</span></div></div>
+      <div class="dt-stat"><span class="dt-stat__icon dt-stat__icon--gold"><i class="fas fa-coins" aria-hidden="true"></i></span><div class="dt-stat__body"><strong class="dt-stat__num">{{ fcfa(r.totals.platform_share) }}</strong><span class="dt-stat__label">Part DocTrack</span></div></div>
+      <div class="dt-stat"><span class="dt-stat__icon dt-stat__icon--purple"><i class="fas fa-gift" aria-hidden="true"></i></span><div class="dt-stat__body"><strong class="dt-stat__num">{{ fcfa(r.totals.pilot_theoretical_value) }}</strong><span class="dt-stat__label">Offert (pilote)</span><small class="dt-stat__hint">{{ r.totals.pilot_count }} démarche(s) gratuites</small></div></div>
+      <div class="dt-stat"><span class="dt-stat__icon dt-stat__icon--blue"><i class="fas fa-hand-holding-heart" aria-hidden="true"></i></span><div class="dt-stat__body"><strong class="dt-stat__num">{{ r.totals.exempted_count | number }}</strong><span class="dt-stat__label">Exonérations</span><small class="dt-stat__hint">{{ fcfa(r.totals.exempted_value) }}</small></div></div>
       @if (r.totals.pending_count) {
-        <div class="bl-tile"><span>En attente de paiement</span><strong>{{ fcfa(r.totals.pending_amount) }}</strong><small>{{ r.totals.pending_count }} démarche(s)</small></div>
+        <div class="dt-stat"><span class="dt-stat__icon dt-stat__icon--gold"><i class="fas fa-hourglass-half" aria-hidden="true"></i></span><div class="dt-stat__body"><strong class="dt-stat__num">{{ fcfa(r.totals.pending_amount) }}</strong><span class="dt-stat__label">En attente de paiement</span><small class="dt-stat__hint">{{ r.totals.pending_count }} démarche(s)</small></div></div>
       }
     </div>
 

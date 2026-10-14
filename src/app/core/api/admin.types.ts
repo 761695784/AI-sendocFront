@@ -77,3 +77,28 @@ export interface BillingReport {
   by_institution: (BillingTotals & { institution: string })[];
   scope: OrgRef | 'national';
 }
+
+// ── Voix de l'assistant (Adia_TTS) ──────────────────────────────
+export type VoiceState = 'ready' | 'stale' | 'missing' | 'manual';
+
+export interface AssistantVoice {
+  key: string;
+  text: string;
+  state: VoiceState;
+  audio_url: string | null;
+  /** Si « stale » : ce que dit encore l'ancien audio. */
+  spoken_text: string | null;
+  model: string | null;
+  generated_at: string | null;
+  duration: number | null;
+  bytes: number | null;
+}
+
+export interface AssistantVoices {
+  lang: string;
+  languages: string[];
+  provider: string;
+  can_generate: boolean;
+  summary: { total: number; ready: number; stale: number; missing: number; manual: number };
+  data: AssistantVoice[];
+}

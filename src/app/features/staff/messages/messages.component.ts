@@ -71,17 +71,17 @@ const EVENT_ICONS: Record<string, string> = {
     }
   `,
   styles: `
-    .inbox { background: #fff; border: 1px solid #e3e8ef; border-radius: .75rem; overflow: hidden; }
+    .inbox { background: #fff; border: 1px solid var(--bo-border, #e3e8ef); border-radius: var(--bo-radius, .75rem); box-shadow: var(--bo-shadow, none); overflow: hidden; }
     .inbox li + li { border-top: 1px solid #eef1f5; }
     .inbox__item { display: flex; gap: .9rem; align-items: flex-start; width: 100%; text-align: left; background: none; border: 0;
       padding: .9rem 1.1rem; color: inherit; }
-    .inbox__item:hover, .inbox__item:focus-visible { background: #f6f8fb; }
-    .inbox__item--unread { background: #f3f8ff; }
+    .inbox__item:hover, .inbox__item:focus-visible { background: var(--bo-row-hover, #f6f8fb); }
+    .inbox__item--unread { background: var(--bo-unread, #f3f8ff); box-shadow: inset 3px 0 0 var(--bo-accent, transparent); }
     .inbox__item--unread .inbox__title { font-weight: 700; }
-    .inbox__icon { flex: 0 0 2.2rem; height: 2.2rem; border-radius: 50%; display: grid; place-items: center; background: #e8eef7; color: #13294b; }
+    .inbox__icon { flex: 0 0 2.2rem; height: 2.2rem; border-radius: 50%; display: grid; place-items: center; background: var(--bo-soft, #e8eef7); color: var(--bo-ink, #13294b); }
     .inbox__icon--priority { background: #fde8e8; color: #a52a2a; }
     .inbox__body { flex: 1; display: flex; flex-direction: column; gap: .15rem; min-width: 0; }
-    .inbox__title { color: #13294b; }
+    .inbox__title { color: var(--bo-ink, #13294b); }
     .inbox__text { color: #3d4855; font-size: .92rem; }
     .inbox__meta { color: #6b7684; font-size: .8rem; }
     .inbox__go { color: #9aa5b1; align-self: center; }

@@ -94,7 +94,8 @@
               "buildTarget": "DocTrackFront:build:production"
             },
             "development": {
-              "buildTarget": "DocTrackFront:build:development"
+              "buildTarget": "DocTrackFront:build:development",
+              "allowedHosts": true
             }
           },
           "defaultConfiguration": "development"

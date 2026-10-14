@@ -21,50 +21,53 @@ interface Overview {
   imports: [RouterLink, PageHeaderComponent, LoadingComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <app-page-header [title]="'Bonjour ' + firstName()" [subtitle]="organizationName()" />
+    <app-page-header [title]="'Bonjour ' + firstName()" [subtitle]="organizationName() || 'Espace des structures'" icon="fa-tachometer-alt" />
 
     @if (canSeeStats()) {
       @if (loading()) {
         <app-loading label="Chargement des chiffres…" />
       } @else if (error()) {
-        <div class="alert alert-warning">{{ error() }}</div>
+        <div class="dt-callout dt-callout--warning mt-0"><i class="fas fa-exclamation-triangle" aria-hidden="true"></i><div>{{ error() }}</div></div>
       } @else if (overview(); as o) {
-        <section class="kpis" aria-label="Chiffres clés des 30 derniers jours">
-          <div class="kpi"><span>Déclarations au guichet</span><strong>{{ o.declarations?.counter ?? 0 }}</strong></div>
-          <div class="kpi"><span>Documents en garde</span><strong>{{ o.found_documents?.in_custody_now ?? 0 }}</strong></div>
-          <div class="kpi" [class.kpi--alert]="(o.matches?.overdue_reviews_now ?? 0) > 0">
-            <span>Correspondances à examiner</span><strong>{{ o.matches?.pending_review_now ?? 0 }}</strong>
-            @if ((o.matches?.overdue_reviews_now ?? 0) > 0) {
-              <small>dont {{ o.matches?.overdue_reviews_now }} en retard</small>
-            }
-          </div>
-          <div class="kpi"><span>Restitutions faites</span><strong>{{ o.restitutions?.completed ?? 0 }}</strong></div>
+        <section class="dt-kpis" aria-label="Chiffres clés des 30 derniers jours">
+          <a class="dt-kpi" routerLink="/espace/declarations">
+            <span class="dt-kpi__icon"><i class="fas fa-file-alt" aria-hidden="true"></i></span>
+            <div><strong class="dt-kpi__num">{{ o.declarations?.counter ?? 0 }}</strong><span class="dt-kpi__label">Déclarations au guichet</span>
+              <small class="dt-kpi__hint">30 derniers jours</small></div>
+          </a>
+          <a class="dt-kpi dt-kpi--gold" routerLink="/espace/documents">
+            <span class="dt-kpi__icon"><i class="fas fa-id-card" aria-hidden="true"></i></span>
+            <div><strong class="dt-kpi__num">{{ o.found_documents?.in_custody_now ?? 0 }}</strong><span class="dt-kpi__label">Documents en garde</span>
+              <small class="dt-kpi__hint">aujourd'hui</small></div>
+          </a>
+          <a class="dt-kpi" routerLink="/espace/correspondances" [class.dt-kpi--alert]="(o.matches?.overdue_reviews_now ?? 0) > 0">
+            <span class="dt-kpi__icon"><i class="fas fa-link" aria-hidden="true"></i></span>
+            <div><strong class="dt-kpi__num">{{ o.matches?.pending_review_now ?? 0 }}</strong><span class="dt-kpi__label">Correspondances à examiner</span>
+              <small class="dt-kpi__hint">
+                @if ((o.matches?.overdue_reviews_now ?? 0) > 0) { dont {{ o.matches?.overdue_reviews_now }} en retard } @else { aucune en retard }
+              </small></div>
+          </a>
+          <a class="dt-kpi dt-kpi--gold" routerLink="/espace/restitutions">
+            <span class="dt-kpi__icon"><i class="fas fa-hands-helping" aria-hidden="true"></i></span>
+            <div><strong class="dt-kpi__num">{{ o.restitutions?.completed ?? 0 }}</strong><span class="dt-kpi__label">Restitutions faites</span>
+              <small class="dt-kpi__hint">30 derniers jours</small></div>
+          </a>
         </section>
       }
     }
 
-    <h2 class="h6 text-uppercase text-muted mt-4 mb-3">Accès rapide</h2>
-    <section class="shortcuts">
+    <h2 class="sh-h dt-section-title">Accès rapide</h2>
+    <section class="dt-links">
       @for (item of shortcuts(); track item.path) {
-        <a class="shortcut" [routerLink]="['/espace', item.path]">
-          <i class="fas {{ item.icon }}" aria-hidden="true"></i>
-          <span>{{ item.label }}</span>
+        <a class="dt-link" [routerLink]="['/espace', item.path]">
+          <span class="dt-link__icon"><i class="fas {{ item.icon }}" aria-hidden="true"></i></span><span>{{ item.label }}</span>
+          <i class="fas fa-chevron-right dt-link__go" aria-hidden="true"></i>
         </a>
       }
     </section>
   `,
   styles: `
-    .kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; }
-    .kpi { background: #fff; border: 1px solid #e3e8ef; border-radius: .75rem; padding: 1rem 1.25rem; display: flex; flex-direction: column; gap: .25rem; }
-    .kpi span { color: #5f6b7a; font-size: .85rem; }
-    .kpi strong { font-size: 1.9rem; color: #13294b; line-height: 1.1; }
-    .kpi small { color: #a52a2a; font-weight: 600; }
-    .kpi--alert { border-color: #f1b8b8; }
-    .shortcuts { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: .75rem; }
-    .shortcut { display: flex; align-items: center; gap: .75rem; padding: .9rem 1rem; background: #fff; border: 1px solid #e3e8ef;
-      border-radius: .75rem; color: #1c2430; text-decoration: none; font-weight: 500; }
-    .shortcut:hover { border-color: #f6a500; }
-    .shortcut i { color: #13294b; width: 1.2rem; text-align: center; }
+    .sh-h { font-size: .8rem; text-transform: uppercase; letter-spacing: .04em; color: #5f6b7a; margin: 1.75rem 0 .85rem; }
   `,
 })
 export class StaffHomeComponent implements OnInit {

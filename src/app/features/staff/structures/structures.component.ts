@@ -39,6 +39,8 @@ type FormMode = { kind: 'create'; parent: Organization | null } | { kind: 'edit'
     .org-name i { color: #9aa5b1; }
     .org-row--off td { color: #8a94a0; }
     .org-row--current { background: #fffaf0; }
+    .st-search { width: auto; min-width: 220px; flex: 1 1 220px; max-width: 320px; }
+    .st-count { margin-left: auto; white-space: nowrap; }
   `,
 })
 export class StaffStructuresComponent implements OnInit {
@@ -58,6 +60,11 @@ export class StaffStructuresComponent implements OnInit {
   readonly busy = signal<string | null>(null);
   search = '';
   showInactive = false;
+  /** Filtres rapides : institution (Police, Gendarmerie…), région, type de structure. */
+  readonly institutions = signal<Organization[]>([]);
+  readonly institution = signal('');
+  readonly region = signal('');
+  readonly typeFilter = signal('');
 
   readonly base = spaceBase();
   readonly levelLabels = LEVEL_LABELS;
@@ -82,6 +89,9 @@ export class StaffStructuresComponent implements OnInit {
     return m.parent ? childTypes(this.types(), m.parent.type?.level) : this.types().filter((t) => t.level === 'institution');
   });
   readonly departments = computed(() => this.territories().filter((t) => t.level !== 'region'));
+  readonly regions = computed(() => this.territories().filter((t) => t.level === 'region'));
+  readonly structureTypes = computed(() => this.types().filter((t) => t.level !== 'institution'));
+  readonly filtered = computed(() => !!(this.institution() || this.region() || this.typeFilter()));
 
   readonly form = this.fb.nonNullable.group({
     organization_type: ['', Validators.required],
@@ -104,13 +114,36 @@ export class StaffStructuresComponent implements OnInit {
       },
       error: () => void 0,
     });
+    this.api.organizations({ level: 'institution' }).subscribe({ next: (p) => this.institutions.set(p.data), error: () => void 0 });
+    this.load(1);
+  }
+
+  setInstitution(uuid: string): void {
+    this.institution.set(uuid);
+    this.load(1);
+  }
+
+  resetFilters(): void {
+    this.institution.set('');
+    this.region.set('');
+    this.typeFilter.set('');
+    this.search = '';
     this.load(1);
   }
 
   load(page: number): void {
     this.loading.set(true);
     this.error.set(null);
-    this.api.organizations({ q: this.search.trim() || undefined, include_inactive: this.showInactive, page }).subscribe({
+    this.api
+      .organizations({
+        q: this.search.trim() || undefined,
+        institution: this.institution() || undefined,
+        region: this.region() || undefined,
+        type: this.typeFilter() || undefined,
+        include_inactive: this.showInactive,
+        page,
+      })
+      .subscribe({
       next: (p) => {
         this.page.set(p);
         this.loading.set(false);

@@ -14,7 +14,7 @@ import { MEMBERSHIP_ROLE_LABELS, Membership } from '../../core/session/session.m
   template: `
     @if (active(); as current) {
       @if (memberships().length > 1) {
-        <div ngbDropdown class="d-inline-block" placement="bottom-end">
+        <div ngbDropdown class="d-inline-block" placement="bottom-start" container="body">
           <button type="button" class="dt-org" ngbDropdownToggle [attr.aria-label]="'Structure active : ' + current.organization.name">
             <i class="fas fa-building" aria-hidden="true"></i>
             <span class="dt-org__text">
@@ -45,8 +45,9 @@ import { MEMBERSHIP_ROLE_LABELS, Membership } from '../../core/session/session.m
     }
   `,
   styles: `
-    .dt-org { display: inline-flex; align-items: center; gap: .6rem; padding: .35rem .75rem; border-radius: .6rem;
-      border: 1px solid #d8dee6; background: #fff; color: #1c2430; max-width: 22rem; text-align: left; }
+    .dt-org { display: inline-flex; align-items: center; gap: .6rem; padding: .35rem .75rem; border-radius: 10px;
+      border: 1px solid var(--bo-org-border, #d8dee6); background: #fff; color: var(--bo-ink, #1c2430); max-width: 22rem; text-align: left; }
+    .dt-org > i { color: var(--bo-accent, inherit); }
     .dt-org--static { cursor: default; }
     .dt-org__text { display: flex; flex-direction: column; min-width: 0; line-height: 1.15; }
     .dt-org__text strong { font-size: .9rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }

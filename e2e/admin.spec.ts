@@ -45,4 +45,20 @@ test.describe('Espace super admin', () => {
     await page.goto('/admin/adminrapport');
     await expect(page).toHaveURL(/\/admin\/rapports$/);
   });
+
+  test('les anciens écrans affichent leurs données (liste des utilisateurs)', async ({ page }) => {
+    await signIn(page, 'admin');
+    await mockApi(page, {
+      profile: 'admin',
+      overrides: {
+        users: { success: true, users: [
+          { id: 4, uuid: 'u4', FirstName: 'Awa', LastName: 'Ndiaye', email: 'awa@example.sn', roles: ['citizen', 'SimpleUser'], Adress: 'Dakar', Phone: '+221770000001' },
+          { id: 1, uuid: 'u1', FirstName: 'Admin', LastName: 'DocTrack', email: 'admin@example.sn', roles: ['super_admin', 'Admin'], Adress: 'Dakar', Phone: '+221700000000' },
+        ] },
+      },
+    });
+    await page.goto('/admin/adminuser');
+    await expect(page.getByText('awa@example.sn')).toBeVisible();
+    await expect(page.getByText('2 utilisateur(s) affiché(s)')).toBeVisible();
+  });
 });
