@@ -19,7 +19,7 @@
         <img src="/assets/logoo2.webp" alt="DocTrack" class="auth-logo">
         <div class="auth-left-divider"></div>
 
-        <h2>Nouveau mot de passe</h2>
+        <h2>{{ activation ? 'Activez votre compte' : 'Nouveau mot de passe' }}</h2>
         <p>Choisissez un mot de passe sécurisé pour protéger votre compte DocTrack.</p>
 
         <div class="auth-features">
@@ -56,8 +56,8 @@
           <div class="auth-card-icon">
             <i class="fas fa-key"></i>
           </div>
-          <h1>Nouveau mot de passe</h1>
-          <p>Définissez votre nouveau mot de passe</p>
+          <h1>{{ activation ? 'Activez votre compte' : 'Nouveau mot de passe' }}</h1>
+          <p>{{ activation ? 'Votre compte a été créé au guichet : choisissez votre mot de passe' : 'Définissez votre nouveau mot de passe' }}</p>
         </div>
 
         <form [formGroup]="newPasswordForm" (ngSubmit)="onSubmit()">

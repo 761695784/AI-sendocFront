@@ -9,6 +9,7 @@ import { DocTypeRef, Territory } from '../../../core/api/citizen.types';
 import { NotifyService } from '../../../shared/feedback/notify.service';
 import { PageHeaderComponent } from '../../../shared/ui/page-header.component';
 import { fieldError, personNameValidator } from '../../../shared/forms/validators';
+import { CitizenAccountComponent } from '../shared/citizen-account.component';
 import { CitizenPickerComponent } from '../shared/citizen-picker.component';
 
 type ItemForm = FormGroup<{
@@ -25,7 +26,7 @@ type ItemForm = FormGroup<{
  */
 @Component({
   selector: 'app-staff-declaration-new',
-  imports: [DatePipe, ReactiveFormsModule, RouterLink, PageHeaderComponent, CitizenPickerComponent],
+  imports: [DatePipe, ReactiveFormsModule, RouterLink, PageHeaderComponent, CitizenPickerComponent, CitizenAccountComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './declaration-new.component.html',
 })

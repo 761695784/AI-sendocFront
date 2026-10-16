@@ -49,7 +49,7 @@ import { fieldError, personNameValidator, senegalPhoneValidator } from '../../..
                   <b>{{ c.first_name }} {{ c.last_name }}</b>
                   <small class="d-block dt-muted">
                     @if (c.birth_date) { Né(e) le {{ c.birth_date | date: 'd MMM y' }} · }
-                    {{ c.phone_masked }}{{ c.has_account ? ' · compte DocTrack' : '' }}
+                    {{ c.phone_masked }}{{ c.account_status === 'pending' ? ' · compte à activer' : c.has_account ? ' · compte DocTrack' : '' }}
                   </small>
                 </span>
                 <span class="btn btn-sm btn-outline-primary">Choisir</span>
@@ -76,8 +76,11 @@ import { fieldError, personNameValidator, senegalPhoneValidator } from '../../..
           <div class="col-sm-4"><label for="np-birth">Date de naissance</label><input id="np-birth" class="form-control" type="date" formControlName="birth_date" /></div>
           <div class="col-sm-4"><label for="np-phone" class="dt-required">Téléphone</label><input id="np-phone" class="form-control" type="tel" formControlName="phone" />
             @if (fieldError(person.controls.phone, 'Le téléphone'); as e) { <small class="dt-error">{{ e }}</small> }</div>
-          <div class="col-sm-4"><label for="np-email">E-mail</label><input id="np-email" class="form-control" type="email" formControlName="email" /></div>
+          <div class="col-sm-4"><label for="np-email">E-mail (crée son compte)</label><input id="np-email" class="form-control" type="email" formControlName="email" />
+            @if (fieldError(person.controls.email, 'L’email'); as e) { <small class="dt-error">{{ e }}</small> }</div>
         </div>
+        <p class="small dt-muted mt-2 mb-0"><i class="fas fa-info-circle me-1" aria-hidden="true"></i>
+          Avec un email, son compte DocTrack est créé : la personne reçoit un lien pour choisir son mot de passe et retrouve ses déclarations dans son espace.</p>
         @if (createError()) { <div class="alert alert-warning py-2 mt-2 mb-0">{{ createError() }}</div> }
         <div class="d-flex gap-2 mt-3">
           <button type="submit" class="btn btn-dt" [disabled]="saving()">{{ saving() ? 'Enregistrement…' : 'Enregistrer' }}</button>

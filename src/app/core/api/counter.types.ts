@@ -24,6 +24,9 @@ export interface CitizenProfile {
   birth_date: string | null;
   phone_masked: string | null;
   has_account: boolean;
+  /** none : pas de compte ; pending : compte créé au guichet, mot de passe pas encore choisi ; active. */
+  account_status?: 'none' | 'pending' | 'active';
+  email_masked?: string | null;
 }
 
 export interface CounterDeclarationItem {

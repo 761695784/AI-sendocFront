@@ -18,6 +18,8 @@ export class NewpassComponent implements OnInit {
   newPasswordForm!: FormGroup;
   token!: string; // Pour capturer le token dans l'URL
   email!: string; // Si besoin, capturer l'email
+  /** Lien d'activation d'un compte créé au guichet (même formulaire que « mot de passe oublié »). */
+  activation = false;
   isLoading: boolean = false; // Variable pour contrôler l'affichage du loader
   showPassword = false;
   showConfirm = false;
@@ -65,6 +67,7 @@ get strengthLabel(): string {
     this.route.queryParams.subscribe((params) => {
       this.token = params['token'];
       this.email = params['email']; // Si l'email est aussi passé dans l'URL
+      this.activation = params['activation'] === '1';
     });
   }
 

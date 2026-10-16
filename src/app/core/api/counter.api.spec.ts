@@ -25,6 +25,13 @@ describe('CounterApi', () => {
     req.flush([]);
   });
 
+  it('compte DocTrack d’une personne : création avec email, renvoi du lien sans corps', () => {
+    api.citizenAccount('c1', 'awa@example.sn').subscribe();
+    expect(http.expectOne(`${V2}/citizens/c1/account`).request.body).toEqual({ email: 'awa@example.sn' });
+    api.citizenAccount('c1').subscribe();
+    expect(http.expectOne(`${V2}/citizens/c1/account`).request.body).toEqual({});
+  });
+
   it('déclaration au guichet (JSON) et certificat en PDF', () => {
     api.declare({ citizen_profile_uuid: 'c1', items: [{ document_type_id: 1, first_name: 'Awa', last_name: 'Ndiaye' }] }).subscribe();
     const req = http.expectOne(`${V2}/declarations`);

@@ -39,6 +39,11 @@ export class CounterApi {
     return this.api.get<CitizenProfile[]>(['citizens'], query);
   }
 
+  /** Créer le compte DocTrack d'une personne enregistrée (email), ou renvoyer son lien d'activation. */
+  citizenAccount(uuid: string, email?: string | null): Observable<CitizenProfile> {
+    return this.api.post<CitizenProfile>(['citizens', uuid, 'account'], email ? { email } : {});
+  }
+
   createCitizen(data: { first_name: string; last_name: string; birth_date?: string | null; phone: string; email?: string | null }): Observable<CitizenProfile> {
     return this.api.post<CitizenProfile>(['citizens'], data);
   }

@@ -13,6 +13,7 @@
       </div>
       <button type="button" class="btn btn-sm btn-outline-secondary" (click)="citizen.set(null)">Changer</button>
     </div>
+    <app-citizen-account [citizen]="c" (updated)="citizen.set($event)" />
   } @else {
     <app-citizen-picker (picked)="choose($event)" />
   }
