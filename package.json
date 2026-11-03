@@ -41,6 +41,7 @@
     "@angular/cli": "^22.2.0",
     "@angular/compiler-cli": "^22.2.0",
     "@angular/localize": "^22.2.0",
+    "@netlify/angular-runtime": "^4.0.0",
     "@playwright/test": "^1.56.0",
     "@types/express": "^4.17.17",
     "@types/node": "^24.19.0",
