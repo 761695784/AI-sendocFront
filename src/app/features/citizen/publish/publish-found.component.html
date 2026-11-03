@@ -1,202 +1,274 @@
 <app-navbar />
-<div class="dt-page">
-  <section class="dt-hero">
-    <div class="dt-hero__inner">
+
+<div class="cf-page">
+  <!-- ── Bandeau ── -->
+  <section class="cf-hero">
+    <div class="cf-hero__inner">
+      <span class="cf-badge"><i class="fas fa-hands-helping" aria-hidden="true"></i> Document trouvé</span>
       <h1>Publier un document trouvé</h1>
       <p>Photographiez la pièce : DocTrack lit les informations, masque les numéros sur la photo publique et prévient son propriétaire.</p>
+      @if (!result()) {
+        <ol class="cf-progress" aria-label="Étapes">
+          <li><b>1</b> Photo</li>
+          <li><b>2</b> Informations</li>
+          <li><b>3</b> Lieu</li>
+          <li><b>4</b> Remise</li>
+        </ol>
+      }
     </div>
   </section>
 
-  <div class="dt-container" style="max-width: 900px">
+  <div class="cf-container">
     @if (result(); as r) {
       <!-- ── Publication réussie ── -->
-      <div class="dt-card text-center py-4">
-        <i class="fas fa-check-circle done-icon" aria-hidden="true"></i>
-        <h2 class="h4 mt-2">Merci pour votre geste !</h2>
-        <p class="mb-1">{{ r.message }}</p>
-        @if (r.document.reference) {
-          <p class="dt-muted">Référence : <span class="dt-mono">{{ r.document.reference }}</span></p>
-        }
-        @if (r.collection?.structure; as s) {
-          <div class="dt-callout dt-callout--info text-start mx-auto" style="max-width: 32rem">
-            <i class="fas fa-phone" aria-hidden="true"></i>
-            <div><strong>{{ s.name }}</strong> va vous appeler pour organiser la remise du document.
-              @if (s.phone) { Tél. <a [href]="'tel:' + s.phone">{{ s.phone }}</a> }</div>
+      <div class="cf-card" style="max-width: 760px; margin: 0 auto">
+        <div class="cf-success">
+          <span class="cf-success__icon"><i class="fas fa-check" aria-hidden="true"></i></span>
+          <h2>Merci pour votre geste !</h2>
+          <p>{{ r.message }}</p>
+
+          @if (r.document.reference) {
+            <div class="cf-ticket">
+              <small>Référence de la publication</small>
+              <span class="ref dt-mono">{{ r.document.reference }}</span>
+              <span class="sub">Conservez-la : elle permet de suivre ce document.</span>
+            </div>
+          }
+
+          @if (r.collection?.structure; as s) {
+            <div class="dt-callout dt-callout--info text-start mx-auto" style="max-width: 30rem">
+              <i class="fas fa-phone" aria-hidden="true"></i>
+              <div><strong>{{ s.name }}</strong> va vous appeler pour organiser la remise du document.
+                @if (s.phone) { Tél. <a [href]="'tel:' + s.phone">{{ s.phone }}</a> }</div>
+            </div>
+          }
+          <p class="small dt-muted mt-3 mb-0">Si le propriétaire vous demande le document, vous serez prévenu : vous pourrez accepter ou refuser.</p>
+
+          <div class="cf-actions">
+            <a routerLink="/mon-espace/trouvailles" class="cf-btn cf-btn--primary"><i class="fas fa-list" aria-hidden="true"></i> Suivre mes documents trouvés</a>
+            <button type="button" class="cf-btn cf-btn--ghost" (click)="another()"><i class="fas fa-plus" aria-hidden="true"></i> Publier un autre document</button>
           </div>
-        }
-        <p class="small dt-muted mt-3">Si le propriétaire vous demande le document, vous recevrez un SMS : vous pourrez accepter ou refuser.</p>
-        <div class="d-flex flex-wrap justify-content-center gap-2 mt-3">
-          <a routerLink="/mon-espace/trouvailles" class="btn btn-dt">Suivre mes documents trouvés</a>
-          <button type="button" class="btn btn-outline-secondary" (click)="another()">Publier un autre document</button>
         </div>
       </div>
     } @else {
-      <form class="dt-form" [formGroup]="form" (ngSubmit)="submit()" novalidate>
-        <!-- ── Étape 1 : photo ── -->
-        <section class="dt-card">
-          <p class="dt-step"><span>1</span> Photo du document</p>
-
-          @if (!photoUrl()) {
-            <div class="row g-2">
-              <div class="col-sm-6">
-                <label class="dt-drop w-100 h-100">
-                  <i class="fas fa-camera" aria-hidden="true"></i>
-                  <strong>Prendre une photo</strong>
-                  <small>Posez la pièce à plat, bien éclairée</small>
-                  <input type="file" accept="image/*" capture="environment" hidden (change)="onPhoto($event)" />
-                </label>
-              </div>
-              <div class="col-sm-6">
-                <label class="dt-drop w-100 h-100">
-                  <i class="fas fa-image" aria-hidden="true"></i>
-                  <strong>Choisir une image</strong>
-                  <small>JPG, PNG ou WEBP</small>
-                  <input type="file" accept="image/jpeg,image/png,image/webp" hidden (change)="onPhoto($event)" />
-                </label>
-              </div>
-            </div>
-          } @else {
-            <div class="scan-grid">
+      <div class="cf-layout">
+        <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+          <!-- ── Étape 1 : photo ── -->
+          <section class="cf-card">
+            <header class="cf-card__head">
+              <span class="cf-num">1</span>
               <div>
-                <div class="scan-label">Votre photo (reste privée)</div>
-                <img class="dt-photo" [src]="photoUrl()" alt="Photo du document" />
+                <h2>Photo du document</h2>
+                <p>Posez la pièce à plat, bien éclairée, sans reflet.</p>
               </div>
-              <div>
-                @switch (scanState()) {
-                  @case ('reading') {
-                    <div class="scan-label">Lecture en cours</div>
-                    <div class="d-flex align-items-center gap-2 py-4">
-                      <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
-                      <span>Lecture de la pièce… (quelques secondes)</span>
-                    </div>
-                  }
-                  @case ('read') {
-                    <div class="scan-label">Ce que verra le public</div>
-                    @if (scan()?.preview_url) {
-                      <img class="dt-photo" [src]="scan()!.preview_url" alt="Aperçu masqué" />
-                      <small class="dt-muted d-block mt-1">{{ scan()?.masked_regions ?? 0 }} zone(s) masquée(s) : numéros, dates, bande codée. La photo publiée est en plus floutée.</small>
-                    } @else {
-                      <p class="small dt-muted">La photo publiée sera floutée.</p>
+            </header>
+            <div class="cf-card__body">
+              @if (!photoUrl()) {
+                <div class="cf-drops">
+                  <label class="cf-drop">
+                    <span class="cf-drop__icon"><i class="fas fa-camera" aria-hidden="true"></i></span>
+                    <strong>Prendre une photo</strong>
+                    <small>Avec l'appareil photo du téléphone</small>
+                    <input type="file" accept="image/*" capture="environment" hidden (change)="onPhoto($event)" />
+                  </label>
+                  <label class="cf-drop cf-drop--alt">
+                    <span class="cf-drop__icon"><i class="fas fa-image" aria-hidden="true"></i></span>
+                    <strong>Choisir une image</strong>
+                    <small>JPG, PNG ou WEBP</small>
+                    <input type="file" accept="image/jpeg,image/png,image/webp" hidden (change)="onPhoto($event)" />
+                  </label>
+                </div>
+              } @else {
+                <div class="cf-scan">
+                  <div>
+                    <div class="cf-scan__label"><i class="fas fa-lock me-1" aria-hidden="true"></i> Votre photo (reste privée)</div>
+                    <img [src]="photoUrl()" alt="Photo du document" />
+                  </div>
+                  <div>
+                    @switch (scanState()) {
+                      @case ('reading') {
+                        <div class="cf-scan__label">Lecture en cours</div>
+                        <div class="cf-reading">
+                          <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+                          <span>Lecture de la pièce… (quelques secondes)</span>
+                        </div>
+                      }
+                      @case ('read') {
+                        <div class="cf-scan__label"><i class="fas fa-eye me-1" aria-hidden="true"></i> Ce que verra le public</div>
+                        @if (scan()?.preview_url) {
+                          <img [src]="scan()!.preview_url" alt="Aperçu masqué" />
+                          <small class="dt-muted d-block mt-1">{{ scan()?.masked_regions ?? 0 }} zone(s) masquée(s) : numéros, dates, bande codée. La photo publiée est en plus floutée.</small>
+                        } @else {
+                          <p class="small dt-muted">La photo publiée sera floutée.</p>
+                        }
+                      }
+                      @default {
+                        <div class="dt-callout" [class.dt-callout--warning]="scanState() === 'manual'" [class.dt-callout--danger]="scanState() === 'failed'">
+                          <i class="fas fa-info-circle" aria-hidden="true"></i>
+                          <div>{{ scanMessage() }}</div>
+                        </div>
+                      }
                     }
-                  }
-                  @default {
-                    <div class="dt-callout" [class.dt-callout--warning]="scanState() === 'manual'" [class.dt-callout--danger]="scanState() === 'failed'">
-                      <i class="fas fa-info-circle" aria-hidden="true"></i>
-                      <div>{{ scanMessage() }}</div>
-                    </div>
-                  }
+                  </div>
+                </div>
+                @if (scanState() === 'read') {
+                  <div class="mt-3">
+                    @for (c of checks(); track c.code) {
+                      <div [class]="'cf-check cf-check--' + (c.level ?? 'info')">
+                        <i class="fas" [class.fa-check]="c.level === 'ok'" [class.fa-exclamation-triangle]="c.level === 'warning'" [class.fa-info-circle]="c.level === 'info'" aria-hidden="true"></i>
+                        <span>{{ c.message }}</span>
+                      </div>
+                    }
+                    <div class="cf-check cf-check--info"><i class="fas fa-pen" aria-hidden="true"></i><span>Vérifiez les champs surlignés en vert avant de publier.</span></div>
+                  </div>
                 }
+                <button type="button" class="cf-link" (click)="retake()"><i class="fas fa-redo me-1" aria-hidden="true"></i> Reprendre la photo</button>
+              }
+              @if (photoError()) { <small class="dt-error">{{ photoError() }}</small> }
+            </div>
+          </section>
+
+          <!-- ── Étape 2 : informations ── -->
+          <section class="cf-card">
+            <header class="cf-card__head">
+              <span class="cf-num">2</span>
+              <div>
+                <h2>Informations inscrites sur la pièce</h2>
+                <p>Pré-remplies par la lecture automatique : vérifiez-les.</p>
+              </div>
+            </header>
+            <div class="cf-card__body">
+              <div class="row g-3">
+                <div class="col-md-6">
+                  <label for="type" class="dt-required">Type de document</label>
+                  <select id="type" class="form-select" formControlName="document_type_id" [class.prefilled]="isPrefilled('document_type_id')">
+                    <option value="" disabled>Choisir…</option>
+                    @for (t of types(); track t.id) { <option [value]="t.id">{{ t.TypeName }}</option> }
+                  </select>
+                  @if (fieldError(form.controls.document_type_id, 'Le type'); as err) { <small class="dt-error">{{ err }}</small> }
+                </div>
+                <div class="col-md-6">
+                  <label for="number">Numéro de la pièce</label>
+                  <input id="number" class="form-control dt-mono" formControlName="DocIdentification" autocomplete="off" [class.prefilled]="isPrefilled('DocIdentification')" />
+                  <small class="form-text">Jamais affiché en entier au public ; il sert à retrouver le propriétaire.</small>
+                </div>
+                <div class="col-md-6">
+                  <label for="last" class="dt-required">Nom du propriétaire</label>
+                  <input id="last" class="form-control" formControlName="OwnerLastName" autocomplete="off" [class.prefilled]="isPrefilled('OwnerLastName')" />
+                  @if (fieldError(form.controls.OwnerLastName, 'Le nom'); as err) { <small class="dt-error">{{ err }}</small> }
+                </div>
+                <div class="col-md-6">
+                  <label for="first" class="dt-required">Prénom(s)</label>
+                  <input id="first" class="form-control" formControlName="OwnerFirstName" autocomplete="off" [class.prefilled]="isPrefilled('OwnerFirstName')" />
+                  @if (fieldError(form.controls.OwnerFirstName, 'Le prénom'); as err) { <small class="dt-error">{{ err }}</small> }
+                </div>
               </div>
             </div>
+          </section>
 
-            @if (scanState() === 'read') {
-              <div class="mt-3">
-                @if (checks().length) {
-                  @for (c of checks(); track c.code) {
-                    <div class="check" [class]="'check check--' + (c.level ?? 'info')">
-                      <i class="fas" [class.fa-check]="c.level === 'ok'" [class.fa-exclamation-triangle]="c.level === 'warning'" [class.fa-info-circle]="c.level === 'info'" aria-hidden="true"></i>
-                      <span>{{ c.message }}</span>
-                    </div>
-                  }
-                }
-                <div class="check check--info"><i class="fas fa-pen" aria-hidden="true"></i><span>Vérifiez les champs surlignés en vert avant de publier.</span></div>
+          <!-- ── Étape 3 : lieu ── -->
+          <section class="cf-card">
+            <header class="cf-card__head">
+              <span class="cf-num">3</span>
+              <div>
+                <h2>Où l'avez-vous trouvé ?</h2>
+                <p>Le lieu aide à choisir la structure officielle la plus proche.</p>
               </div>
-            }
-            <button type="button" class="btn btn-link px-0 mt-2" (click)="retake()"><i class="fas fa-redo me-1" aria-hidden="true"></i> Reprendre la photo</button>
-          }
-          @if (photoError()) { <small class="dt-error">{{ photoError() }}</small> }
-        </section>
-
-        <!-- ── Étape 2 : informations ── -->
-        <section class="dt-card">
-          <p class="dt-step"><span>2</span> Informations inscrites sur la pièce</p>
-          <div class="row g-3">
-            <div class="col-md-6">
-              <label for="type" class="dt-required">Type de document</label>
-              <select id="type" class="form-select" formControlName="document_type_id" [class.prefilled]="isPrefilled('document_type_id')">
-                <option value="" disabled>Choisir…</option>
-                @for (t of types(); track t.id) { <option [value]="t.id">{{ t.TypeName }}</option> }
-              </select>
-              @if (fieldError(form.controls.document_type_id, 'Le type'); as err) { <small class="dt-error">{{ err }}</small> }
-            </div>
-            <div class="col-md-6">
-              <label for="number">Numéro de la pièce</label>
-              <input id="number" class="form-control dt-mono" formControlName="DocIdentification" autocomplete="off" [class.prefilled]="isPrefilled('DocIdentification')" />
-              <small class="form-text">Jamais affiché en entier au public ; il sert à retrouver le propriétaire.</small>
-            </div>
-            <div class="col-md-6">
-              <label for="last" class="dt-required">Nom du propriétaire</label>
-              <input id="last" class="form-control" formControlName="OwnerLastName" autocomplete="off" [class.prefilled]="isPrefilled('OwnerLastName')" />
-              @if (fieldError(form.controls.OwnerLastName, 'Le nom'); as err) { <small class="dt-error">{{ err }}</small> }
-            </div>
-            <div class="col-md-6">
-              <label for="first" class="dt-required">Prénom(s)</label>
-              <input id="first" class="form-control" formControlName="OwnerFirstName" autocomplete="off" [class.prefilled]="isPrefilled('OwnerFirstName')" />
-              @if (fieldError(form.controls.OwnerFirstName, 'Le prénom'); as err) { <small class="dt-error">{{ err }}</small> }
-            </div>
-          </div>
-        </section>
-
-        <!-- ── Étape 3 : lieu ── -->
-        <section class="dt-card">
-          <p class="dt-step"><span>3</span> Où l'avez-vous trouvé ?</p>
-          <div class="row g-3">
-            <div class="col-md-6">
-              <label for="place" class="dt-required">Lieu</label>
-              <input id="place" class="form-control" formControlName="Location" placeholder="Ex. Marché Sandaga, Dakar Plateau" />
-              @if (fieldError(form.controls.Location, 'Le lieu'); as err) { <small class="dt-error">{{ err }}</small> }
-            </div>
-            <div class="col-md-6">
-              <label for="dept">Département</label>
-              <select id="dept" class="form-select" formControlName="territory_code">
-                <option value="">Je ne sais pas</option>
-                @for (d of departments(); track d.code) {
-                  <option [value]="d.code">{{ d.name }}@if (d.parent) { ({{ d.parent.name }}) }</option>
-                }
-              </select>
-            </div>
-          </div>
-          <div class="mt-3 d-flex flex-wrap align-items-center gap-2">
-            <button type="button" class="btn btn-outline-secondary btn-sm" [disabled]="gpsBusy()" (click)="locate()">
-              <i class="fas fa-location-arrow me-1" aria-hidden="true"></i>
-              {{ gpsBusy() ? 'Localisation…' : gps() ? 'Position enregistrée' : 'Utiliser ma position actuelle' }}
-            </button>
-            @if (gps(); as g) { <small class="dt-muted">Précision ≈ {{ g.accuracy }} m — sert à choisir la structure la plus proche.</small> }
-            @if (gpsError()) { <small class="dt-error">{{ gpsError() }}</small> }
-          </div>
-        </section>
-
-        <!-- ── Étape 4 : remise ── -->
-        <section class="dt-card">
-          <p class="dt-step"><span>4</span> Remise du document</p>
-          <div class="form-check">
-            <input class="form-check-input" type="checkbox" id="consent" formControlName="contact_consent" />
-            <label class="form-check-label" for="consent">
-              J'accepte d'être contacté par la <b>structure officielle la plus proche</b> (commissariat, brigade…) pour lui remettre le document.
-            </label>
-          </div>
-          @if (form.controls.contact_consent.value) {
-            <div class="row mt-2">
-              <div class="col-md-6">
-                <label for="phone" class="dt-required">Mon numéro de téléphone</label>
-                <input id="phone" class="form-control" type="tel" inputmode="tel" formControlName="contact_phone" placeholder="77 123 45 67" />
-                @if (fieldError(form.controls.contact_phone, 'Le numéro'); as err) { <small class="dt-error">{{ err }}</small> }
-                <small class="form-text">Visible uniquement par la structure, jamais publié.</small>
+            </header>
+            <div class="cf-card__body">
+              <div class="row g-3">
+                <div class="col-md-6">
+                  <label for="place" class="dt-required">Lieu</label>
+                  <input id="place" class="form-control" formControlName="Location" placeholder="Ex. Marché Sandaga, Dakar Plateau" />
+                  @if (fieldError(form.controls.Location, 'Le lieu'); as err) { <small class="dt-error">{{ err }}</small> }
+                </div>
+                <div class="col-md-6">
+                  <label for="dept">Département</label>
+                  <select id="dept" class="form-select" formControlName="territory_code">
+                    <option value="">Je ne sais pas</option>
+                    @for (d of departments(); track d.code) {
+                      <option [value]="d.code">{{ d.name }}@if (d.parent) { ({{ d.parent.name }}) }</option>
+                    }
+                  </select>
+                </div>
+              </div>
+              <div class="mt-3 d-flex flex-wrap align-items-center gap-2">
+                <button type="button" class="cf-btn cf-btn--ghost py-2" [disabled]="gpsBusy()" (click)="locate()">
+                  <i class="fas fa-location-arrow" aria-hidden="true"></i>
+                  {{ gpsBusy() ? 'Localisation…' : gps() ? 'Position enregistrée' : 'Utiliser ma position actuelle' }}
+                </button>
+                @if (gps(); as g) { <small class="dt-muted">Précision ≈ {{ g.accuracy }} m — sert à choisir la structure la plus proche.</small> }
+                @if (gpsError()) { <small class="dt-error">{{ gpsError() }}</small> }
               </div>
             </div>
-          } @else {
-            <p class="small dt-muted mt-2 mb-0">Vous pourrez aussi remettre le document directement à son propriétaire s'il vous le demande (vous serez prévenu par SMS).</p>
-          }
-        </section>
+          </section>
 
-        <div class="d-flex justify-content-end gap-2 mt-3">
-          <button type="submit" class="btn btn-dt btn-lg" [disabled]="sending() || scanState() === 'reading'">
-            <i class="fas fa-paper-plane me-1" aria-hidden="true"></i>
+          <!-- ── Étape 4 : remise ── -->
+          <section class="cf-card">
+            <header class="cf-card__head">
+              <span class="cf-num">4</span>
+              <div>
+                <h2>Remise du document</h2>
+                <p>Comment le document rejoindra son propriétaire.</p>
+              </div>
+            </header>
+            <div class="cf-card__body">
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="consent" formControlName="contact_consent" />
+                <label class="form-check-label" for="consent">
+                  J'accepte d'être contacté par la <b>structure officielle la plus proche</b> (commissariat, brigade…) pour lui remettre le document.
+                </label>
+              </div>
+              @if (form.controls.contact_consent.value) {
+                <div class="row mt-2">
+                  <div class="col-md-6">
+                    <label for="phone" class="dt-required">Mon numéro de téléphone</label>
+                    <input id="phone" class="form-control" type="tel" inputmode="tel" formControlName="contact_phone" placeholder="77 123 45 67" />
+                    @if (fieldError(form.controls.contact_phone, 'Le numéro'); as err) { <small class="dt-error">{{ err }}</small> }
+                    <small class="form-text">Visible uniquement par la structure, jamais publié.</small>
+                  </div>
+                </div>
+              } @else {
+                <p class="cf-hint mb-0"><i class="fas fa-info-circle" aria-hidden="true"></i>
+                  Vous pourrez aussi remettre le document directement à son propriétaire s'il vous le demande (vous serez prévenu).</p>
+              }
+            </div>
+          </section>
+
+          <button type="submit" class="cf-submit" [disabled]="sending() || scanState() === 'reading'">
+            <i class="fas fa-paper-plane" aria-hidden="true"></i>
             {{ sending() ? 'Publication…' : 'Publier le document' }}
           </button>
-        </div>
-      </form>
+        </form>
+
+        <!-- ── Colonne d'aide ── -->
+        <aside class="cf-aside" aria-label="Aide">
+          <img class="cf-aside__img" src="/assets/imageformpub.webp" alt="" loading="lazy" />
+          <div class="cf-box">
+            <h3><i class="fas fa-lightbulb" aria-hidden="true"></i> Bon à savoir</h3>
+            <ul class="cf-tips">
+              <li><i class="fas fa-check-circle" aria-hidden="true"></i> Votre photo reste privée : le public voit une version masquée et floutée.</li>
+              <li><i class="fas fa-check-circle" aria-hidden="true"></i> Le numéro de la pièce n'est jamais affiché en entier.</li>
+              <li><i class="fas fa-check-circle" aria-hidden="true"></i> Votre téléphone n'est visible que par la structure officielle.</li>
+              <li><i class="fas fa-check-circle" aria-hidden="true"></i> Ne demandez jamais d'argent pour rendre un document.</li>
+            </ul>
+          </div>
+          <div class="cf-box">
+            <h3><i class="fas fa-route" aria-hidden="true"></i> Et ensuite ?</h3>
+            <ol class="cf-steps">
+              <li>DocTrack cherche le propriétaire</li>
+              <li>Le propriétaire est prévenu</li>
+              <li>Le document lui est remis en sécurité</li>
+            </ol>
+          </div>
+          <div class="cf-shield">
+            <i class="fas fa-shield-alt" aria-hidden="true"></i>
+            <span>Toute remise se fait après vérification de l'identité du propriétaire.</span>
+          </div>
+        </aside>
+      </div>
     }
   </div>
 </div>
+
 <app-footer />

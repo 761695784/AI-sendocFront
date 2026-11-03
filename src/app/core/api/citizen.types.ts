@@ -23,6 +23,38 @@ export interface OwnerFoundDocument {
 }
 
 /** Déclaration de perte du citoyen (GET /api/my-declarations). */
+/** Récépissé ou certificat de perte (CertificatDePerte). */
+export interface CertificateRef {
+  uuid: string;
+  certificat_number: string;
+  kind: 'receipt' | 'official' | string;
+  verification_code?: string | null;
+  revoked_at?: string | null;
+  created_at?: string;
+}
+
+/** Corps de POST /api/declarations (déclaration en ligne par le citoyen). */
+export interface DeclareLossPayload {
+  Title: string;
+  FirstNameInDoc: string;
+  LastNameInDoc: string;
+  document_type_id: number;
+  DocIdentification?: string | null;
+  lost_place?: string | null;
+  lost_at?: string | null;
+}
+
+/** Réponse de POST /api/declarations : la déclaration et son récépissé. */
+export interface DeclareLossResponse {
+  success: boolean;
+  message: string;
+  data: {
+    declaration: { uuid: string; reference: string | null; created_at?: string };
+    certificat: CertificateRef;
+    pdf_url?: string;
+  };
+}
+
 export interface MyDeclaration {
   id: number;
   uuid: string;
@@ -34,7 +66,16 @@ export interface MyDeclaration {
   LastNameInDoc: string;
   DocIdentification?: string | null;
   document_type?: DocTypeRef | null;
-  certificat?: { uuid: string; certificat_number?: string | null } | null;
+  /** Document le plus probant : certificat officiel s'il existe, sinon récépissé. */
+  certificat?: { uuid: string; certificat_number?: string | null; kind?: 'receipt' | 'official' | string } | null;
+  /** Récépissé DocTrack (déclaration faite en ligne). */
+  receipt?: CertificateRef | null;
+  /** Certificat de perte délivré par une structure (au guichet ou après certification de la déclaration en ligne). */
+  official_certificate?: (CertificateRef & { issuing_organization?: { name: string } | null }) | null;
+  /** Déclaration en ligne certifiée au guichet. */
+  certified_at?: string | null;
+  lost_at?: string | null;
+  lost_place?: string | null;
   found_documents: OwnerFoundDocument[];
   created_at: string;
 }
@@ -142,6 +183,8 @@ export interface VerificationView {
   holder_initials?: string | null;
   revoked_at?: string | null;
   revocation_reason?: string | null;
+  /** Récépissé d'une déclaration en ligne ensuite certifiée au guichet. */
+  certified?: { date: string | null; structure: string; institution: string | null } | null;
 }
 
 export interface Territory {

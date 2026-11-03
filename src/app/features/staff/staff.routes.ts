@@ -40,6 +40,13 @@ export const STAFF_ROUTES: Routes = [
         loadComponent: () => import('./declarations/declaration-new.component').then((m) => m.StaffDeclarationNewComponent),
       },
       {
+        path: 'certifier',
+        data: { icon: 'fa-file-alt' },
+        canActivate: [abilityGuard('declarations.create')],
+        title: 'Certifier une déclaration en ligne — DocTrack',
+        loadComponent: () => import('./declarations/certify-online.component').then((m) => m.StaffCertifyOnlineComponent),
+      },
+      {
         path: 'declarations/:uuid',
         data: { icon: 'fa-file-alt' },
         canActivate: [abilityGuard('declarations.view')],

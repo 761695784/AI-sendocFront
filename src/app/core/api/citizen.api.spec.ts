@@ -25,6 +25,19 @@ describe('CitizenApi', () => {
     expect(first.found_documents).toEqual([]);
   });
 
+  it('déclaration en ligne : JSON vers /declarations, récépissé en PDF', () => {
+    api.declareLoss({ Title: 'Perte — Passeport', FirstNameInDoc: 'Awa', LastNameInDoc: 'Ndiaye', document_type_id: 2, lost_place: 'HLM' }).subscribe();
+    const req = http.expectOne(`${API}/declarations`);
+    expect(req.request.method).toBe('POST');
+    expect(req.request.body.lost_place).toBe('HLM');
+    req.flush({ success: true, data: {} });
+
+    api.certificatePdf('c1').subscribe();
+    const pdf = http.expectOne(`${API}/certificats/c1/voir`);
+    expect(pdf.request.responseType).toBe('blob');
+    pdf.flush(new Blob(['%PDF']));
+  });
+
   it('scan OCR : photo envoyée en multipart vers la V2', () => {
     api.scan(new Blob(['x'], { type: 'image/jpeg' })).subscribe();
     const req = http.expectOne(`${API}/v2/ocr/scan`);

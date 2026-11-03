@@ -46,40 +46,37 @@
 .footer-brand { display: flex; flex-direction: column; gap: 16px; }
 
 .brand-link {
-  display: flex;
-  align-items: center;
-  gap: 12px;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
   text-decoration: none;
+  align-self: flex-start;
+  border-radius: 8px;
 }
 
+/* Logo horizontal, variante blanche et orange pour fond sombre (proportions 600 × 180 conservées) */
 .footer-logo {
-  width: 52px; height: 52px;
-  border-radius: 12px;
-  object-fit: cover;
-  border: 2px solid rgba(246,165,0,0.25);
-  padding: 2px;
-  background: rgba(255,255,255,0.05);
-}
-
-.brand-name {
   display: block;
-  font-size: 18px;
-  font-weight: 800;
-  color: #fff;
-  letter-spacing: 0.3px;
+  height: 64px;
+  width: auto;
+  max-width: 100%;
+  margin-left: -8px;
 }
 
 .brand-sub {
   display: block;
-  font-size: 10px;
-  color: rgba(255,255,255,0.4);
+  padding-left: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  color: rgba(255,255,255,0.75);
   letter-spacing: 2px;
   text-transform: uppercase;
 }
 
 .brand-desc {
   font-size: 13px;
-  color: rgba(255,255,255,0.5);
+  color: rgba(255,255,255,0.82);
   line-height: 1.7;
   max-width: 280px;
 }
@@ -110,7 +107,7 @@
   align-items: center;
   gap: 8px;
   font-size: 13px;
-  color: rgba(255,255,255,0.65);
+  color: rgba(255,255,255,0.85);
   text-decoration: none;
   transition: color 0.2s, gap 0.2s;
 }
@@ -130,6 +127,10 @@
   transform: translateX(2px);
 }
 
+/* Lien « Vérifier un document » mis en valeur */
+.footer-nav ul li a.footer-verify { color: #F6A500; font-weight: 600; }
+.footer-nav ul li a.footer-verify:hover { color: #ffc23d; }
+
 /* ── Contact ── */
 .footer-contact { display: flex; flex-direction: column; gap: 0; }
 
@@ -143,7 +144,7 @@
   align-items: center;
   gap: 10px;
   font-size: 13px;
-  color: rgba(255,255,255,0.65);
+  color: rgba(255,255,255,0.85);
   text-decoration: none;
   transition: color 0.2s;
 }
@@ -152,7 +153,7 @@
 .contact-item i {
   width: 28px; height: 28px;
   border-radius: 7px;
-  background: rgba(255,255,255,0.07);
+  background: rgba(255,255,255,0.10);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -186,18 +187,23 @@
   justify-content: center;
   font-size: 15px;
   text-decoration: none;
-  transition: transform 0.2s, box-shadow 0.2s;
+  transition: transform 0.2s, box-shadow 0.2s, background 0.2s, color 0.2s;
   color: #fff;
+}
+
+/* Couleurs DocTrack : pastille violet clair, icône blanche ; survol orange avec icône violette */
+.social-btn {
+  background: rgba(255,255,255,0.10);
+  border: 1px solid rgba(246,165,0,0.35);
 }
 
 .social-btn:hover {
   transform: translateY(-3px);
-  box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+  background: #F6A500;
+  border-color: #F6A500;
+  color: #31287C;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.25);
 }
-
-.social-btn.facebook { background: #1877f2; }
-.social-btn.twitter  { background: #1da1f2; }
-.social-btn.linkedin { background: #0a66c2; }
 
 /* ── Séparateur ── */
 .footer-separator {
@@ -234,7 +240,7 @@
 
 .footer-bottom p {
   font-size: 12px;
-  color: rgba(255,255,255,0.4);
+  color: rgba(255,255,255,0.72);
   margin-bottom: 4px;
   line-height: 1.6;
 }
@@ -242,6 +248,13 @@
 .footer-bottom strong {
   color: #F6A500;
   font-weight: 700;
+}
+
+/* Focus clavier visible sur fond sombre */
+.footer a:focus-visible {
+  outline: 3px solid #F6A500;
+  outline-offset: 3px;
+  border-radius: 6px;
 }
 
 /* ── Responsive ── */
@@ -267,6 +280,8 @@
   .footer-brand { grid-column: auto; }
 
   .brand-desc { max-width: 100%; }
+
+  .footer-logo { height: 56px; }
 
   .social-icons { justify-content: flex-start; }
 }

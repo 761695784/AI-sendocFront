@@ -9,6 +9,7 @@ import { NotifyService } from '../../../shared/feedback/notify.service';
 import { StatusBadgeComponent } from '../../../shared/ui/status-badge.component';
 import { EmptyStateComponent, ErrorStateComponent, LoadingComponent } from '../../../shared/ui/state.components';
 import { CitizenBadges } from '../citizen-badges.service';
+import { openBlob } from '../../../shared/media/open-blob';
 
 /**
  * Mes déclarations de perte, avec les documents retrouvés et la marche à suivre :
@@ -59,6 +60,21 @@ export class MyDeclarationsComponent implements OnInit {
     if (d.certificat?.uuid) {
       this.declarations.viewCertificate(d.certificat.uuid);
     }
+  }
+
+  /** Ouvre le PDF d'un récépissé ou d'un certificat de perte. */
+  openPdf(uuid: string, number: string): void {
+    this.busy.set(uuid);
+    this.api.certificatePdf(uuid).subscribe({
+      next: (blob) => {
+        this.busy.set(null);
+        openBlob(blob, `${number}.pdf`);
+      },
+      error: (e) => {
+        this.busy.set(null);
+        void this.notify.error(e, 'Document indisponible');
+      },
+    });
   }
 
   /** Remise directe : le trouveur reçoit la demande par SMS et e-mail, sans votre numéro. */

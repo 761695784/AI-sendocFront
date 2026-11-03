@@ -25,7 +25,7 @@
           <p class="dt-card__meta">
             @if (d.reference) { <span class="dt-mono">{{ d.reference }}</span> · }
             Déclarée le {{ d.created_at | date: 'd MMMM y' }}
-            {{ d.channel === 'counter' ? '· au guichet' : '· en ligne' }}
+            {{ d.channel === 'counter' ? '· au guichet' : (d.certified_at ? '· en ligne, certifiée au guichet' : '· en ligne') }}
           </p>
         </div>
         <app-status-badge [status]="d.status" />
@@ -97,10 +97,45 @@
         </p>
       }
 
-      @if (d.certificat?.uuid) {
+      <!-- Récépissé (en ligne) et certificat de perte (structure) -->
+      @if (d.official_certificate; as cert) {
+        <div class="dt-callout dt-callout--success mt-3">
+          <i class="fas fa-certificate" aria-hidden="true"></i>
+          <div>
+            <strong>Certificat de perte délivré</strong>
+            @if (cert.issuing_organization?.name) { par {{ cert.issuing_organization?.name }} }
+            @if (cert.created_at) { le {{ cert.created_at | date: 'd MMMM y' }} }
+            — N° <span class="dt-mono">{{ cert.certificat_number }}</span>.
+            <div class="mt-2 d-flex flex-wrap gap-2">
+              <button type="button" class="btn btn-sm btn-dt" [disabled]="busy() === cert.uuid" (click)="openPdf(cert.uuid, cert.certificat_number)">
+                <i class="fas fa-file-pdf me-1" aria-hidden="true"></i> Ouvrir le certificat
+              </button>
+              @if (d.receipt; as rec) {
+                <button type="button" class="btn btn-sm btn-outline-secondary" [disabled]="busy() === rec.uuid" (click)="openPdf(rec.uuid, rec.certificat_number)">
+                  Récépissé en ligne
+                </button>
+              }
+            </div>
+          </div>
+        </div>
+      } @else if (d.receipt; as rec) {
+        <div class="dt-callout dt-callout--info mt-3">
+          <i class="fas fa-receipt" aria-hidden="true"></i>
+          <div>
+            <strong>Récépissé de déclaration en ligne</strong> — N° <span class="dt-mono">{{ rec.certificat_number }}</span>.
+            Ce n'est pas un certificat de perte : pour l'obtenir, présentez-vous dans un commissariat ou une brigade partenaire
+            avec la référence <span class="dt-mono">{{ d.reference }}</span> et une pièce justifiant de votre identité.
+            <div class="mt-2">
+              <button type="button" class="btn btn-sm btn-outline-secondary" [disabled]="busy() === rec.uuid" (click)="openPdf(rec.uuid, rec.certificat_number)">
+                <i class="fas fa-file-pdf me-1" aria-hidden="true"></i> Ouvrir le récépissé
+              </button>
+            </div>
+          </div>
+        </div>
+      } @else if (d.certificat?.uuid) {
         <div class="mt-3">
           <button type="button" class="btn btn-sm btn-outline-secondary" (click)="viewCertificate(d)">
-            <i class="fas fa-file-pdf me-1" aria-hidden="true"></i> Voir le certificat
+            <i class="fas fa-file-pdf me-1" aria-hidden="true"></i> Voir le document
           </button>
         </div>
       }

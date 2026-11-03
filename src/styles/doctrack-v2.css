@@ -235,3 +235,104 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
 .nav-pills .nav-link:not(.active) { color: #1a4f8b; }
 .btn-link { --bs-btn-color: #1a4f8b; }
 .btn-outline-danger { --bs-btn-color: #a52834; --bs-btn-border-color: #c0392b; }
+
+/* ══════════════════════════════════════════════════════════════════
+   Harmonisation avec les anciennes pages (V1) — appliquée à TOUS les écrans V2 :
+   espace citoyen et pages publiques (.dt-page), administration et espace des structures (.dt-bo).
+   Boutons arrondis et gras, violet qui passe à l'or au survol ; cartes blanches arrondies ;
+   bandeau violet en dégradé ; champs comme les anciens formulaires ; en-têtes de tableau violets.
+   ══════════════════════════════════════════════════════════════════ */
+
+/* ── Bandeau des pages publiques et de l'espace citoyen ── */
+.dt-hero {
+  position: relative; overflow: hidden;
+  background: linear-gradient(135deg, #31287c 0%, #1e1a55 60%, #2d1f6e 100%);
+  padding: 2.6rem 1rem 1.9rem;
+}
+.dt-hero::before, .dt-hero::after { content: ''; position: absolute; border-radius: 50%; pointer-events: none; }
+.dt-hero::before { top: -70px; right: -60px; width: 240px; height: 240px; background: rgba(246, 165, 0, .09); }
+.dt-hero::after { bottom: -110px; left: -80px; width: 260px; height: 260px; background: rgba(255, 255, 255, .05); }
+.dt-hero__inner { position: relative; z-index: 1; }
+.dt-hero h1 { font-weight: 800; }
+.dt-hero p { color: rgba(255, 255, 255, .82); opacity: 1; line-height: 1.65; }
+.dt-tab { border-radius: 10px 10px 0 0; font-weight: 600; }
+.dt-tab.active { color: #31287c; }
+
+/* ── Cartes (espace citoyen, pages publiques) ── */
+.dt-page .dt-card { border-radius: 16px; border: 1px solid rgba(49, 40, 124, .07); box-shadow: 0 4px 18px rgba(49, 40, 124, .07); padding: 1.25rem 1.4rem; }
+.dt-page .dt-card__title { color: #31287c; }
+.dt-page .dt-toolbar h2 { color: #31287c; font-weight: 800; }
+
+/* ── Boutons : même style que les anciennes pages ── */
+:is(.dt-page, .dt-bo) .btn {
+  border-radius: 10px; font-weight: 700; padding: .55rem 1.15rem; letter-spacing: .01em;
+  transition: background-color .18s, color .18s, border-color .18s, box-shadow .18s, transform .12s;
+}
+:is(.dt-page, .dt-bo) .btn-sm { padding: .35rem .8rem; font-size: .82rem; border-radius: 8px; }
+:is(.dt-page, .dt-bo) .btn-lg { padding: .8rem 1.6rem; font-size: 1rem; border-radius: 12px; }
+:is(.dt-page, .dt-bo) .btn:focus-visible { outline: 3px solid rgba(246, 165, 0, .7); outline-offset: 2px; box-shadow: none; }
+:is(.dt-page, .dt-bo) .btn:disabled, :is(.dt-page, .dt-bo) .btn.disabled { transform: none; box-shadow: none; }
+
+:is(.dt-page, .dt-bo) .btn-dt { background: #31287c; border-color: #31287c; color: #fff; box-shadow: 0 4px 12px rgba(49, 40, 124, .18); }
+:is(.dt-page, .dt-bo) .btn-dt:hover:not(:disabled), :is(.dt-page, .dt-bo) .btn-dt:active {
+  background: #f6a500; border-color: #f6a500; color: #31287c; transform: translateY(-1px);
+}
+:is(.dt-page, .dt-bo) .btn-dt-gold { background: #f6a500; border-color: #f6a500; color: #31287c; }
+:is(.dt-page, .dt-bo) .btn-dt-gold:hover:not(:disabled) { background: #31287c; border-color: #31287c; color: #fff; transform: translateY(-1px); }
+:is(.dt-page, .dt-bo) .btn-primary { --bs-btn-bg: #31287c; --bs-btn-border-color: #31287c; --bs-btn-hover-bg: #f6a500; --bs-btn-hover-border-color: #f6a500;
+  --bs-btn-hover-color: #31287c; --bs-btn-active-bg: #f6a500; --bs-btn-active-border-color: #f6a500; --bs-btn-active-color: #31287c; }
+:is(.dt-page, .dt-bo) .btn-outline-secondary, :is(.dt-page, .dt-bo) .btn-outline-primary, :is(.dt-page, .dt-bo) .btn-light {
+  --bs-btn-color: #31287c; --bs-btn-bg: #fff; --bs-btn-border-color: rgba(49, 40, 124, .28);
+  --bs-btn-hover-bg: #31287c; --bs-btn-hover-border-color: #31287c; --bs-btn-hover-color: #fff;
+  --bs-btn-active-bg: #31287c; --bs-btn-active-border-color: #31287c; --bs-btn-active-color: #fff;
+  border-width: 2px;
+}
+:is(.dt-page, .dt-bo) .btn-outline-danger { --bs-btn-color: #c62828; --bs-btn-border-color: rgba(198, 40, 40, .4); --bs-btn-hover-bg: #c62828;
+  --bs-btn-hover-border-color: #c62828; --bs-btn-hover-color: #fff; border-width: 2px; background: #fff; }
+:is(.dt-page, .dt-bo) .btn-outline-success { --bs-btn-color: #1b7f3b; --bs-btn-border-color: rgba(27, 127, 59, .4); --bs-btn-hover-bg: #1b7f3b;
+  --bs-btn-hover-border-color: #1b7f3b; --bs-btn-hover-color: #fff; border-width: 2px; background: #fff; }
+:is(.dt-page, .dt-bo) .btn-success { --bs-btn-bg: #1b7f3b; --bs-btn-border-color: #1b7f3b; --bs-btn-hover-bg: #156530; --bs-btn-hover-border-color: #156530; }
+:is(.dt-page, .dt-bo) .btn-danger { --bs-btn-bg: #c62828; --bs-btn-border-color: #c62828; --bs-btn-hover-bg: #a51f1f; --bs-btn-hover-border-color: #a51f1f; }
+:is(.dt-page, .dt-bo) .btn-link { --bs-btn-color: #31287c; --bs-btn-hover-color: #c98400; text-underline-offset: 3px; box-shadow: none; }
+/* Groupes de boutons (choix d'un mode) : pastilles jointes */
+:is(.dt-page, .dt-bo) .btn-group > .btn { border-radius: 0; }
+:is(.dt-page, .dt-bo) .btn-group > .btn:first-child { border-radius: 10px 0 0 10px; }
+:is(.dt-page, .dt-bo) .btn-group > .btn:last-child { border-radius: 0 10px 10px 0; }
+:is(.dt-page, .dt-bo) .btn-group > .btn-dt { box-shadow: none; transform: none; }
+
+/* ── Champs (comme les anciens formulaires) ── */
+:is(.dt-page, .dt-bo) .form-control, :is(.dt-page, .dt-bo) .form-select {
+  border: 2px solid #e8e6f5; border-radius: 10px; background-color: #faf9ff; min-height: 44px;
+  transition: border-color .2s, box-shadow .2s, background-color .2s;
+}
+:is(.dt-page, .dt-bo) .form-control-sm, :is(.dt-page, .dt-bo) .form-select-sm { min-height: 34px; border-radius: 8px; }
+:is(.dt-page, .dt-bo) .form-control:hover, :is(.dt-page, .dt-bo) .form-select:hover { border-color: #c9c3ea; }
+:is(.dt-page, .dt-bo) .form-control:focus, :is(.dt-page, .dt-bo) .form-select:focus {
+  border-color: #31287c; background-color: #fff; box-shadow: 0 0 0 .22rem rgba(49, 40, 124, .1);
+}
+.dt-page .dt-form label { color: #4b4766; font-weight: 700; font-size: .82rem; }
+.dt-page .form-check-input:checked { background-color: #31287c; border-color: #31287c; }
+
+/* ── Tableaux de l'espace citoyen et des pages publiques ── */
+.dt-page .table > thead > tr > th { background: #31287c; color: #fff; border: 0; font-size: 11.5px; letter-spacing: .06em; text-transform: uppercase; padding: 12px 14px; }
+.dt-page .table > tbody > tr > td { padding: 11px 14px; border-color: #f0eef8; vertical-align: middle; }
+
+/* ── Listes (choix d'une personne, d'une structure…) ── */
+:is(.dt-page, .dt-bo) .list-group { border-radius: 12px; overflow: hidden; }
+:is(.dt-page, .dt-bo) .list-group-item-action:hover { background: #faf9ff; }
+
+/* ══════════════════════════════════════════════════════════════════
+   Fenêtres d'alerte (SweetAlert2) : même identité partout
+   ══════════════════════════════════════════════════════════════════ */
+.swal2-popup { border-radius: 18px !important; font-family: 'Poppins', Arial, sans-serif !important; padding: 1.6rem 1.4rem 1.4rem !important; }
+.swal2-title { color: #31287c !important; font-weight: 800 !important; font-size: 1.3rem !important; }
+.swal2-html-container { color: #4b4766 !important; font-size: .95rem !important; line-height: 1.6 !important; }
+.swal2-actions { gap: .5rem; }
+.swal2-styled { border-radius: 10px !important; font-weight: 700 !important; padding: .65rem 1.35rem !important; box-shadow: none !important; }
+.swal2-styled.swal2-confirm:hover { filter: brightness(1.08); }
+.swal2-styled:focus-visible { outline: 3px solid rgba(246, 165, 0, .7) !important; outline-offset: 2px; }
+.swal2-input, .swal2-textarea { border: 2px solid #e8e6f5 !important; border-radius: 10px !important; box-shadow: none !important; font-size: .95rem !important; }
+.swal2-input:focus, .swal2-textarea:focus { border-color: #31287c !important; }
+.swal2-toast { border-radius: 14px !important; box-shadow: 0 8px 26px rgba(49, 40, 124, .18) !important; }
+.swal2-toast .swal2-title { font-size: .95rem !important; color: #31287c !important; }
+.swal2-timer-progress-bar { background: #f6a500 !important; }

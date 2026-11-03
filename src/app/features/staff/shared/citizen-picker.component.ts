@@ -6,10 +6,12 @@ import { CounterApi } from '../../../core/api/counter.api';
 import { CitizenProfile } from '../../../core/api/counter.types';
 import { apiErrorMessage } from '../../../core/api/api-v2.client';
 import { SessionStore } from '../../../core/session/session.store';
+import { NotifyService } from '../../../shared/feedback/notify.service';
 import { fieldError, personNameValidator, senegalPhoneValidator } from '../../../shared/forms/validators';
 
 /**
- * Trouver la personne au guichet (par téléphone, ou nom + prénom + date de naissance)
+ * Trouver la personne au guichet (par téléphone, ou nom + prénom, date de naissance facultative)
+ * parmi TOUTES les personnes connues de DocTrack (comptes inscrits compris),
  * ou l'enregistrer si elle est inconnue. Évite les doublons de fiches.
  */
 @Component({
@@ -31,7 +33,7 @@ import { fieldError, personNameValidator, senegalPhoneValidator } from '../../..
       } @else {
         <div class="col-sm-3"><label for="cp-last">Nom</label><input id="cp-last" class="form-control" formControlName="last_name" /></div>
         <div class="col-sm-3"><label for="cp-first">Prénom</label><input id="cp-first" class="form-control" formControlName="first_name" /></div>
-        <div class="col-sm-3"><label for="cp-birth">Date de naissance</label><input id="cp-birth" class="form-control" type="date" formControlName="birth_date" /></div>
+        <div class="col-sm-3"><label for="cp-birth">Date de naissance <span class="dt-muted fw-normal">(facultatif)</span></label><input id="cp-birth" class="form-control" type="date" formControlName="birth_date" /></div>
       }
       <div class="col-auto">
         <button type="submit" class="btn btn-dt" [disabled]="searching()">{{ searching() ? 'Recherche…' : 'Rechercher' }}</button>
@@ -93,6 +95,7 @@ import { fieldError, personNameValidator, senegalPhoneValidator } from '../../..
 export class CitizenPickerComponent {
   private readonly api = inject(CounterApi);
   private readonly session = inject(SessionStore);
+  private readonly notify = inject(NotifyService);
   private readonly fb = inject(FormBuilder);
 
   readonly picked = output<CitizenProfile>();
@@ -121,9 +124,9 @@ export class CitizenPickerComponent {
     const query =
       this.mode() === 'phone'
         ? { phone: v.phone.trim() }
-        : { last_name: v.last_name.trim(), first_name: v.first_name.trim(), birth_date: v.birth_date };
-    if (this.mode() === 'phone' ? !query.phone : !(v.last_name && v.first_name && v.birth_date)) {
-      this.searchError.set(this.mode() === 'phone' ? 'Saisissez un numéro.' : 'Nom, prénom et date de naissance sont nécessaires.');
+        : { last_name: v.last_name.trim(), first_name: v.first_name.trim(), ...(v.birth_date ? { birth_date: v.birth_date } : {}) };
+    if (this.mode() === 'phone' ? !query.phone : !(v.last_name.trim() && v.first_name.trim())) {
+      this.searchError.set(this.mode() === 'phone' ? 'Saisissez un numéro.' : 'Le nom et le prénom sont nécessaires (la date de naissance est facultative).');
       return;
     }
     this.searchError.set(null);
@@ -160,6 +163,7 @@ export class CitizenPickerComponent {
         next: (c) => {
           this.saving.set(false);
           this.creating.set(false);
+          this.notify.success(`${c.first_name} ${c.last_name} est enregistré(e).`);
           this.picked.emit(c);
         },
         error: (e: HttpErrorResponse) => {

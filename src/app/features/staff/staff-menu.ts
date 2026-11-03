@@ -29,6 +29,7 @@ export const STAFF_MENU: StaffMenuSection[] = [
     items: [
       { path: 'citoyens', label: 'Citoyens', icon: 'fa-user', abilities: ['citizens.search'] },
       { path: 'declarations', label: 'Déclarations de perte', icon: 'fa-file-alt', abilities: ['declarations.view'] },
+      { path: 'certifier', label: 'Certifier une déclaration en ligne', icon: 'fa-qrcode', abilities: ['declarations.create'] },
       { path: 'documents', label: 'Documents trouvés', icon: 'fa-id-card', abilities: ['found_documents.view'] },
       { path: 'correspondances', label: 'Correspondances', icon: 'fa-link', abilities: ['matches.view'] },
       { path: 'retraits', label: 'Retraits', icon: 'fa-people-arrows', abilities: ['collections.view'] },

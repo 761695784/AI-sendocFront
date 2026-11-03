@@ -47,7 +47,7 @@ import { LoadingComponent } from '../../../shared/ui/state.components';
               <div class="d-flex align-items-center gap-3 mb-3">
                 @if (r.status === 'valid') {
                   <i class="fas fa-check-circle" style="font-size: 2.5rem; color: var(--dt-success)" aria-hidden="true"></i>
-                  <div><h2 class="h5 m-0" style="color: var(--dt-success)">Document authentique</h2><small class="dt-muted">{{ r.kind_label }}</small></div>
+                  <div><h2 class="h5 m-0" style="color: var(--dt-success)">{{ r.kind === 'receipt' ? 'Récépissé authentique' : 'Document authentique' }}</h2><small class="dt-muted">{{ r.kind_label }}</small></div>
                 } @else {
                   <i class="fas fa-ban" style="font-size: 2.5rem; color: var(--dt-danger)" aria-hidden="true"></i>
                   <div><h2 class="h5 m-0" style="color: var(--dt-danger)">Document révoqué</h2><small class="dt-muted">{{ r.kind_label }}</small></div>
@@ -69,6 +69,14 @@ import { LoadingComponent } from '../../../shared/ui/state.components';
                   <dt class="col-sm-5">Motif</dt><dd class="col-sm-7">{{ r.revocation_reason }} ({{ r.revoked_at }})</dd>
                 }
               </dl>
+              @if (r.certified; as c) {
+                <div class="dt-callout dt-callout--success mt-3 mb-0">
+                  <i class="fas fa-check-double" aria-hidden="true"></i>
+                  <div><strong>Déclaration certifiée au guichet.</strong> Un certificat de perte a été délivré le {{ c.date }} par {{ c.structure }}@if (c.institution) { ({{ c.institution }}) }.</div>
+                </div>
+              } @else if (r.kind === 'receipt' && r.status === 'valid') {
+                <p class="small dt-muted mt-3 mb-0">Ce récépissé prouve seulement l'enregistrement d'une déclaration en ligne. Il ne remplace pas le certificat de perte délivré par une structure habilitée.</p>
+              }
             </div>
           }
         } @else if (error()) {

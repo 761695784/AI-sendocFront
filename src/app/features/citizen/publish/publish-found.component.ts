@@ -27,17 +27,7 @@ type ScanState = 'idle' | 'reading' | 'read' | 'manual' | 'failed';
   imports: [ReactiveFormsModule, RouterLink, NavbarComponent, FooterComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './publish-found.component.html',
-  styles: `
-    .scan-grid { display: grid; gap: 1rem; grid-template-columns: 1fr; }
-    @media (min-width: 768px) { .scan-grid { grid-template-columns: 1fr 1fr; } }
-    .scan-label { font-size: .78rem; text-transform: uppercase; letter-spacing: .05em; color: var(--dt-muted); margin-bottom: .35rem; }
-    .check { display: flex; gap: .5rem; font-size: .88rem; margin: .25rem 0; }
-    .check--warning { color: #7a5000; }
-    .check--ok { color: var(--dt-success); }
-    .check--info { color: #2c3e8c; }
-    .prefilled { background: #f3fbf6 !important; border-color: #9fd4b3 !important; }
-    .done-icon { font-size: 3rem; color: var(--dt-success); }
-  `,
+  styleUrl: '../citizen-form.css',
 })
 export class PublishFoundComponent implements OnInit, OnDestroy {
   private readonly api = inject(CitizenApi);
@@ -226,6 +216,7 @@ export class PublishFoundComponent implements OnInit, OnDestroy {
       next: (res) => {
         this.sending.set(false);
         this.result.set(res);
+        this.notify.success('Document publié : merci pour votre geste !');
         window.scrollTo?.({ top: 0, behavior: 'smooth' });
       },
       error: (e: HttpErrorResponse) => {

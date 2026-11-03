@@ -29,7 +29,8 @@ export const routes: Routes = [
     loadComponent: () => import('./features/citizen/publish/publish-found.component').then(m => m.PublishFoundComponent)
   },
   { path: 'document/:uuid', canActivate: [authGuard], title: 'Document — DocTrack', loadComponent: () => import('./components/document-detail/document-detail.component').then(m => m.DocumentDetailComponent) },
-  { path: 'declarer', canActivate: [authGuard], title: 'Déclarer une perte — DocTrack', loadComponent: () => import('./components/declarationform/declarationform.component').then(m => m.DeclarationformComponent) },
+  // Déclaration en ligne (V2) : récépissé DocTrack ; le certificat de perte est délivré au guichet.
+  { path: 'declarer', canActivate: [authGuard], title: 'Déclarer une perte — DocTrack', loadComponent: () => import('./features/citizen/declare/declare-loss.component').then(m => m.DeclareLossComponent) },
   { path: 'lost', canActivate: [authGuard], title: 'Mes déclarations — DocTrack', loadComponent: () => import('./components/lostdeclaration/lostdeclaration.component').then(m => m.LostdeclarationComponent) },
   { path: 'mypub', canActivate: [authGuard], title: 'Mes publications — DocTrack', loadComponent: () => import('./components/mypublish/mypublish.component').then(m => m.MypublishComponent) },
   { path: 'modify', canActivate: [authGuard], title: 'Mon profil — DocTrack', loadComponent: () => import('./components/changeprofil/changeprofil.component').then(m => m.ChangeprofilComponent) },

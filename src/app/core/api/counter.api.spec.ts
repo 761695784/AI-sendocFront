@@ -44,6 +44,22 @@ describe('CounterApi', () => {
     pdf.flush(new Blob(['%PDF']));
   });
 
+  it('déclaration en ligne : recherche par référence puis certification au guichet', () => {
+    api.lookupOnlineDeclaration('DT-2026-000123').subscribe();
+    const lookup = http.expectOne((r) => r.url === `${V2}/online-declarations/lookup`);
+    expect(lookup.request.params.get('q')).toBe('DT-2026-000123');
+    lookup.flush({ uuid: 'd1' });
+
+    api.certifyOnlineDeclaration('d1', {
+      person: { first_name: 'Awa', last_name: 'Ndiaye', id_type: 'passeport', id_number: 'A0123456' },
+      checks: { identity_photo_matches: true },
+    }).subscribe();
+    const certify = http.expectOne(`${V2}/online-declarations/d1/certify`);
+    expect(certify.request.method).toBe('POST');
+    expect(certify.request.body.person.id_type).toBe('passeport');
+    certify.flush({ uuid: 'd1' });
+  });
+
   it('files de travail : filtres vides ignorés', () => {
     api.collections(undefined, 2).subscribe();
     const req = http.expectOne((r) => r.url === `${V2}/collections`);

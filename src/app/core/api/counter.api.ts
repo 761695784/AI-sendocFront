@@ -6,10 +6,12 @@ import {
   CitizenProfile,
   CollectionView,
   CounterCharge,
+  CertifyOnlinePayload,
   CounterDeclaration,
   FoundDocumentView,
   LaravelPage,
   MatchView,
+  OnlineDeclarationLookup,
   OrgRef,
   RestitutionPayload,
   RestitutionPreparation,
@@ -67,6 +69,17 @@ export class CounterApi {
 
   certificatePdf(uuid: string): Observable<Blob> {
     return this.api.blob(['declarations', uuid, 'certificate']);
+  }
+
+  // ── Déclarations faites en ligne : certification au guichet ──────
+  /** Retrouver une déclaration en ligne par sa référence (DT-…) ou le code / lien du QR de son récépissé. */
+  lookupOnlineDeclaration(q: string): Observable<OnlineDeclarationLookup> {
+    return this.api.get<OnlineDeclarationLookup>(['online-declarations', 'lookup'], { q });
+  }
+
+  /** Vérifier l'identité, rattacher la déclaration à la structure et délivrer le certificat de perte. */
+  certifyOnlineDeclaration(uuid: string, data: CertifyOnlinePayload): Observable<CounterDeclaration> {
+    return this.api.post<CounterDeclaration>(['online-declarations', uuid, 'certify'], data);
   }
 
   // ── Documents trouvés (déposés au guichet ou pris en garde) ──────

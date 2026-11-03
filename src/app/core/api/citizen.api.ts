@@ -7,6 +7,8 @@ import {
   ChargeView,
   CollectionSummary,
   DocTypeRef,
+  DeclareLossPayload,
+  DeclareLossResponse,
   DocumentTagView,
   MyDeclaration,
   PublicTagView,
@@ -65,6 +67,16 @@ export class CitizenApi {
   }
 
   // ── Déclarations et documents retrouvés ──────────────────────────
+
+  /** Déclaration en ligne : enregistre la perte et délivre un récépissé DocTrack (pas un certificat de perte). */
+  declareLoss(payload: DeclareLossPayload): Observable<DeclareLossResponse> {
+    return this.http.post<DeclareLossResponse>(apiV1('declarations'), payload);
+  }
+
+  /** PDF d'un récépissé ou d'un certificat de perte appartenant au citoyen. */
+  certificatePdf(uuid: string): Observable<Blob> {
+    return this.http.get(apiV1('certificats', uuid, 'voir'), { responseType: 'blob' });
+  }
 
   myDeclarations(): Observable<MyDeclaration[]> {
     return this.http

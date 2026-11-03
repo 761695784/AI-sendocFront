@@ -60,6 +60,13 @@ export interface CounterDeclaration {
   citizen?: CitizenProfile | null;
   organization?: OrgRef | null;
   recorded_by?: { uuid: string; name: string } | null;
+  /** Déclaration faite en ligne puis certifiée au guichet. */
+  certified?: {
+    at: string;
+    by?: { uuid: string; name: string } | null;
+    person?: { first_name: string; last_name: string; birth_date: string | null; id_type: string | null; id_last4: string | null };
+  } | null;
+  receipt?: { number: string; created_at: string } | null;
   items?: CounterDeclarationItem[];
   certificate: {
     number: string;
@@ -73,6 +80,33 @@ export interface CounterDeclaration {
   closed_at: string | null;
   closure_reason: string | null;
   created_at: string;
+}
+
+/** Résumé d'une déclaration en ligne avant vérification d'identité (GET /api/v2/online-declarations/lookup). */
+export interface OnlineDeclarationLookup {
+  uuid: string;
+  reference: string;
+  declared_at: string | null;
+  status: string;
+  document_types: string[];
+  holder_initials: string;
+  has_doc_number: boolean;
+  lost_at: string | null;
+  lost_place: string | null;
+  can_certify: boolean;
+  certified: { date: string | null; structure: string | null } | null;
+}
+
+/** Corps de POST /api/v2/online-declarations/{uuid}/certify. */
+export interface CertifyOnlinePayload {
+  person: { first_name: string; last_name: string; birth_date?: string | null; id_type: IdType; id_number: string };
+  checks: { identity_photo_matches: boolean };
+  name_override_reason?: string | null;
+  lost_at?: string | null;
+  lost_place?: string | null;
+  territory_code?: string | null;
+  circumstances?: string | null;
+  doc_number?: string | null;
 }
 
 export interface FoundDocumentView {

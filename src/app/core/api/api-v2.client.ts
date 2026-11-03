@@ -99,6 +99,14 @@ export function apiErrorMessage(error: any, fallback = 'Une erreur est survenue,
     return 'Impossible de joindre le serveur. Vérifiez votre connexion.';
   }
   const body = error?.error;
+  if (error?.status === 429) {
+    // Limitation des requêtes : message de l'API s'il est en français, sinon délai d'attente.
+    if (typeof body?.message === 'string' && /tentatives|réessayez/i.test(body.message)) {
+      return body.message;
+    }
+    const retry = Number(error?.headers?.get?.('Retry-After') ?? body?.retry_after ?? 60);
+    return `Trop de tentatives. Réessayez dans ${retry >= 120 ? Math.ceil(retry / 60) + ' minutes' : retry + ' secondes'}.`;
+  }
   if (body?.errors && typeof body.errors === 'object') {
     const first = Object.values(body.errors as Record<string, string[]>)[0];
     if (Array.isArray(first) && first[0]) {

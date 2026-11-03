@@ -66,6 +66,20 @@ import { ChargeActionsComponent } from '../shared/charge-actions.component';
             <h2 class="dt-card__title mb-2">Déclarant</h2>
             <p class="mb-0"><b>{{ d.citizen?.first_name }} {{ d.citizen?.last_name }}</b></p>
             <p class="dt-card__meta">{{ d.citizen?.phone_masked }} @if (d.recorded_by) { · enregistrée par {{ d.recorded_by.name }} }</p>
+            @if (d.certified; as c) {
+              <div class="dt-callout dt-callout--info mt-2 mb-0">
+                <i class="fas fa-check-double" aria-hidden="true"></i>
+                <div>
+                  <strong>Déclarée en ligne</strong> le {{ d.created_at | date: 'd MMM y' }}
+                  @if (d.receipt) { (récépissé <span class="dt-mono">{{ d.receipt.number }}</span>) }
+                  , certifiée au guichet le {{ c.at | date: 'd MMM y, HH:mm' }} @if (c.by) { par {{ c.by.name }} }.
+                  @if (c.person; as p) {
+                    <br /><small>Personne présente : {{ p.first_name }} {{ p.last_name }}
+                      @if (p.id_type) { · pièce {{ p.id_type }} @if (p.id_last4) { ••••{{ p.id_last4 }} } }</small>
+                  }
+                </div>
+              </div>
+            }
           </section>
 
           <section class="dt-card">

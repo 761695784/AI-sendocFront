@@ -17,8 +17,9 @@ import { PaginatorComponent } from '../../../shared/ui/paginator.component';
   imports: [DatePipe, FormsModule, RouterLink, PageHeaderComponent, StatusBadgeComponent, LoadingComponent, EmptyStateComponent, ErrorStateComponent, PaginatorComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <app-page-header title="Déclarations de perte" subtitle="Enregistrées au guichet">
+    <app-page-header title="Déclarations de perte" subtitle="Enregistrées au guichet ou certifiées après une déclaration en ligne">
       @if (canCreate()) {
+        <a routerLink="/espace/certifier" class="btn btn-outline-secondary"><i class="fas fa-qrcode me-1" aria-hidden="true"></i> Certifier une déclaration en ligne</a>
         <a routerLink="nouvelle" class="btn btn-dt"><i class="fas fa-plus me-1" aria-hidden="true"></i> Nouvelle déclaration</a>
       }
     </app-page-header>
@@ -47,7 +48,7 @@ import { PaginatorComponent } from '../../../shared/ui/paginator.component';
     } @else if (error()) {
       <app-error-state [message]="error()!"><button type="button" class="btn btn-sm btn-outline-danger" (click)="load(1)">Réessayer</button></app-error-state>
     } @else if (!page()?.data?.length) {
-      <div class="dt-card"><app-empty-state icon="fa-file-alt" title="Aucune déclaration" text="Les déclarations enregistrées au guichet apparaîtront ici." /></div>
+      <div class="dt-card"><app-empty-state icon="fa-file-alt" title="Aucune déclaration" text="Les déclarations enregistrées au guichet, ou certifiées après une déclaration en ligne, apparaîtront ici." /></div>
     } @else {
       <div class="dt-card p-0 overflow-hidden">
         <div class="table-responsive">
@@ -56,7 +57,9 @@ import { PaginatorComponent } from '../../../shared/ui/paginator.component';
             <tbody>
               @for (d of page()!.data; track d.uuid) {
                 <tr class="cursor-pointer" [routerLink]="[d.uuid]">
-                  <td class="dt-mono small"><a [routerLink]="[d.uuid]">{{ d.reference }}</a></td>
+                  <td class="dt-mono small"><a [routerLink]="[d.uuid]">{{ d.reference }}</a>
+                    @if (d.channel === 'online') { <span class="badge text-bg-light border ms-1" title="Déclarée en ligne, certifiée au guichet">en ligne</span> }
+                  </td>
                   <td>{{ d.citizen?.first_name }} {{ d.citizen?.last_name }}</td>
                   <td class="small">{{ itemsLabel(d) }}</td>
                   <td class="small text-nowrap">{{ d.created_at | date: 'd MMM y' }}</td>

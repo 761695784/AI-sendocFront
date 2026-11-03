@@ -2,7 +2,8 @@ import { Injectable } from '@angular/core';
 import Swal from 'sweetalert2';
 import { apiErrorMessage } from '../../core/api/api-v2.client';
 
-const COLORS = { confirm: '#1d5b99', cancel: '#6c757d', danger: '#c0392b' };
+/** Couleurs de la marque : violet pour confirmer, gris pour annuler, rouge pour les actions destructrices. */
+const COLORS = { confirm: '#31287C', cancel: '#8a86a3', danger: '#c62828' };
 
 /**
  * Messages à l'utilisateur (SweetAlert2), avec le même style partout.

@@ -2,9 +2,8 @@
   <nav class="navbar">
 
     <!-- Logo -->
-    <a class="navbar-logo" routerLink="/">
-      <img src="/assets/logoo2.webp" alt="DocTrack Logo">
-      <span class="navbar-brand-name">DocTrack</span>
+    <a class="navbar-logo" routerLink="/" aria-label="DocTrack — accueil">
+      <img src="/assets/transparent/logo%203.png" alt="DocTrack" width="600" height="180">
     </a>
 
     <!-- Links desktop -->
@@ -22,13 +21,19 @@
       <li>
         <a routerLink="/apropos" routerLinkActive="active">À propos</a>
       </li>
+      <li>
+        <!-- Mis en valeur : vérification publique d'un certificat de perte, d'un récépissé ou d'une décharge -->
+        <a routerLink="/verifier" routerLinkActive="active" class="nav-verify" title="Vérifier l'authenticité d'un certificat, d'un récépissé ou d'une décharge">
+          <i class="fas fa-shield-alt" aria-hidden="true"></i> Vérifier un document
+        </a>
+      </li>
     </ul>
 
     <!-- Auth zone -->
     <div class="navbar-auth">
       @if (authService.isAuthenticated()) {
         <div class="user-dropdown">
-          <button class="user-btn" (click)="toggleUserDropdown()">
+          <button type="button" class="user-btn" (click)="toggleUserDropdown()" [attr.aria-expanded]="userDropdownOpen">
             <div class="user-initials">{{ userInitial }}</div>
             <span class="user-label">{{ authService.getUserName() }}</span>
             <i class="fas fa-chevron-down chevron"
@@ -68,21 +73,21 @@
         </div>
       } @else {
         <a routerLink="/connexion" class="connexion-btn">
-          <i class="fas fa-sign-in-alt"></i> Connexion
+          <i class="fas fa-sign-in-alt" aria-hidden="true"></i> Connexion
         </a>
       }
     </div>
 
     <!-- Burger mobile -->
-    <button class="burger" (click)="toggleMenu()" [class.open]="menuOpen"
-      aria-label="Menu">
+    <button type="button" class="burger" (click)="toggleMenu()" [class.open]="menuOpen"
+      aria-label="Menu" aria-controls="menu-mobile" [attr.aria-expanded]="menuOpen">
       <span></span><span></span><span></span>
     </button>
 
   </nav>
 
   <!-- Mobile menu -->
-  <div class="mobile-menu" [class.show]="menuOpen">
+  <div class="mobile-menu" id="menu-mobile" [class.show]="menuOpen">
     <ul>
       <li>
         <a routerLink="/accueil" routerLinkActive="active"
@@ -99,6 +104,10 @@
       <li>
         <a routerLink="/apropos" routerLinkActive="active"
         (click)="menuOpen=false">À propos</a>
+      </li>
+      <li>
+        <a routerLink="/verifier" routerLinkActive="active" class="mobile-verify"
+        (click)="menuOpen=false"><i class="fas fa-shield-alt" aria-hidden="true"></i> Vérifier un document</a>
       </li>
       @if (authService.isAuthenticated()) {
         <li>
@@ -128,7 +137,7 @@
       @if (!authService.isAuthenticated()) {
         <li>
           <a routerLink="/connexion" class="mobile-connexion"
-          (click)="menuOpen=false">Connexion</a>
+          (click)="menuOpen=false"><i class="fas fa-sign-in-alt" aria-hidden="true"></i>Connexion</a>
         </li>
       }
     </ul>

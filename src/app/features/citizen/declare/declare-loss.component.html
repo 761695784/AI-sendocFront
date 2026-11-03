@@ -1,0 +1,182 @@
+<app-navbar />
+
+<div class="cf-page">
+  <!-- ── Bandeau ── -->
+  <section class="cf-hero">
+    <div class="cf-hero__inner">
+      <span class="cf-badge"><i class="fas fa-file-alt" aria-hidden="true"></i> Déclaration en ligne</span>
+      <h1>Déclarer une perte</h1>
+      <p>Enregistrez votre déclaration : DocTrack vous prévient dès qu'un document correspondant est publié ou déposé dans une structure.</p>
+      @if (!result()) {
+        <ol class="cf-progress" aria-label="Étapes">
+          <li><b>1</b> Le document</li>
+          <li><b>2</b> Le nom</li>
+          <li><b>3</b> Où et quand</li>
+        </ol>
+      }
+    </div>
+  </section>
+
+  <div class="cf-container">
+    @if (result(); as r) {
+      <!-- ── Déclaration enregistrée : récépissé ── -->
+      <div class="cf-card" style="max-width: 760px; margin: 0 auto">
+        <div class="cf-success">
+          <span class="cf-success__icon"><i class="fas fa-check" aria-hidden="true"></i></span>
+          <h2>Déclaration enregistrée</h2>
+          <p>Votre récépissé de déclaration en ligne est prêt.</p>
+
+          <div class="cf-ticket">
+            <small>Référence de votre déclaration</small>
+            <span class="ref dt-mono">{{ r.data.declaration.reference }}</span>
+            <span class="sub">Récépissé N° <span class="dt-mono">{{ r.data.certificat.certificat_number }}</span>
+              @if (r.data.declaration.created_at) { — {{ r.data.declaration.created_at | date: 'd MMMM y à HH:mm' }} }</span>
+          </div>
+
+          <div class="dt-callout dt-callout--warning cf-steps-inline">
+            <i class="fas fa-info-circle" aria-hidden="true"></i>
+            <div>
+              <strong>Ce récépissé n'est pas un certificat de perte.</strong>
+              Pour obtenir le certificat (demandé pour un duplicata ou un renouvellement) :
+              <ol class="mb-0 mt-1 ps-3">
+                <li>présentez-vous en personne dans un commissariat ou une brigade partenaire de DocTrack ;</li>
+                <li>donnez votre référence ou montrez le QR code du récépissé, avec une pièce justifiant de votre identité ;</li>
+                <li>l'agent vérifie votre identité et vous délivre le certificat de perte.</li>
+              </ol>
+            </div>
+          </div>
+
+          <div class="cf-actions">
+            <button type="button" class="cf-btn cf-btn--primary" [disabled]="opening()" (click)="openReceipt()">
+              <i class="fas fa-file-pdf" aria-hidden="true"></i> {{ opening() ? 'Ouverture…' : 'Ouvrir mon récépissé' }}
+            </button>
+            <a routerLink="/mon-espace/declarations" class="cf-btn cf-btn--ghost"><i class="fas fa-list" aria-hidden="true"></i> Suivre mes déclarations</a>
+            <button type="button" class="cf-btn cf-btn--link" (click)="another()">Déclarer une autre perte</button>
+          </div>
+        </div>
+      </div>
+    } @else {
+      <div class="cf-layout">
+        <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+          <!-- ── Étape 1 : document ── -->
+          <section class="cf-card">
+            <header class="cf-card__head">
+              <span class="cf-num">1</span>
+              <div>
+                <h2>Le document perdu</h2>
+                <p>Choisissez le type de pièce et, si vous le connaissez, son numéro.</p>
+              </div>
+            </header>
+            <div class="cf-card__body">
+              <div class="row g-3">
+                <div class="col-md-6">
+                  <label for="type" class="dt-required">Type de document</label>
+                  <select id="type" class="form-select" formControlName="document_type_id">
+                    <option value="" disabled>Choisir…</option>
+                    @for (t of types(); track t.id) { <option [value]="t.id">{{ t.TypeName }}</option> }
+                  </select>
+                  @if (fieldError(form.controls.document_type_id, 'Le type'); as err) { <small class="dt-error">{{ err }}</small> }
+                </div>
+                <div class="col-md-6">
+                  <label for="number">Numéro du document <span class="cf-opt">Facultatif</span></label>
+                  <input id="number" class="form-control dt-mono" formControlName="DocIdentification" autocomplete="off" />
+                  <small class="form-text">Il aide à retrouver le document ; il n'est jamais affiché en entier.</small>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- ── Étape 2 : nom sur le document ── -->
+          <section class="cf-card">
+            <header class="cf-card__head">
+              <span class="cf-num">2</span>
+              <div>
+                <h2>Nom inscrit sur le document</h2>
+                <p>Écrivez-le exactement comme sur la pièce : c'est ainsi que DocTrack la retrouve.</p>
+              </div>
+            </header>
+            <div class="cf-card__body">
+              <div class="row g-3">
+                <div class="col-md-6">
+                  <label for="first" class="dt-required">Prénom(s)</label>
+                  <input id="first" class="form-control" formControlName="FirstNameInDoc" autocomplete="given-name" />
+                  @if (nameError('FirstNameInDoc', 'Le prénom'); as err) { <small class="dt-error">{{ err }}</small> }
+                </div>
+                <div class="col-md-6">
+                  <label for="last" class="dt-required">Nom</label>
+                  <input id="last" class="form-control" formControlName="LastNameInDoc" autocomplete="family-name" />
+                  @if (nameError('LastNameInDoc', 'Le nom'); as err) { <small class="dt-error">{{ err }}</small> }
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- ── Étape 3 : circonstances ── -->
+          <section class="cf-card">
+            <header class="cf-card__head">
+              <span class="cf-num">3</span>
+              <div>
+                <h2>Où et quand ? <span class="cf-opt">Facultatif</span></h2>
+                <p>Ces informations aident les correspondances et seront reprises sur votre certificat.</p>
+              </div>
+            </header>
+            <div class="cf-card__body">
+              <div class="row g-3">
+                <div class="col-md-7">
+                  <label for="place">Lieu de la perte</label>
+                  <input id="place" class="form-control" formControlName="lost_place" placeholder="Ex. Marché Sandaga, Dakar Plateau" />
+                </div>
+                <div class="col-md-5">
+                  <label for="date">Date de la perte</label>
+                  <input id="date" type="date" class="form-control" formControlName="lost_at" [max]="today" />
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <div class="cf-note">
+            <i class="fas fa-receipt" aria-hidden="true"></i>
+            <div>
+              <strong>Récépissé de déclaration en ligne</strong>
+              <p>Vous le recevez immédiatement. Le <b>certificat de perte</b> est délivré par un commissariat ou une brigade partenaire,
+                sur présentation de la référence et d'une pièce d'identité.</p>
+            </div>
+          </div>
+
+          <button type="submit" class="cf-submit" [disabled]="sending()">
+            <i class="fas fa-paper-plane" aria-hidden="true"></i>
+            {{ sending() ? 'Enregistrement…' : 'Enregistrer ma déclaration' }}
+          </button>
+        </form>
+
+        <!-- ── Colonne d'aide ── -->
+        <aside class="cf-aside" aria-label="Aide">
+          <img class="cf-aside__img" src="/assets/declarepub.webp" alt="" loading="lazy" />
+          <div class="cf-box">
+            <h3><i class="fas fa-lightbulb" aria-hidden="true"></i> Informations importantes</h3>
+            <ul class="cf-tips">
+              <li><i class="fas fa-check-circle" aria-hidden="true"></i> Indiquez les informations exactes du document.</li>
+              <li><i class="fas fa-check-circle" aria-hidden="true"></i> Le prénom et le nom doivent correspondre à la pièce.</li>
+              <li><i class="fas fa-check-circle" aria-hidden="true"></i> Vous êtes prévenu si le document est retrouvé.</li>
+              <li><i class="fas fa-check-circle" aria-hidden="true"></i> Gratuit pendant la phase pilote.</li>
+            </ul>
+          </div>
+          <div class="cf-box">
+            <h3><i class="fas fa-list-ol" aria-hidden="true"></i> Étapes suivantes</h3>
+            <ol class="cf-steps">
+              <li>Recevez votre récépissé</li>
+              <li>Suivez votre déclaration dans Mon espace</li>
+              <li>Obtenez le certificat au guichet</li>
+            </ol>
+          </div>
+          <div class="cf-shield">
+            <i class="fas fa-shield-alt" aria-hidden="true"></i>
+            <span>Vos données personnelles sont protégées : le numéro de la pièce n'est jamais publié.</span>
+          </div>
+        </aside>
+      </div>
+    }
+  </div>
+</div>
+
+<app-footer />

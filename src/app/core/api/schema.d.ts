@@ -415,6 +415,14 @@ export interface paths {
                             /** @description Modèle de langage de secours branché (AI_LLM_PROVIDER) */
                             llm_fallback?: boolean;
                             /**
+                             * @description Langues pour lesquelles des phrases ont une voix prête (générée par Adia_TTS)
+                             * @example [
+                             *       "wo"
+                             *     ]
+                             */
+                            voice_output?: string[];
+                            /**
+                             * @description Nombre de phrases dont l'audio est à jour (un texte corrigé invalide son audio)
                              * @example {
                              *       "fr": 0,
                              *       "wo": 37
@@ -649,6 +657,150 @@ export interface paths {
         put?: never;
         post?: never;
         delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v2/assistant/voices": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Voix de l'assistant — état de chaque phrase fixe (super admin)
+         * @description Les phrases fixes (sans nom ni numéro) sont lues UNE fois par le service de synthèse `doctrack-tts`
+         *     (modèle **Adia_TTS** de CONCREE, wolof, Apache 2.0 : un réseau entraîné sur 40 h de voix, qui génère l'audio),
+         *     enregistrées en MP3 puis servies comme des fichiers. États : `ready` (à jour), `stale` (texte corrigé depuis :
+         *     l'audio n'est plus proposé), `missing`, `manual` (fichier déposé à la main, sans fiche).
+         */
+        get: {
+            parameters: {
+                query?: {
+                    lang?: "fr" | "wo";
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            lang?: string;
+                            /**
+                             * @description AI_TTS_PROVIDER
+                             * @example hf_space
+                             */
+                            provider?: string;
+                            /** @description Service de synthèse configuré et langue prise en charge (wolof) */
+                            can_generate?: boolean;
+                            summary?: {
+                                total?: number;
+                                ready?: number;
+                                stale?: number;
+                                missing?: number;
+                                manual?: number;
+                            };
+                            data?: components["schemas"]["AssistantVoice"][];
+                        };
+                    };
+                };
+                403: components["responses"]["Forbidden"];
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v2/assistant/voices/{lang}/{key}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                lang: "fr" | "wo";
+                key: string;
+            };
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Générer ou régénérer la voix d'une phrase (super admin)
+         * @description Appel long (30 s à 2 min sur un service gratuit). Les phrases à paramètres (nom, référence) sont refusées — aucune donnée personnelle n'est envoyée au service.
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    lang: "fr" | "wo";
+                    key: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Audio enregistré */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["AssistantVoice"];
+                    };
+                };
+                /** @description Phrase inconnue ou à paramètres */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Service de synthèse non configuré */
+                503: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        /** Retirer la voix d'une phrase mal prononcée (super admin) */
+        delete: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    lang: "fr" | "wo";
+                    key: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Retirée (l'assistant n'affichera plus que le texte) */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["AssistantVoice"];
+                    };
+                };
+            };
+        };
         options?: never;
         head?: never;
         patch?: never;
@@ -1504,7 +1656,13 @@ export interface paths {
             };
         };
         put?: never;
-        /** Enregistrer une victime sans compte DocTrack */
+        /**
+         * Enregistrer une victime (avec un email, son compte DocTrack est créé)
+         * @description Sans compte existant (même téléphone et même nom) et avec un email, le compte citoyen est créé :
+         *     la personne reçoit un lien (valable 7 jours) pour choisir son mot de passe ; ses déclarations
+         *     apparaissent dans son espace. Sans email, la fiche sera rattachée à son compte s'il s'inscrit
+         *     plus tard avec le même téléphone, nom et prénom.
+         */
         post: {
             parameters: {
                 query?: never;
@@ -1537,6 +1695,73 @@ export interface paths {
                 };
                 /** @description Profil déjà existant (renvoyé) */
                 409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Email déjà utilisé par une autre personne */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v2/citizens/{citizen}/account": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Créer le compte DocTrack d'une personne déjà enregistrée, ou renvoyer son lien d'activation */
+        post: {
+            parameters: {
+                query?: never;
+                header?: {
+                    /** @description UUID de la structure au nom de laquelle l'agent agit. */
+                    "X-Organization"?: components["parameters"]["XOrganization"];
+                };
+                path: {
+                    citizen: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/json": {
+                        /** @description Obligatoire si la personne n'a pas encore de compte */
+                        email?: string;
+                    };
+                };
+            };
+            responses: {
+                /** @description Fiche avec account_status (pending / active) */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Compte déjà actif */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Email invalide ou déjà utilisé */
+                422: {
                     headers: {
                         [name: string]: unknown;
                     };
@@ -1794,6 +2019,129 @@ export interface paths {
         };
         put?: never;
         post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v2/online-declarations/lookup": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Retrouver une déclaration faite en ligne (référence ou QR du récépissé)
+         * @description Le citoyen présente sa référence DT-… ou le QR code de son récépissé. Toute structure habilitée peut rechercher. Résumé minimal (type de pièce, initiales, date) : aucune donnée nominative complète avant la vérification d'identité.
+         */
+        get: {
+            parameters: {
+                query: {
+                    /** @description Référence DT-…, code de vérification ou lien du QR code */
+                    q: string;
+                };
+                header?: {
+                    /** @description UUID de la structure au nom de laquelle l'agent agit. */
+                    "X-Organization"?: components["parameters"]["XOrganization"];
+                };
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                403: components["responses"]["Forbidden"];
+                404: components["responses"]["NotFound"];
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v2/online-declarations/{uuid}/certify": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                uuid: components["parameters"]["Uuid"];
+            };
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Certifier une déclaration en ligne et délivrer le certificat de perte
+         * @description L'agent vérifie l'identité de la personne présente (pièce, photo, nom comparé à la déclaration ; dérogation motivée réservée aux responsables). La déclaration est rattachée à la structure, un certificat officiel CP-… est émis (même tarification que la déclaration au guichet ; gratuit en phase pilote) et le récépissé reste valable.
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: {
+                    /** @description UUID de la structure au nom de laquelle l'agent agit. */
+                    "X-Organization"?: components["parameters"]["XOrganization"];
+                };
+                path: {
+                    uuid: components["parameters"]["Uuid"];
+                };
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/json": {
+                        person: {
+                            first_name: string;
+                            last_name: string;
+                            /** Format: date */
+                            birth_date?: string;
+                            /** @enum {string} */
+                            id_type: "cni" | "passeport" | "permis" | "carte_consulaire" | "carte_militaire" | "extrait_naissance" | "autre";
+                            /** @description Jamais conservé en clair (4 derniers caractères + empreinte) */
+                            id_number: string;
+                        };
+                        checks: {
+                            identity_photo_matches?: boolean;
+                        };
+                        name_override_reason?: string;
+                        /** Format: date */
+                        lost_at?: string;
+                        lost_place?: string;
+                        territory_code?: string;
+                        circumstances?: string;
+                        doc_number?: string;
+                    };
+                };
+            };
+            responses: {
+                /** @description Déclaration certifiée */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                403: components["responses"]["Forbidden"];
+                /** @description Déjà certifiée */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                422: components["responses"]["ValidationError"];
+            };
+        };
         delete?: never;
         options?: never;
         head?: never;
@@ -4285,6 +4633,8 @@ export interface paths {
                     /** @description UUID du périmètre (organisation et sa descendance). Par défaut, celui de l'utilisateur. */
                     organization?: components["parameters"]["ScopeOrganization"];
                     national?: boolean;
+                    /** @description Synthèse IA : none, pending (à valider), approved, rejected, failed */
+                    narrative_status?: "none" | "pending" | "approved" | "rejected" | "failed";
                     page?: components["parameters"]["Page"];
                 };
                 header?: never;
@@ -4728,6 +5078,13 @@ export interface components {
              */
             phone?: string;
             has_account?: boolean;
+            /**
+             * @description pending = compte créé au guichet, mot de passe pas encore choisi
+             * @enum {string}
+             */
+            account_status?: "none" | "pending" | "active";
+            /** @example aw•••@example.sn */
+            email_masked?: string | null;
         };
         DeclarationItem: {
             /** Format: uuid */
@@ -5139,6 +5496,24 @@ export interface components {
                 OwnerLastName?: string | null;
                 DocIdentification?: string | null;
             };
+        };
+        AssistantVoice: {
+            /** @example welcome */
+            key?: string;
+            /** @description Texte actuel de la phrase */
+            text?: string;
+            /** @enum {string} */
+            state?: "ready" | "stale" | "missing" | "manual";
+            audio_url?: string | null;
+            /** @description Si stale : ce que dit encore l'audio */
+            spoken_text?: string | null;
+            /** @example CONCREE/Adia_TTS */
+            model?: string | null;
+            /** Format: date-time */
+            generated_at?: string | null;
+            /** @description Durée de l'audio (s) */
+            duration?: number | null;
+            bytes?: number | null;
         };
         AssistantReply: {
             conversation?: {
