@@ -9,7 +9,8 @@ ENV PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1
 COPY package.json package-lock.json ./
 RUN npm ci
 COPY . .
-RUN npx ng build
+# Configuration « docker » : serveur Express (server.node.ts) au lieu du point d'entrée Netlify.
+RUN npx ng build --configuration production,docker
 
 # ── Étape 2 : exécution (rendu serveur Angular) ────────
 FROM node:24-alpine

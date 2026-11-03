@@ -73,6 +73,11 @@
               "outputHashing": "all",
               "serviceWorker": "ngsw-config.json"
             },
+            "docker": {
+              "ssr": {
+                "entry": "server.node.ts"
+              }
+            },
             "development": {
               "optimization": false,
               "extractLicenses": false,
