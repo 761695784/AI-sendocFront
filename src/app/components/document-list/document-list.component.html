@@ -66,15 +66,15 @@
             </div>
             <!-- Image -->
             <div class="image-container">
-              @if (document.image_blurred || document.image) {
+              @if ((document.image_blurred || document.image) && !brokenImages.has(document.uuid)) {
                 <img loading="lazy"
                   [src]="document.image_blurred || document.image" alt="document" decoding="async"
-                  class="image" oncontextmenu="return false;" />
+                  class="image" oncontextmenu="return false;" (error)="brokenImages.add(document.uuid)" />
               }
               <!-- <div class="blur-overlay"></div> -->
-              <div class="image-type-chip">{{ document.document_type.TypeName }}</div>
+              <div class="image-type-chip">{{ document.document_type?.TypeName }}</div>
             </div>
-            @if (!document.image) {
+            @if (!(document.image_blurred || document.image) || brokenImages.has(document.uuid)) {
               <p class="no-image">
                 <i class="fas fa-image"></i> Image non disponible
               </p>
@@ -83,7 +83,7 @@
             <div class="card-content">
               <div class="published-by">
                 <i class="fas fa-user-circle"></i>
-                Publié par <strong>{{ document.user.FirstName }} {{ document.user.LastName }}</strong>
+                Publié par <strong>{{ document | publisher }}</strong>
                 <span class="pub-date">· {{ document.created_at | date:'dd/MM/yyyy' }}</span>
               </div>
               <div class="card-info">

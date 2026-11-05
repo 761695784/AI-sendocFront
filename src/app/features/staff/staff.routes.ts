@@ -61,6 +61,12 @@ export const STAFF_ROUTES: Routes = [
         loadComponent: () => import('./documents/documents-list.component').then((m) => m.StaffDocumentsListComponent),
       },
       {
+        path: 'publications',
+        data: { icon: 'fa-globe-africa' },
+        title: 'Publications en ligne — DocTrack',
+        loadComponent: () => import('./publications/publications.component').then((m) => m.StaffPublicationsComponent),
+      },
+      {
         path: 'documents/depot',
         data: { icon: 'fa-id-card' },
         canActivate: [abilityGuard('found_documents.create')],

@@ -1,0 +1,26 @@
+.dt-map { position: relative; height: 480px; border-radius: 14px; overflow: hidden; background: #e9eef3; }
+.dt-map__canvas { position: absolute; inset: 0; }
+.dt-map__overlay {
+  position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+  background: rgba(255, 255, 255, .72); color: #4b4766; font-weight: 600; pointer-events: none; text-align: center; padding: 1rem;
+}
+@media (max-width: 576px) { .dt-map { height: 360px; } }
+
+/* Bulle : nombre de publications d'un département */
+.dt-map-bubble {
+  display: flex; align-items: center; justify-content: center; border-radius: 50%; padding: 0; cursor: pointer;
+  background: rgba(49, 40, 124, .88); color: #fff; font-weight: 800; line-height: 1;
+  border: 3px solid #F6A500; box-shadow: 0 4px 14px rgba(49, 40, 124, .35);
+  transition: transform .15s ease, background-color .15s ease;
+}
+.dt-map-bubble:hover, .dt-map-bubble:focus-visible { background: #F6A500; color: #1f1b4d; transform: scale(1.08); outline: none; }
+
+.dt-map-popup { display: flex; flex-direction: column; gap: 2px; font-size: 13px; color: #4b4766; }
+.dt-map-popup strong { color: #31287C; font-size: 14px; }
+
+.dt-map__list { list-style: none; padding: 0; margin: .75rem 0 0; display: flex; flex-wrap: wrap; gap: .4rem; }
+.dt-map__list li {
+  display: flex; align-items: center; gap: .45rem; background: #f4f3fb; border-radius: 999px; padding: .25rem .4rem .25rem .75rem; font-size: .85rem;
+}
+.dt-map__list strong { background: #31287C; color: #fff; border-radius: 999px; padding: .05rem .5rem; font-size: .78rem; }
+.dt-map__note { margin: .5rem 0 0; font-size: .8rem; color: #6b6889; }

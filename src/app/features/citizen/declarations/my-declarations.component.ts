@@ -1,3 +1,4 @@
+import { RestitutionFlowService } from '../../../shared/restitution/restitution-flow.service';
 import { ChangeDetectionStrategy, Component, OnInit, inject, signal } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
@@ -23,6 +24,7 @@ import { openBlob } from '../../../shared/media/open-blob';
 })
 export class MyDeclarationsComponent implements OnInit {
   private readonly api = inject(CitizenApi);
+  private readonly restitutionFlow = inject(RestitutionFlowService);
   private readonly declarations = inject(DeclarationService);
   private readonly notify = inject(NotifyService);
   private readonly badges = inject(CitizenBadges);
@@ -77,32 +79,18 @@ export class MyDeclarationsComponent implements OnInit {
     });
   }
 
-  /** Remise directe : le trouveur reçoit la demande par SMS et e-mail, sans votre numéro. */
+  /**
+   * Demande de restitution : document publié par un citoyen (conditions puis numéro du trouveur)
+   * ou conservé par une structure (demande transmise, retrait au guichet).
+   */
   async askRestitution(doc: OwnerFoundDocument): Promise<void> {
-    const ok = await this.notify.confirm({
-      title: 'Demander la restitution ?',
-      text:
-        'Le trouveur recevra votre demande par SMS et par e-mail. Vos numéros ne seront échangés que s’il accepte. ' +
-        'Rencontrez-vous dans un lieu public et ne payez jamais pour récupérer un document.',
-      confirmText: 'Envoyer la demande',
-    });
-    if (!ok) {
-      return;
-    }
     this.busy.set(doc.uuid);
-    this.api.askRestitution(doc.uuid).subscribe({
-      next: (res) => {
-        this.busy.set(null);
-        void this.notify.info(res.message, 'Demande envoyée');
-        this.badges.refresh();
-        this.load();
-      },
-      error: (e) => {
-        this.busy.set(null);
-        void this.notify.error(e, 'Demande impossible');
-        this.load();
-      },
-    });
+    const sent = await this.restitutionFlow.ask(doc);
+    this.busy.set(null);
+    if (sent) {
+      this.badges.refresh();
+    }
+    this.load();
   }
 
   goToRequests(): void {

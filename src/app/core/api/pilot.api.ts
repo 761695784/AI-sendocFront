@@ -1,5 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, map } from 'rxjs';
 import { ApiV2Client } from './api-v2.client';
 import { QueryParams } from './api.types';
 import { LaravelPage } from './counter.types';
@@ -24,6 +24,15 @@ import {
   VigilanceAlert,
   VigilanceList,
 } from './pilot.types';
+
+/**
+ * L'API renvoie une organisation « à plat » (ressources sans enveloppe « data ») ; certains anciens écrans
+ * attendent { data }. On accepte les deux formes pour que la fiche s'affiche toujours.
+ */
+function asData<T>(res: unknown): { data: T } {
+  const r = res as { data?: T } | null;
+  return { data: (r && typeof r === 'object' && 'data' in r && r.data ? r.data : res) as T };
+}
 
 /** Période et périmètre des statistiques (organization = uuid ; vide = périmètre par défaut / national). */
 export interface StatsQuery {
@@ -129,19 +138,19 @@ export class PilotApi {
   }
 
   organization(uuid: string): Observable<{ data: Organization }> {
-    return this.api.get<{ data: Organization }>(['organizations', uuid]);
+    return this.api.get<unknown>(['organizations', uuid]).pipe(map(asData<Organization>));
   }
 
   createOrganization(data: OrganizationPayload): Observable<{ data: Organization }> {
-    return this.api.post<{ data: Organization }>(['organizations'], data);
+    return this.api.post<unknown>(['organizations'], data).pipe(map(asData<Organization>));
   }
 
   updateOrganization(uuid: string, data: OrganizationPayload): Observable<{ data: Organization }> {
-    return this.api.patch<{ data: Organization }>(['organizations', uuid], data);
+    return this.api.patch<unknown>(['organizations', uuid], data).pipe(map(asData<Organization>));
   }
 
   setOrganizationActive(uuid: string, active: boolean): Observable<{ data: Organization }> {
-    return this.api.post<{ data: Organization }>(['organizations', uuid, active ? 'activate' : 'deactivate']);
+    return this.api.post<unknown>(['organizations', uuid, active ? 'activate' : 'deactivate']).pipe(map(asData<Organization>));
   }
 
   // ── Membres ──────────────────────────────────────────────────────

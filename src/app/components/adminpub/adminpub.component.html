@@ -3,7 +3,7 @@
   <!-- Barre de recherche -->
   <div class="search-bar">
     <select [(ngModel)]="selectedFilter" (change)="filterDocuments()" title="Choisissez une option">
-      <option value="all-publications">Tous les documents</option>
+      <option value="all-publications">Documents en ligne</option>
       <option value="softdeleted">Supprimés</option>
       <option value="récupéré">Récupérés</option>
       <option value="non récupéré">Non récupérés</option>
@@ -51,12 +51,11 @@
           }
           <div class="card-content">
             <p class="published-by">
-              Publié par {{ document.user.FirstName }}
-              {{ document.user.LastName }} | {{ document.created_at | date }}
+              Publié par {{ document | publisher }} | {{ document.created_at | date }}
             </p>
-            <p class="phone-number">📞 {{ document.user.Phone }}</p>
+            <p class="phone-number">📞 {{ document.user?.Phone ?? '—' }}</p>
             <p class="doc-info">
-              Type : <strong>{{ document.document_type.TypeName }}</strong>
+              Type : <strong>{{ document.document_type?.TypeName }}</strong>
             </p>
             <p class="doc-info">
               Prénom : <strong>{{ document.OwnerFirstName }}</strong>

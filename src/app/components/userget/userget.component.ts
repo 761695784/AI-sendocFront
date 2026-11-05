@@ -68,39 +68,34 @@ export class UsergetComponent implements OnInit {
     }
   }
 
-  // Méthode pour supprimer un utilisateur
-  deleteUser(userId: number): void {
+  // Méthode pour supprimer un utilisateur (compte anonymisé côté API : ses déclarations et publications restent tracées)
+  deleteUser(user: User): void {
     Swal.fire({
-      title: 'Êtes-vous sûr ?',
-      text: "Cette action est irréversible !",
+      title: 'Supprimer ce compte ?',
+      html: `Le compte de <b>${this.escape(user.FirstName)} ${this.escape(user.LastName)}</b> sera supprimé et ses données personnelles effacées. `
+        + 'Ses déclarations et publications restent dans l’historique, sans son nom.',
       icon: 'warning',
       showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'Oui, supprimer !',
+      confirmButtonColor: '#c62828',
+      confirmButtonText: 'Oui, supprimer',
       cancelButtonText: 'Annuler'
     }).then((result) => {
       if (result.isConfirmed) {
-        this.authService.deleteUser(userId).subscribe({
-          next: () => {
-            Swal.fire(
-              'Supprimé !',
-              'L\'utilisateur a été supprimé.',
-              'success'
-            );
-            this.loadUsers(); // Recharge les utilisateurs après suppression
+        this.authService.deleteUser(user.uuid).subscribe({
+          next: (res: any) => {
+            Swal.fire('Compte supprimé', res?.message || 'L’utilisateur a été supprimé.', 'success');
+            this.loadUsers();
           },
           error: (err) => {
-            Swal.fire(
-              'Erreur !',
-              'Vous ne pouvez pas supprimer un utilisateur de role Admin.',
-              'error'
-            );
-            // console.error('Erreur lors de la suppression de l\'utilisateur', err);
+            Swal.fire('Suppression impossible', err?.error?.message || 'Le compte n’a pas pu être supprimé. Réessayez.', 'error');
           }
         });
       }
     });
+  }
+
+  private escape(v: unknown): string {
+    return String(v ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c] as string));
   }
 
   // Méthode pour trier les utilisateurs

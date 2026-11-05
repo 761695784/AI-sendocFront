@@ -39,7 +39,7 @@
               </div>
               <!-- Badge type -->
               <div class="doc-type-badge">
-                {{ documentDetails.document_type.TypeName }}
+                {{ documentDetails.document_type?.TypeName }}
               </div>
             </div>
           </div>
@@ -54,7 +54,11 @@
                 </div>
                 <div class="alert-text">
                   <strong>Ce document vous appartient ?</strong>
-                  <p>Cliquez sur <em>Restituer</em> pour envoyer votre demande et obtenir le contact du publicateur.</p>
+                  @if ($any(documentDetails).custody) {
+                    <p>Il est conservé par <b>{{ $any(documentDetails).custody.name }}</b> : faites votre demande, puis présentez-vous avec une pièce d'identité pour le retirer.</p>
+                  } @else {
+                    <p>Faites votre demande : après avoir accepté les conditions, vous obtenez le numéro de la personne qui l'a trouvé.</p>
+                  }
                 </div>
               </div>
             }
@@ -63,7 +67,7 @@
               <div class="meta-row publisher">
                 <i class="fas fa-user-circle"></i>
                 <span>Publié par
-                  <strong>{{ documentDetails.user.FirstName }} {{ documentDetails.user.LastName }}</strong>
+                  <strong>{{ documentDetails | publisher }}</strong>
                   · {{ documentDetails.created_at | date:'dd/MM/yyyy, HH:mm' }}
                 </span>
               </div>
@@ -71,7 +75,7 @@
               <div class="meta-row">
                 <div class="meta-item">
                   <span class="meta-label">Type de document</span>
-                  <span class="meta-value">{{ documentDetails.document_type.TypeName }}</span>
+                  <span class="meta-value">{{ documentDetails.document_type?.TypeName }}</span>
                 </div>
               </div>
               <div class="meta-row">
@@ -107,7 +111,7 @@
                   (click)="requestRestitution()"
                   [disabled]="isRestitutionRequested">
                   <i class="fas fa-hand-holding"></i>
-                  {{ isRestitutionRequested ? 'Demande envoyée ✓' : 'Demander la restitution' }}
+                  {{ isRestitutionRequested ? 'Demande envoyée ✓' : ($any(documentDetails).custody ? 'Le retirer au guichet' : 'C’est mon document : le récupérer') }}
                 </button>
               </div>
             }
@@ -142,11 +146,11 @@
           @for (commentaire of commentaires; track commentaire) {
             <div class="comment-item">
               <div class="comment-avatar">
-                {{ commentaire.user.FirstName.charAt(0) }}{{ commentaire.user.LastName.charAt(0) }}
+                {{ (commentaire | publisher).charAt(0) }}
               </div>
               <div class="comment-body">
                 <div class="comment-meta">
-                  <strong>{{ commentaire.user.FirstName }} {{ commentaire.user.LastName }}</strong>
+                  <strong>{{ commentaire | publisher }}</strong>
                   <span class="comment-date">{{ commentaire.created_at | date:'dd/MM/yyyy' }}</span>
                 </div>
                 <p class="comment-text">{{ commentaire.contenu }}</p>

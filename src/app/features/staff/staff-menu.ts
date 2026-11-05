@@ -31,6 +31,7 @@ export const STAFF_MENU: StaffMenuSection[] = [
       { path: 'declarations', label: 'Déclarations de perte', icon: 'fa-file-alt', abilities: ['declarations.view'] },
       { path: 'certifier', label: 'Certifier une déclaration en ligne', icon: 'fa-qrcode', abilities: ['declarations.create'] },
       { path: 'documents', label: 'Documents trouvés', icon: 'fa-id-card', abilities: ['found_documents.view'] },
+      { path: 'publications', label: 'Publications en ligne', icon: 'fa-globe-africa' },
       { path: 'correspondances', label: 'Correspondances', icon: 'fa-link', abilities: ['matches.view'] },
       { path: 'retraits', label: 'Retraits', icon: 'fa-people-arrows', abilities: ['collections.view'] },
       { path: 'restitutions', label: 'Restitutions', icon: 'fa-handshake', abilities: ['restitutions.view'] },

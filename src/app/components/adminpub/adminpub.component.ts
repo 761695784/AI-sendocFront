@@ -1,3 +1,4 @@
+import { PublisherPipe } from '../../shared/pipes/publisher.pipe';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
@@ -20,9 +21,10 @@ export interface Document {
   statut: string;
   document_type_id: number;
   user_id: number;
+  custody?: { name: string; address?: string | null; phone?: string | null } | null;
   created_at: string;
   updated_at: string;
-  user: {
+  user: null | {
     id: number;
     FirstName: string;
     LastName: string;
@@ -31,7 +33,7 @@ export interface Document {
     email: string;
     email_verified_at?: string;
   };
-  document_type: {
+  document_type: null | {
     id: number;
     TypeName: string;
   };
@@ -39,7 +41,7 @@ export interface Document {
 
 @Component({
     selector: 'app-adminpub',
-    imports: [CommonModule, FormsModule],
+    imports: [PublisherPipe, CommonModule, FormsModule],
     templateUrl: './adminpub.component.html',
     changeDetection: ChangeDetectionStrategy.Eager,
     styleUrls: ['./adminpub.component.css']

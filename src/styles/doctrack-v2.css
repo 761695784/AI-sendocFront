@@ -189,9 +189,9 @@
 .dt-bo .btn-dt-gold:hover { background: #e09800; border-color: #e09800; color: var(--bo-ink); }
 .dt-bo .btn-outline-secondary { --bs-btn-color: var(--bo-ink); --bs-btn-border-color: rgba(49, 40, 124, .28);
   --bs-btn-hover-bg: var(--bo-ink); --bs-btn-hover-border-color: var(--bo-ink); --bs-btn-hover-color: #fff;
-  --bs-btn-active-bg: var(--bo-ink); --bs-btn-active-border-color: var(--bo-ink); background: #fff; }
+  --bs-btn-active-bg: var(--bo-ink); --bs-btn-active-border-color: var(--bo-ink); --bs-btn-bg: #fff; }
 .dt-bo .btn-outline-primary { --bs-btn-color: var(--bo-ink); --bs-btn-border-color: rgba(49, 40, 124, .35); --bs-btn-hover-bg: var(--bo-ink);
-  --bs-btn-hover-border-color: var(--bo-ink); --bs-btn-hover-color: #fff; --bs-btn-active-bg: var(--bo-ink); background: #fff; }
+  --bs-btn-hover-border-color: var(--bo-ink); --bs-btn-hover-color: #fff; --bs-btn-active-bg: var(--bo-ink); --bs-btn-bg: #fff; }
 .dt-bo .btn-primary { --bs-btn-bg: var(--bo-ink); --bs-btn-border-color: var(--bo-ink); --bs-btn-hover-bg: var(--bo-accent);
   --bs-btn-hover-border-color: var(--bo-accent); --bs-btn-hover-color: var(--bo-ink); }
 .dt-bo .btn-link { --bs-btn-color: var(--bo-ink); --bs-btn-hover-color: #1f1a4d; font-weight: 600; }
@@ -288,12 +288,16 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
   border-width: 2px;
 }
 :is(.dt-page, .dt-bo) .btn-outline-danger { --bs-btn-color: #c62828; --bs-btn-border-color: rgba(198, 40, 40, .4); --bs-btn-hover-bg: #c62828;
-  --bs-btn-hover-border-color: #c62828; --bs-btn-hover-color: #fff; border-width: 2px; background: #fff; }
+  --bs-btn-hover-border-color: #c62828; --bs-btn-hover-color: #fff; --bs-btn-active-bg: #c62828; --bs-btn-active-color: #fff; border-width: 2px; --bs-btn-bg: #fff; }
 :is(.dt-page, .dt-bo) .btn-outline-success { --bs-btn-color: #1b7f3b; --bs-btn-border-color: rgba(27, 127, 59, .4); --bs-btn-hover-bg: #1b7f3b;
-  --bs-btn-hover-border-color: #1b7f3b; --bs-btn-hover-color: #fff; border-width: 2px; background: #fff; }
+  --bs-btn-hover-border-color: #1b7f3b; --bs-btn-hover-color: #fff; --bs-btn-active-bg: #1b7f3b; --bs-btn-active-color: #fff; border-width: 2px; --bs-btn-bg: #fff; }
 :is(.dt-page, .dt-bo) .btn-success { --bs-btn-bg: #1b7f3b; --bs-btn-border-color: #1b7f3b; --bs-btn-hover-bg: #156530; --bs-btn-hover-border-color: #156530; }
 :is(.dt-page, .dt-bo) .btn-danger { --bs-btn-bg: #c62828; --bs-btn-border-color: #c62828; --bs-btn-hover-bg: #a51f1f; --bs-btn-hover-border-color: #a51f1f; }
 :is(.dt-page, .dt-bo) .btn-link { --bs-btn-color: #31287c; --bs-btn-hover-color: #c98400; text-underline-offset: 3px; box-shadow: none; }
+/* Survol toujours lisible : le texte et le fond du survol viennent du même jeu de couleurs. */
+:is(.dt-page, .dt-bo) .btn:is([class*="btn-outline-"], .btn-light):hover:not(:disabled) {
+  color: var(--bs-btn-hover-color); background-color: var(--bs-btn-hover-bg); border-color: var(--bs-btn-hover-border-color);
+}
 /* Groupes de boutons (choix d'un mode) : pastilles jointes */
 :is(.dt-page, .dt-bo) .btn-group > .btn { border-radius: 0; }
 :is(.dt-page, .dt-bo) .btn-group > .btn:first-child { border-radius: 10px 0 0 10px; }
@@ -336,3 +340,21 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
 .swal2-toast { border-radius: 14px !important; box-shadow: 0 8px 26px rgba(49, 40, 124, .18) !important; }
 .swal2-toast .swal2-title { font-size: .95rem !important; color: #31287c !important; }
 .swal2-timer-progress-bar { background: #f6a500 !important; }
+
+/* ══════════════════════════════════════════════════════════════════
+   Tableaux larges (administration et espace des structures) : défilement horizontal
+   au lieu de colonnes coupées. Tout conteneur qui porte directement un tableau défile
+   sur le côté ; la page elle-même ne déborde jamais.
+   ══════════════════════════════════════════════════════════════════ */
+.dt-bo .ad-content { min-width: 0; }
+.dt-bo :is(div, section, article):has(> table) {
+  overflow-x: auto !important;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(49, 40, 124, .35) transparent;
+}
+.dt-bo :is(div, section, article):has(> table)::-webkit-scrollbar { height: 8px; }
+.dt-bo :is(div, section, article):has(> table)::-webkit-scrollbar-thumb { background: rgba(49, 40, 124, .3); border-radius: 8px; }
+/* Les titres de colonnes ne se cassent pas ; les emails et téléphones restent sur une ligne. */
+.dt-bo table th { white-space: nowrap; }
+.dt-bo table td :is(a[href^="mailto:"], .dt-mono, .text-nowrap) { white-space: nowrap; }

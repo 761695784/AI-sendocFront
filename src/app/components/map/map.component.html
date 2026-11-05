@@ -1,2 +1,21 @@
-<div id="map" style="width: 100%; height: 500px;"></div>
-  
+<div class="dt-map">
+  <div #map class="dt-map__canvas" role="region" aria-label="Carte des publications par département"></div>
+  @if (status() === 'loading') {
+    <div class="dt-map__overlay"><i class="fas fa-spinner fa-spin me-2" aria-hidden="true"></i>Chargement de la carte…</div>
+  } @else if (status() === 'empty') {
+    <div class="dt-map__overlay">Aucune publication localisée pour le moment.</div>
+  } @else if (status() === 'error') {
+    <div class="dt-map__overlay">La carte n'a pas pu être chargée.</div>
+  }
+</div>
+
+@if (locations().length) {
+  <ul class="dt-map__list" aria-label="Publications par département">
+    @for (l of locations().slice(0, 8); track l.name) {
+      <li><span>{{ l.name }}</span><strong>{{ l.publications }}</strong></li>
+    }
+  </ul>
+}
+@if (unlocated() > 0) {
+  <p class="dt-map__note">{{ unlocated() }} publication(s) dont le lieu n'a pas pu être situé sur la carte.</p>
+}

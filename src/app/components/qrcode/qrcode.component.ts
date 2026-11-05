@@ -1,4 +1,4 @@
-import { IMAGE_URL_BASE } from './../services/imageUrl';
+import { assetUrl } from './../services/imageUrl';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from './../services/auth.service';
 import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit, ChangeDetectionStrategy } from '@angular/core';
@@ -31,7 +31,7 @@ export class QrcodeComponent implements OnInit {
     this.authService.getUserProfile().subscribe({
       next: (response) => {
         this.user = response.user;
-        this.qrCodeUrl = `${IMAGE_URL_BASE}${response.qr_code_url}`;
+        this.qrCodeUrl = assetUrl(response.qr_code_url) || null;
       },
       error: (error) => {
         console.error('Erreur lors de la récupération du profil:', error);
@@ -68,7 +68,7 @@ export class QrcodeComponent implements OnInit {
 
   private handleRenewalSuccess(response: any): void {
     this.isLoading = false;
-    this.qrCodeUrl = `${IMAGE_URL_BASE}${response.new_qr_code_url}`;
+    this.qrCodeUrl = assetUrl(response.new_qr_code_url ?? response.qr_code_url) || null;
     this.user.qr_code_expires_at = response.new_expiration;
     
     Swal.fire({

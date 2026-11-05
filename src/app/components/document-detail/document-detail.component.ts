@@ -1,6 +1,8 @@
+import { PublisherPipe } from '../../shared/pipes/publisher.pipe';
+import { RestitutionFlowService } from '../../shared/restitution/restitution-flow.service';
   import { AuthService } from './../services/auth.service';
   import { FooterComponent } from './../footer/footer.component';
-  import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit, ChangeDetectionStrategy } from '@angular/core';
+  import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit, ChangeDetectionStrategy, inject } from '@angular/core';
   import { ActivatedRoute } from '@angular/router';
   import { DetailsService } from '../services/details.service';
   import { NavbarComponent } from '../navbar/navbar.component';
@@ -24,9 +26,10 @@
     document_type_id: number;
     identification: string;
     user_id: number;
+    custody?: { name: string; address?: string | null; phone?: string | null } | null;
     created_at: string;
     updated_at: string;
-    user: {
+    user: null | {
       id: number;
       FirstName: string;
       LastName: string;
@@ -35,7 +38,7 @@
       email: string;
       email_verified_at?: string;
     };
-    document_type: {
+    document_type: null | {
       id: number;
       TypeName: string;
     };
@@ -55,7 +58,7 @@
 
   @Component({
     selector: 'app-document-detail',
-    imports: [NavbarComponent, FooterComponent, CommonModule, FormsModule],
+    imports: [PublisherPipe, NavbarComponent, FooterComponent, CommonModule, FormsModule],
     templateUrl: './document-detail.component.html',
     styleUrls: ['./document-detail.component.css'],
     changeDetection: ChangeDetectionStrategy.Eager,
@@ -68,6 +71,8 @@
     isRestitutionRequested: boolean = false; // Ajout pour suivre l'état de la demande de restitution
     isOwner: boolean = false; // Variable pour suivre si l'utilisateur est le propriétaire
     isLoading: boolean = false; // Variable pour suivre l'état de chargement
+
+    private readonly restitutionFlow = inject(RestitutionFlowService);
 
     constructor(
       private route: ActivatedRoute,
@@ -94,7 +99,7 @@
           next: (details) => {
             this.documentDetails = details;
             const currentUserId = +localStorage.getItem('userId')!;
-            this.isOwner = currentUserId === this.documentDetails?.user.id;
+            this.isOwner = currentUserId === this.documentDetails?.user?.id;
           },
           error: (err) =>
              console.error('Erreur lors de la récupération des détails du document', err)
@@ -161,71 +166,30 @@
       }
     }
 
-    // Méthode pour demander la restitution d'un document
-    requestRestitution(): void {
-      if (!this.isOwner && this.documentDetails) {
-        // On affiche le loader dès le début
-        this.isLoading = true;
-        Swal.fire({
-          title: 'Êtes-vous sûr ?',
-          text: 'Vous êtes sur le point d\'envoyer une demande de restitution.',
-          icon: 'warning',
-          showCancelButton: true,
-          confirmButtonText: 'Oui, envoyer',
-          cancelButtonText: 'Annuler'
-        }).then((result) => {
-          if (result.isConfirmed) {
-            this.detailsService.requestRestitution(this.documentDetails!.uuid).subscribe({
-              next: (response) => {
-                this.isLoading = false;
-                this.isRestitutionRequested = true;
-                // Afficher le numéro de téléphone du publicateur dans la SweetAlert
-                const phoneNumber = this.documentDetails?.user.Phone;
-                Swal.fire({
-                  icon: 'success',
-                  title: 'Demande envoyée',
-                  text: 'Votre demande de restitution a été envoyée avec succès.',
-                  footer: phoneNumber ? `<p>Vous pouvez l'appeler au :📞  <strong>${phoneNumber}</strong></p>` : '',
-                  // timer: 8000,
-                  showConfirmButton: true
-                });
-              },
-              error: (err) => {
-                this.isLoading = false;
-                if (err.status === 400 && err.error.success === false) {
-                  Swal.fire({
-                    icon: 'warning',
-                    title: 'Demande déjà effectuée',
-                    text: 'Vous avez déjà demandé la restitution de ce document.',
-                    timer: 4000,
-                    showConfirmButton: true
-                  });
-                } else {
-                  Swal.fire({
-                    icon: 'error',
-                    title: 'Erreur',
-                    text: 'Une erreur est survenue lors de la demande de restitution.',
-                    timer: 2000,
-                    showConfirmButton: false
-                  });
-                }
-              }
-            });
-          } else {
-            // En cas d'annulation, on cache le loader
-            this.isLoading = false;
-          }
-        });
-      } else {
+    // Demande de restitution : parcours selon qui détient le document (citoyen ou structure).
+    async requestRestitution(): Promise<void> {
+      if (!this.documentDetails) {
+        return;
+      }
+      if (this.isOwner) {
         Swal.fire({
           icon: 'error',
           title: 'Action interdite',
           text: 'Vous ne pouvez pas demander la restitution de votre propre document.',
-          timer: 2000,
+          timer: 2500,
           showConfirmButton: false
         });
+        return;
+      }
+      const d: any = this.documentDetails;
+      const sent = await this.restitutionFlow.ask({
+        uuid: d.uuid,
+        reference: d.reference ?? null,
+        found_channel: d.found_channel ?? null,
+        custody: d.custody ?? null,
+      });
+      if (sent) {
+        this.isRestitutionRequested = true;
       }
     }
-
-
   }

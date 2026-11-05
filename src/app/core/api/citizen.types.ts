@@ -83,12 +83,15 @@ export interface MyDeclaration {
 /** Demande de remise directe (GET /api/restitution-requests). */
 export interface RestitutionRequestView {
   uuid: string;
+  /** direct : remise entre citoyens ; counter : retrait au guichet de la structure. */
+  channel?: 'direct' | 'counter' | string;
+  structure?: { uuid: string; name: string; address: string | null; phone: string | null } | null;
   my_role: 'owner' | 'finder';
   status: 'pending' | 'accepted' | 'declined' | 'expired' | 'completed' | 'cancelled' | string;
   expires_at: string | null;
   responded_at: string | null;
   document: { uuid: string; reference: string | null; document_type: string | null; owner_name: string } | null;
-  other_party: { first_name: string | null; phone: string | null };
+  other_party: { first_name: string | null; last_name?: string | null; phone: string | null };
   created_at: string;
 }
 

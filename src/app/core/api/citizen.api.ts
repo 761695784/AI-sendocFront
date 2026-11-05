@@ -32,8 +32,13 @@ export interface RestitutionAskResponse {
   success: boolean;
   message: string;
   code?: string;
+  has_number?: boolean;
+  /** direct : publié par un citoyen (numéros échangés) ; counter : retrait au guichet de la structure. */
+  channel?: 'direct' | 'counter' | string;
   custody?: { uuid: string; name: string; address: string | null; phone: string | null } | null;
-  request?: { uuid: string; status: string; expires_at: string | null };
+  reference?: string | null;
+  finder?: { first_name: string | null; phone: string | null } | null;
+  request?: { uuid: string; status: string; channel?: string; expires_at?: string | null };
 }
 
 /**
@@ -84,9 +89,17 @@ export class CitizenApi {
       .pipe(map((res) => (res?.data ?? []).map((d) => ({ ...d, found_documents: d.found_documents ?? [] }))));
   }
 
-  /** Le propriétaire confirmé demande la remise directe au trouveur. */
-  askRestitution(documentUuid: string): Observable<RestitutionAskResponse> {
-    return this.http.post<RestitutionAskResponse>(apiV1('documents', documentUuid, 'restitution'), {});
+  /**
+   * Demande de restitution. Document publié par un citoyen : accept_terms obligatoire
+   * (et doc_last4 si le nom du compte diffère du nom sur le document).
+   */
+  askRestitution(documentUuid: string, payload: { accept_terms?: boolean; doc_last4?: string | null; ask_finder?: boolean } = {}): Observable<RestitutionAskResponse> {
+    return this.http.post<RestitutionAskResponse>(apiV1('documents', documentUuid, 'restitution'), payload);
+  }
+
+  /** Le trouveur indique que le document a été remis à son propriétaire. */
+  markHandedOver(documentUuid: string): Observable<{ message?: string }> {
+    return this.http.put<{ message?: string }>(apiV1('documents', documentUuid), { statut: 'récupéré' });
   }
 
   // ── Remises directes (propriétaire ↔ trouveur) ───────────────────

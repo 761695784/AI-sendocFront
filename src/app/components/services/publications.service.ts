@@ -6,7 +6,7 @@ import { throwError } from 'rxjs';
 import { AuthService } from './auth.service';
 import { Document } from '../document-list/document-list.component';
 import { apiUrl } from './apiUrl';
-import { IMAGE_URL_BASE } from './imageUrl';
+import { assetUrl } from './imageUrl';
 import { Location } from './location.model';
 
 @Injectable({
@@ -43,8 +43,11 @@ export class PublicationsService {
 
   // Documents dans la corbeille (trashed)
   getTrashedDocuments(): Observable<Document[]> {
-    return this.getWithAuth<{ data: Document[] }>(`${apiUrl}/trashed`).pipe(
-      map(response => Array.isArray(response.data) ? response.data : [])
+    return this.getWithAuth<any>(`${apiUrl}/trashed`).pipe(
+      // Liste simple ; ancien format (page Laravel imbriquée dans « data ») accepté aussi.
+      map((response: any) => Array.isArray(response?.data) ? response.data
+        : Array.isArray(response?.data?.data) ? response.data.data
+        : Array.isArray(response) ? response : [])
     );
   }
 
@@ -53,7 +56,7 @@ export class PublicationsService {
     return this.getWithAuth<Document[]>(`${apiUrl}/my-publications`).pipe(
       map(publications =>
         publications.map(pub => {
-          pub.image = pub.image ? `${IMAGE_URL_BASE}${pub.image}` : '';
+          pub.image = assetUrl(pub.image);
           return pub;
         })
       )

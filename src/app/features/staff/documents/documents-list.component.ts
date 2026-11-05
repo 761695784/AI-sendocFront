@@ -10,6 +10,7 @@ import { PageHeaderComponent } from '../../../shared/ui/page-header.component';
 import { StatusBadgeComponent } from '../../../shared/ui/status-badge.component';
 import { EmptyStateComponent, ErrorStateComponent, LoadingComponent } from '../../../shared/ui/state.components';
 import { PaginatorComponent } from '../../../shared/ui/paginator.component';
+import { NotifyService } from '../../../shared/feedback/notify.service';
 
 /** Documents trouvés sous la garde de la structure. */
 @Component({
@@ -48,7 +49,7 @@ import { PaginatorComponent } from '../../../shared/ui/paginator.component';
       <div class="dt-card p-0 overflow-hidden">
         <div class="table-responsive">
           <table class="table table-hover align-middle mb-0">
-            <thead class="table-light"><tr><th>Référence</th><th>Pièce</th><th>Au nom de</th><th>En garde depuis</th><th>Statut</th></tr></thead>
+            <thead class="table-light"><tr><th>Référence</th><th>Pièce</th><th>Au nom de</th><th>En garde depuis</th><th>Statut</th><th class="text-end"><span class="visually-hidden">Actions</span></th></tr></thead>
             <tbody>
               @for (doc of page()!.data; track doc.uuid) {
                 <tr [routerLink]="[doc.uuid]" style="cursor: pointer">
@@ -59,6 +60,14 @@ import { PaginatorComponent } from '../../../shared/ui/paginator.component';
                   <td>
                     <app-status-badge [status]="doc.lifecycle_status" />
                     @if (hasConfirmedMatch(doc)) { <i role="img" class="fas fa-user-check text-success ms-1" title="Propriétaire identifié" aria-label="Propriétaire identifié"></i> }
+                  </td>
+                  <td class="text-end">
+                    @if (canDelete(doc)) {
+                      <button type="button" class="btn btn-sm btn-outline-danger" [disabled]="deleting() === doc.uuid"
+                        (click)="remove(doc, $event)" title="Supprimer définitivement" [attr.aria-label]="'Supprimer définitivement ' + doc.reference">
+                        <i class="fas" [class.fa-trash-alt]="deleting() !== doc.uuid" [class.fa-spinner]="deleting() === doc.uuid" [class.fa-spin]="deleting() === doc.uuid" aria-hidden="true"></i>
+                      </button>
+                    }
                   </td>
                 </tr>
               }
@@ -73,15 +82,48 @@ import { PaginatorComponent } from '../../../shared/ui/paginator.component';
 export class StaffDocumentsListComponent implements OnInit {
   private readonly api = inject(CounterApi);
   private readonly session = inject(SessionStore);
+  private readonly notify = inject(NotifyService);
 
   reference = '';
   status = '';
   readonly page = signal<LaravelPage<FoundDocumentView> | null>(null);
   readonly loading = signal(true);
   readonly error = signal<string | null>(null);
+  readonly deleting = signal<string | null>(null);
 
   canDeposit(): boolean {
     return this.session.can('found_documents.create');
+  }
+
+  /** Seul un dépôt du guichet encore en garde, sans propriétaire identifié, peut être supprimé. */
+  canDelete(doc: FoundDocumentView): boolean {
+    return this.canDeposit() && doc.found_channel === 'counter' && doc.lifecycle_status === 'in_custody' && !this.hasConfirmedMatch(doc);
+  }
+
+  async remove(doc: FoundDocumentView, event: Event): Promise<void> {
+    event.stopPropagation(); // la ligne ouvre la fiche
+    const ok = await this.notify.confirm({
+      title: 'Supprimer définitivement ?',
+      text: `Le document ${doc.reference} (${doc.first_name} ${doc.last_name}) et sa photo seront effacés. Il n'y a pas de corbeille : cette action est irréversible.`,
+      confirmText: 'Supprimer définitivement',
+      danger: true,
+    });
+    if (!ok) {
+      return;
+    }
+    this.deleting.set(doc.uuid);
+    this.api.deleteFoundDocument(doc.uuid).subscribe({
+      next: (res) => {
+        this.deleting.set(null);
+        this.notify.success(res.message);
+        const p = this.page();
+        this.load(p && p.data.length === 1 && p.current_page > 1 ? p.current_page - 1 : (p?.current_page ?? 1));
+      },
+      error: (e) => {
+        this.deleting.set(null);
+        void this.notify.error(e);
+      },
+    });
   }
 
   hasConfirmedMatch(doc: FoundDocumentView): boolean {

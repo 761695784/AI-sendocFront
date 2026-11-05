@@ -111,8 +111,9 @@ export class AuthService {
     return this.http.get(`${apiUrl}/users`);
   }
 
-  deleteUser(id: number): Observable<any> {
-    return this.http.delete(`${apiUrl}/users/${id}`);
+  /** Supprime (anonymise) un compte : l'API attend l'identifiant public (uuid). */
+  deleteUser(uuid: string): Observable<any> {
+    return this.http.delete(`${apiUrl}/users/${uuid}`);
   }
 
   addUser(userData: any): Observable<any> {
@@ -131,12 +132,16 @@ export class AuthService {
     return this.http.get(`${apiUrl}/restitution-count`);
   }
 
-  getActivityLogs(page = 1): Observable<any> {
-    return this.withTimeout(this.http.get(`${apiUrl}/activity-logs`, { params: { page } }));
+  getActivityLogs(page = 1, q = ''): Observable<any> {
+    const params: Record<string, string | number> = { page };
+    if (q) { params['q'] = q; }
+    return this.withTimeout(this.http.get(`${apiUrl}/activity-logs`, { params }));
   }
 
-  getActivityLogsByType(type: string, page = 1): Observable<any> {
-    return this.withTimeout(this.http.get(`${apiUrl}/activity-logs/${type}`, { params: { page } }));
+  getActivityLogsByType(type: string, page = 1, q = ''): Observable<any> {
+    const params: Record<string, string | number> = { page };
+    if (q) { params['q'] = q; }
+    return this.withTimeout(this.http.get(`${apiUrl}/activity-logs/${type}`, { params }));
   }
 
   /** 15 secondes max, sinon message clair. */

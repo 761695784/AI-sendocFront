@@ -31,8 +31,9 @@ export class DeclarationService {
   }
 
   // Afficher toutes les déclarations pour l'admin
+  // (en cours et supprimées : l'écran les sépare ; par défaut il n'affiche que celles en cours)
   getAllDeclarations(): Observable<any[]> {
-    return this.http.get<any>(`${apiUrl}/declarations`).pipe(
+    return this.http.get<any>(`${apiUrl}/declarations`, { params: { trashed: 'with', per_page: 100 } }).pipe(
       map((response) => response?.data ?? []), // ← simple, plus de data.data
     );
   }

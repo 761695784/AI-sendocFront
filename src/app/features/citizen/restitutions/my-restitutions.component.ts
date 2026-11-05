@@ -9,18 +9,19 @@ import { EmptyStateComponent, ErrorStateComponent, LoadingComponent } from '../.
 import { CitizenBadges } from '../citizen-badges.service';
 
 const LABELS: Record<string, string> = {
-  pending: 'En attente de réponse',
-  accepted: 'Acceptée',
-  declined: 'Refusée',
+  pending: 'En attente',
+  accepted: 'En contact',
+  declined: 'Passe par une structure',
   expired: 'Sans réponse',
   completed: 'Remise faite',
   cancelled: 'Retirée',
 };
 
 /**
- * Remises directes entre citoyens (double accord) :
- *  - propriétaire : suivre ou retirer sa demande ;
- *  - trouveur : accepter (échange des numéros par SMS) ou refuser (une structure prend le relais).
+ * Remises de documents :
+ *  - entre citoyens : numéros échangés dès la demande ; le trouveur indique « document remis »
+ *    (ou préfère passer par une structure) ;
+ *  - au guichet : la structure qui conserve le document est prévenue ; la personne s'y présente.
  */
 @Component({
   selector: 'app-my-restitutions',
@@ -60,8 +61,26 @@ export class MyRestitutionsComponent implements OnInit {
     });
   }
 
-  label(status: string): string {
-    return LABELS[status] ?? status;
+  label(r: RestitutionRequestView): string {
+    if (r.channel === 'counter') {
+      return r.status === 'pending' ? 'Structure prévenue' : r.status === 'completed' ? 'Remis au guichet' : LABELS[r.status] ?? r.status;
+    }
+    return LABELS[r.status] ?? r.status;
+  }
+
+  /** Trouveur : le document a été remis à son propriétaire (la publication passe « récupéré »). */
+  async handedOver(r: RestitutionRequestView): Promise<void> {
+    if (!r.document?.uuid) {
+      return;
+    }
+    const ok = await this.notify.confirm({
+      title: 'Le document a été remis ?',
+      text: 'Votre publication sera marquée « récupéré » et la demande close. Merci pour votre geste !',
+      confirmText: 'Oui, il est remis',
+    });
+    if (ok) {
+      this.run(r, this.api.markHandedOver(r.document.uuid) as ReturnType<CitizenApi['cancelRestitution']>, 'Merci ! La remise est enregistrée.');
+    }
   }
 
   async accept(r: RestitutionRequestView): Promise<void> {
@@ -77,11 +96,11 @@ export class MyRestitutionsComponent implements OnInit {
 
   async decline(r: RestitutionRequestView): Promise<void> {
     const reason = await this.notify.confirmWithNote({
-      title: 'Refuser la remise directe ?',
-      text: 'La structure officielle la plus proche récupérera le document auprès de vous.',
+      title: 'Passer par une structure ?',
+      text: 'Vous ne remettez pas le document vous-même : la structure de police ou de gendarmerie la plus proche le récupérera auprès de vous, et le propriétaire sera prévenu.',
       label: 'Motif (facultatif)',
-      confirmText: 'Refuser',
-      danger: true,
+      confirmText: 'Passer par une structure',
+      danger: false,
     });
     if (reason !== null) {
       this.run(r, this.api.declineRestitution(r.uuid, reason));
@@ -95,12 +114,12 @@ export class MyRestitutionsComponent implements OnInit {
     }
   }
 
-  private run(r: RestitutionRequestView, call: ReturnType<CitizenApi['cancelRestitution']>): void {
+  private run(r: RestitutionRequestView, call: ReturnType<CitizenApi['cancelRestitution']>, fallback = 'C’est fait.'): void {
     this.busy.set(r.uuid);
     call.subscribe({
       next: (res) => {
         this.busy.set(null);
-        this.notify.success(res.message);
+        this.notify.success(res?.message || fallback);
         this.badges.refresh();
         this.load();
       },

@@ -1,3 +1,4 @@
+import { PublisherPipe } from '../../shared/pipes/publisher.pipe';
 import { ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { Component, CUSTOM_ELEMENTS_SCHEMA, ChangeDetectionStrategy } from '@angular/core';
@@ -13,7 +14,7 @@ import { AuthService } from '../services/auth.service';
 
 @Component({
     selector: 'app-admindetails',
-    imports: [CommonModule, FormsModule],
+    imports: [PublisherPipe, CommonModule, FormsModule],
     templateUrl: './admindetails.component.html',
     styleUrl: './admindetails.component.css',
     changeDetection: ChangeDetectionStrategy.Eager,

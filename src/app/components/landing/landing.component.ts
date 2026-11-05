@@ -1,3 +1,4 @@
+import { PublisherPipe } from '../../shared/pipes/publisher.pipe';
 import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { PublicationsService } from './../services/publications.service';
 import { Document } from '../document-list/document-list.component';
@@ -10,7 +11,7 @@ import { MapComponent } from '../map/map.component';
 
 @Component({
     selector: 'app-landing',
-    imports: [NavbarComponent, FooterComponent, FormsModule, CommonModule, MapComponent],
+    imports: [PublisherPipe, NavbarComponent, FooterComponent, FormsModule, CommonModule, MapComponent],
     templateUrl: './landing.component.html',
     changeDetection: ChangeDetectionStrategy.Eager,
     styleUrls: ['./landing.component.css']

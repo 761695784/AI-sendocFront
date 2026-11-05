@@ -1,180 +1,208 @@
-import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit, ChangeDetectionStrategy } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject, signal } from '@angular/core';
+import { DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Subject, Subscription, debounceTime, distinctUntilChanged } from 'rxjs';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AuthService } from '../services/auth.service';
 
-@Component({
-    selector: 'app-adminlogs',
-    imports: [CommonModule, FormsModule],
-    templateUrl: './adminlogs.component.html',
-    styleUrls: ['./adminlogs.component.css'],
-    changeDetection: ChangeDetectionStrategy.Eager,
-    schemas: [CUSTOM_ELEMENTS_SCHEMA]
-})
-export class AdminlogsComponent implements OnInit {
+/** Une propriété affichable d'un log (clé → valeur courte). */
+interface LogProp { key: string; value: string; }
 
-  logs: any[]         = [];
-  filteredLogs: any[] = [];
-  isLoading           = false;
-  activeFilter        = 'all';
-  searchTerm          = '';
-  selectedLog: any    = null;
-
-  // Pagination
-  currentPage = 1;
-  lastPage    = 1;
-  totalLogs   = 0;
-
-  constructor(private authService: AuthService) {}
-
-  ngOnInit(): void {
-    this.loadLogs();
-  }
-
-  // ── Chargement ────────────────────────────────
-
-loadLogs(page = 1): void {
-    this.isLoading = true;
-
-    const obs = this.activeFilter === 'all'
-        ? this.authService.getActivityLogs(page)
-        : this.authService.getActivityLogsByType(this.activeFilter, page);
-
-    obs.subscribe({
-        next: (res) => {
-            this.logs         = res.data;
-            this.filteredLogs = res.data;
-            this.currentPage  = res.current_page;
-            this.lastPage     = res.last_page;
-            this.totalLogs    = res.total;
-            this.isLoading    = false;
-            this.filterLogs();
-        },
-        error: (err) => {
-            this.isLoading = false;
-            console.error('Erreur chargement logs:', err.message);
-            // ← le spinner s'arrête et affiche l'empty state
-        }
-    });
+/** Log prêt à afficher : tout est calculé une seule fois, au chargement (jamais dans le gabarit). */
+interface LogView {
+  id: number;
+  description: string;
+  event: string | null;
+  createdAt: string;
+  subjectLabel: string;
+  subjectId: number | null;
+  subjectClass: string;
+  subjectIcon: string;
+  actionClass: string;
+  actionIcon: string;
+  eventClass: string;
+  causerName: string | null;
+  causerEmail: string | null;
+  initials: string;
+  props: LogProp[];
 }
 
-  // ── Filtres ────────────────────────────────────
+type Filter = 'all' | 'documents' | 'declarations' | 'users';
 
-  setFilter(filter: string): void {
-    this.activeFilter = filter;
-    this.currentPage  = 1;
-    this.searchTerm   = '';
+/**
+ * Journal d'activité (super admin).
+ * Page légère : 20 lignes par page, recherche faite par l'API (sur tout le journal, pas seulement la page),
+ * détails pré-calculés. L'ancien écran recalculait les propriétés à chaque rafraîchissement et chargeait
+ * l'objet concerné en entier : il pouvait geler le navigateur.
+ */
+@Component({
+  selector: 'app-adminlogs',
+  imports: [DatePipe, FormsModule],
+  templateUrl: './adminlogs.component.html',
+  styleUrls: ['./adminlogs.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+})
+export class AdminlogsComponent implements OnInit {
+  private readonly authService = inject(AuthService);
+  private readonly destroyRef = inject(DestroyRef);
+  private readonly search$ = new Subject<string>();
+  private request?: Subscription;
+
+  readonly logs = signal<LogView[]>([]);
+  readonly isLoading = signal(false);
+  readonly error = signal<string | null>(null);
+  readonly activeFilter = signal<Filter>('all');
+  readonly currentPage = signal(1);
+  readonly lastPage = signal(1);
+  readonly totalLogs = signal(0);
+  readonly selectedLog = signal<LogView | null>(null);
+  searchTerm = '';
+
+  ngOnInit(): void {
+    this.search$.pipe(debounceTime(400), distinctUntilChanged(), takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => this.loadLogs(1));
     this.loadLogs(1);
   }
 
-  filterLogs(): void {
-    const term = this.searchTerm.toLowerCase().trim();
-    if (!term) {
-      this.filteredLogs = [...this.logs];
+  loadLogs(page = 1): void {
+    this.request?.unsubscribe();
+    this.isLoading.set(true);
+    this.error.set(null);
+    const filter = this.activeFilter();
+    const q = this.searchTerm.trim();
+    const obs = filter === 'all'
+      ? this.authService.getActivityLogs(page, q)
+      : this.authService.getActivityLogsByType(filter, page, q);
+
+    this.request = obs.subscribe({
+      next: (res: any) => {
+        const rows: any[] = Array.isArray(res?.data) ? res.data : [];
+        this.logs.set(rows.map((r) => this.toView(r)));
+        this.currentPage.set(res?.current_page ?? page);
+        this.lastPage.set(Math.max(1, res?.last_page ?? 1));
+        this.totalLogs.set(res?.total ?? rows.length);
+        this.isLoading.set(false);
+      },
+      error: (err) => {
+        this.logs.set([]);
+        this.isLoading.set(false);
+        this.error.set(err?.error?.message || err?.message || 'Le journal n’a pas pu être chargé. Réessayez.');
+      },
+    });
+  }
+
+  setFilter(filter: Filter): void {
+    if (filter === this.activeFilter()) {
       return;
     }
-    this.filteredLogs = this.logs.filter(log =>
-      log.description?.toLowerCase().includes(term) ||
-      log.causer?.FirstName?.toLowerCase().includes(term) ||
-      log.causer?.LastName?.toLowerCase().includes(term) ||
-      log.causer?.email?.toLowerCase().includes(term) ||
-      log.event?.toLowerCase().includes(term)
-    );
+    this.activeFilter.set(filter);
+    this.loadLogs(1);
+  }
+
+  onSearch(value: string): void {
+    this.searchTerm = value;
+    this.search$.next(value.trim());
   }
 
   changePage(page: number): void {
-    if (page < 1 || page > this.lastPage) return;
+    if (page < 1 || page > this.lastPage() || this.isLoading()) {
+      return;
+    }
     this.loadLogs(page);
   }
 
-  // ── Détail modal ───────────────────────────────
+  openDetail(log: LogView): void { this.selectedLog.set(log); }
+  closeDetail(): void { this.selectedLog.set(null); }
 
-  openDetail(log: any): void  { this.selectedLog = log; }
-  closeDetail(): void         { this.selectedLog = null; }
+  // ── Préparation d'une ligne (une seule fois) ─────────────────────
+  private toView(r: any): LogView {
+    const description = String(r?.description ?? '');
+    const subjectType = String(r?.subject_type ?? '');
+    const causer = r?.causer ?? null;
+    const name = causer ? [causer.FirstName, causer.LastName].filter(Boolean).join(' ') : null;
+    return {
+      id: r?.id,
+      description,
+      event: r?.event ?? null,
+      createdAt: r?.created_at,
+      subjectLabel: subjectType ? AdminlogsComponent.subjectLabel(subjectType) : '',
+      subjectId: r?.subject_id ?? null,
+      subjectClass: AdminlogsComponent.subjectClass(subjectType),
+      subjectIcon: AdminlogsComponent.subjectIcon(subjectType),
+      actionClass: AdminlogsComponent.actionClass(description),
+      actionIcon: AdminlogsComponent.actionIcon(description),
+      eventClass: ({ created: 'event-created', updated: 'event-updated', deleted: 'event-deleted' } as Record<string, string>)[r?.event] ?? 'event-default',
+      causerName: name || null,
+      causerEmail: causer?.email ?? null,
+      initials: name ? name.split(' ').map((p: string) => p.charAt(0)).join('').slice(0, 2).toUpperCase() : '',
+      props: AdminlogsComponent.props(r?.properties),
+    };
+  }
 
-  // ── Helpers visuels ────────────────────────────
+  /** Accepte la liste préparée par l'API, ou l'ancien format (objet) par sécurité. */
+  private static props(raw: unknown): LogProp[] {
+    if (Array.isArray(raw)) {
+      return raw.slice(0, 20).map((p: any) => ({ key: String(p?.key ?? ''), value: String(p?.value ?? '') }));
+    }
+    if (!raw || typeof raw !== 'object') {
+      return [];
+    }
+    const source: Record<string, unknown> = (raw as any).attributes ?? (raw as Record<string, unknown>);
+    return Object.entries(source)
+      .filter(([k]) => !/password|token|hash|encrypted/i.test(k) && k !== 'id')
+      .slice(0, 20)
+      .map(([key, value]) => ({
+        key,
+        value: (typeof value === 'object' ? JSON.stringify(value) : String(value ?? '—')).slice(0, 160),
+      }));
+  }
 
-  getActionClass(description: string): string {
-    if (!description) return 'action-default';
-    const d = description.toLowerCase();
-    if (d.includes('connexion'))        return 'action-login';
-    if (d.includes('supprim'))          return 'action-delete';
-    if (d.includes('restaur'))          return 'action-restore';
-    if (d.includes('créé') || d.includes('inscrit') || d.includes('publié')) return 'action-create';
-    if (d.includes('mis à jour') || d.includes('modif')) return 'action-update';
-    if (d.includes('restitution'))      return 'action-restitution';
-    if (d.includes('qr'))               return 'action-qr';
-    if (d.includes('déconnex'))         return 'action-logout';
+  private static actionClass(d: string): string {
+    const s = d.toLowerCase();
+    if (s.includes('déconnex')) return 'action-logout';
+    if (s.includes('connexion')) return 'action-login';
+    if (s.includes('supprim')) return 'action-delete';
+    if (s.includes('restaur')) return 'action-restore';
+    if (s.includes('créé') || s.includes('inscrit') || s.includes('publié')) return 'action-create';
+    if (s.includes('mis à jour') || s.includes('modif')) return 'action-update';
+    if (s.includes('restitution')) return 'action-restitution';
+    if (s.includes('qr')) return 'action-qr';
     return 'action-default';
   }
 
-  getActionIcon(description: string): string {
-    if (!description) return 'fa-circle';
-    const d = description.toLowerCase();
-    if (d.includes('connexion'))        return 'fa-sign-in-alt';
-    if (d.includes('supprim'))          return 'fa-trash-alt';
-    if (d.includes('restaur'))          return 'fa-undo';
-    if (d.includes('créé') || d.includes('inscrit') || d.includes('publié')) return 'fa-plus-circle';
-    if (d.includes('mis à jour') || d.includes('modif')) return 'fa-edit';
-    if (d.includes('restitution'))      return 'fa-hand-holding';
-    if (d.includes('qr'))               return 'fa-qrcode';
-    if (d.includes('déconnex'))         return 'fa-sign-out-alt';
+  private static actionIcon(d: string): string {
+    const s = d.toLowerCase();
+    if (s.includes('déconnex')) return 'fa-sign-out-alt';
+    if (s.includes('connexion')) return 'fa-sign-in-alt';
+    if (s.includes('supprim')) return 'fa-trash-alt';
+    if (s.includes('restaur')) return 'fa-undo';
+    if (s.includes('créé') || s.includes('inscrit') || s.includes('publié')) return 'fa-plus-circle';
+    if (s.includes('mis à jour') || s.includes('modif')) return 'fa-edit';
+    if (s.includes('restitution')) return 'fa-hand-holding';
+    if (s.includes('qr')) return 'fa-qrcode';
     return 'fa-circle';
   }
 
-  getEventClass(event: string): string {
-    const map: Record<string, string> = {
-      created: 'event-created',
-      updated: 'event-updated',
-      deleted: 'event-deleted',
-    };
-    return map[event] ?? 'event-default';
+  private static subjectLabel(t: string): string {
+    if (t.includes('Document') && !t.includes('Type')) return 'Document';
+    if (t.includes('Declaration')) return 'Déclaration';
+    if (t.includes('User')) return 'Utilisateur';
+    if (t.includes('CitizenProfile')) return 'Personne';
+    if (t.includes('Organization')) return 'Structure';
+    return t.split('\\').pop() ?? '—';
   }
 
-  getSubjectLabel(subjectType: string): string {
-    if (subjectType?.includes('Document') && !subjectType.includes('Type')) return 'Document';
-    if (subjectType?.includes('Declaration'))  return 'Déclaration';
-    if (subjectType?.includes('User'))         return 'Utilisateur';
-    return subjectType?.split('\\').pop() ?? '—';
-  }
-
-  getSubjectClass(subjectType: string): string {
-    if (subjectType?.includes('Document') && !subjectType.includes('Type')) return 'subject-doc';
-    if (subjectType?.includes('Declaration'))  return 'subject-decl';
-    if (subjectType?.includes('User'))         return 'subject-user';
+  private static subjectClass(t: string): string {
+    if (t.includes('Document') && !t.includes('Type')) return 'subject-doc';
+    if (t.includes('Declaration')) return 'subject-decl';
+    if (t.includes('User')) return 'subject-user';
     return 'subject-default';
   }
 
-  getSubjectIcon(subjectType: string): string {
-    if (subjectType?.includes('Document') && !subjectType.includes('Type')) return 'fa-file-alt';
-    if (subjectType?.includes('Declaration'))  return 'fa-clipboard-list';
-    if (subjectType?.includes('User'))         return 'fa-user';
+  private static subjectIcon(t: string): string {
+    if (t.includes('Document') && !t.includes('Type')) return 'fa-file-alt';
+    if (t.includes('Declaration')) return 'fa-clipboard-list';
+    if (t.includes('User')) return 'fa-user';
     return 'fa-circle';
-  }
-
-  // Extrait les propriétés clé/valeur à afficher
-  getTopProps(properties: any): { key: string; value: string }[] {
-    if (!properties) return [];
-
-    // Spatie stocke les attributs dans properties.attributes ou directement
-    const source = properties.attributes ?? properties;
-
-    return Object.entries(source)
-      .filter(([k]) => !['id', 'password', 'remember_token'].includes(k))
-      .map(([key, value]) => ({
-        key,
-        value: String(value ?? '—').substring(0, 60),
-      }));
-  }
-
-  getSubjectProps(subject: any): { key: string; value: string }[] {
-    if (!subject) return [];
-    const exclude = ['id', 'user_id', 'document_type_id', 'image', 'password'];
-    return Object.entries(subject)
-      .filter(([k, v]) => !exclude.includes(k) && v !== null)
-      .map(([key, value]) => ({
-        key,
-        value: String(value).substring(0, 80),
-      }));
   }
 }

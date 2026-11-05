@@ -117,22 +117,33 @@ import { StatusBadgeComponent } from '../../../shared/ui/status-badge.component'
                   <input id="p-birth" type="date" class="form-control" formControlName="birth_date" [max]="today" />
                 </div>
                 <div class="col-md-5">
-                  <label for="p-idtype" class="dt-required">Pièce présentée</label>
+                  <label for="p-idtype">Pièce présentée <span class="dt-muted small">(facultatif)</span></label>
                   <select id="p-idtype" class="form-select" formControlName="id_type">
+                    <option value="">Aucune pièce : la personne a tout perdu</option>
                     @for (t of idTypes; track t[0]) { <option [value]="t[0]">{{ t[1] }}</option> }
                   </select>
                 </div>
-                <div class="col-md-7">
-                  <label for="p-idnum" class="dt-required">Numéro de la pièce présentée</label>
-                  <input id="p-idnum" class="form-control dt-mono" formControlName="id_number" autocomplete="off" />
-                  <small class="form-text">Conservé seulement sous forme masquée (4 derniers caractères).</small>
-                  @if (fieldError(form.controls.person.controls.id_number, 'Le numéro'); as err) { <small class="dt-error d-block">{{ err }}</small> }
+                @if (hasIdDocument()) {
+                  <div class="col-md-7">
+                    <label for="p-idnum" class="dt-required">Numéro de la pièce présentée</label>
+                    <input id="p-idnum" class="form-control dt-mono" formControlName="id_number" autocomplete="off" />
+                    <small class="form-text">Conservé seulement sous forme masquée (4 derniers caractères).</small>
+                    @if (idError(); as err) { <small class="dt-error d-block">{{ err }}</small> }
+                  </div>
+                }
+              </div>
+              @if (hasIdDocument()) {
+                <div class="form-check mt-3">
+                  <input class="form-check-input" type="checkbox" id="chk-photo" formControlName="identity_photo_matches" />
+                  <label class="form-check-label" for="chk-photo">J'ai vérifié que la photo de la pièce présentée correspond à la personne présente.</label>
                 </div>
-              </div>
-              <div class="form-check mt-3">
-                <input class="form-check-input" type="checkbox" id="chk-photo" formControlName="identity_photo_matches" />
-                <label class="form-check-label" for="chk-photo">J'ai vérifié que la photo de la pièce présentée correspond à la personne présente.</label>
-              </div>
+              } @else {
+                <div class="dt-callout dt-callout--warning mt-3">
+                  <i class="fas fa-info-circle" aria-hidden="true"></i>
+                  <div>Sans pièce d'identité, notez dans <b>Circonstances</b> (étape 3) comment l'identité a été vérifiée :
+                    témoin, extrait de naissance, carte professionnelle…</div>
+                </div>
+              }
               @if (needOverride()) {
                 <div class="dt-callout dt-callout--warning mt-3">
                   <i class="fas fa-exclamation-triangle" aria-hidden="true"></i>
@@ -164,8 +175,10 @@ import { StatusBadgeComponent } from '../../../shared/ui/status-badge.component'
                   </div>
                 }
                 <div class="col-12">
-                  <label for="c-circ">Circonstances</label>
-                  <textarea id="c-circ" class="form-control" rows="2" formControlName="circumstances"></textarea>
+                  <label for="c-circ" [class.dt-required]="!hasIdDocument()">Circonstances</label>
+                  <textarea id="c-circ" class="form-control" rows="2" formControlName="circumstances"
+                    [placeholder]="hasIdDocument() ? '' : 'Ex. toutes ses pièces perdues ; identité confirmée par un témoin (nom, pièce du témoin)'"></textarea>
+                  @if (circumstancesError(); as err) { <small class="dt-error d-block">{{ err }}</small> }
                 </div>
               </div>
             </section>
@@ -198,6 +211,9 @@ export class StaffCertifyOnlineComponent {
   readonly opening = signal(false);
   readonly needOverride = signal<string | null>(null);
   readonly result = signal<CounterDeclaration | null>(null);
+  /** Erreurs affichées après une tentative de certification. */
+  readonly idError = signal<string | null>(null);
+  readonly circumstancesError = signal<string | null>(null);
 
   readonly search = this.fb.nonNullable.group({
     q: ['', [Validators.required, Validators.minLength(4)]],
@@ -208,10 +224,10 @@ export class StaffCertifyOnlineComponent {
       first_name: ['', [Validators.required, Validators.maxLength(100)]],
       last_name: ['', [Validators.required, Validators.maxLength(100)]],
       birth_date: [''],
-      id_type: ['cni' as IdType],
-      id_number: ['', [Validators.required, Validators.minLength(4), Validators.maxLength(50)]],
+      id_type: ['cni' as IdType | ''],
+      id_number: ['', [Validators.maxLength(50)]],
     }),
-    identity_photo_matches: [false, Validators.requiredTrue],
+    identity_photo_matches: [false],
     name_override_reason: [''],
     lost_at: [''],
     lost_place: ['', Validators.maxLength(255)],
@@ -233,6 +249,8 @@ export class StaffCertifyOnlineComponent {
         this.found.set(f);
         this.needOverride.set(null);
         this.form.reset();
+        this.idError.set(null);
+        this.circumstancesError.set(null);
         this.form.patchValue({ lost_at: f.lost_at ?? '', lost_place: f.lost_place ?? '' });
       },
       error: (e) => {
@@ -242,24 +260,34 @@ export class StaffCertifyOnlineComponent {
     });
   }
 
+  /** Une pièce d'identité est présentée (sinon : la victime a tout perdu). */
+  hasIdDocument(): boolean {
+    return !!this.form.controls.person.controls.id_type.value;
+  }
+
   certify(f: OnlineDeclarationLookup): void {
-    if (this.form.invalid) {
+    const v = this.form.getRawValue();
+    const hasId = !!v.person.id_type;
+    this.idError.set(hasId && v.person.id_number.trim().length < 4 ? 'Saisissez le numéro de la pièce présentée (4 caractères au moins).' : null);
+    this.circumstancesError.set(!hasId && v.circumstances.trim().length < 10
+      ? 'Sans pièce d’identité, indiquez comment l’identité a été vérifiée.' : null);
+    if (this.form.invalid || this.idError() || this.circumstancesError()) {
       this.form.markAllAsTouched();
-      if (!this.form.controls.identity_photo_matches.value) {
-        void this.notify.error('Vérifiez que la photo de la pièce présentée correspond à la personne, puis cochez la case.');
-      }
       return;
     }
-    const v = this.form.getRawValue();
+    if (hasId && !v.identity_photo_matches) {
+      void this.notify.error('Vérifiez que la photo de la pièce présentée correspond à la personne, puis cochez la case.');
+      return;
+    }
     const payload: CertifyOnlinePayload = {
       person: {
         first_name: v.person.first_name.trim(),
         last_name: v.person.last_name.trim(),
         birth_date: v.person.birth_date || null,
-        id_type: v.person.id_type,
-        id_number: v.person.id_number.trim(),
+        id_type: hasId ? (v.person.id_type as IdType) : null,
+        id_number: hasId ? v.person.id_number.trim() : null,
       },
-      checks: { identity_photo_matches: v.identity_photo_matches },
+      checks: { identity_photo_matches: hasId && v.identity_photo_matches },
       name_override_reason: v.name_override_reason.trim() || null,
       lost_at: v.lost_at || null,
       lost_place: v.lost_place.trim() || null,
@@ -308,5 +336,7 @@ export class StaffCertifyOnlineComponent {
     this.needOverride.set(null);
     this.search.reset();
     this.form.reset();
+    this.idError.set(null);
+    this.circumstancesError.set(null);
   }
 }

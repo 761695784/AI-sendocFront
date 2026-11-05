@@ -1,4 +1,4 @@
-import { IMAGE_URL_BASE } from './../services/imageUrl';
+import { assetUrl } from './../services/imageUrl';
 import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -64,7 +64,7 @@ export class ChangeprofilComponent implements OnInit {
     this.authService.getUserProfile().subscribe({
       next: (response) => {
         this.user = response.user;
-        this.qrCodeUrl = `${IMAGE_URL_BASE}${response.qr_code_url}`;
+        this.qrCodeUrl = assetUrl(response.qr_code_url);
         this.profileForm.patchValue({
           FirstName: response.user.FirstName || '',
           LastName:  response.user.LastName  || '',
@@ -182,7 +182,7 @@ export class ChangeprofilComponent implements OnInit {
       this.authService.renewQrCode().subscribe({
         next: (response) => {
           this.isLoading = false;
-          this.qrCodeUrl = `${IMAGE_URL_BASE}${response.qr_code_url}`;
+          this.qrCodeUrl = assetUrl(response.qr_code_url);
           if (this.user) {
             this.user.qr_code_expires_at = response.new_expiration;
           }

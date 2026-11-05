@@ -67,7 +67,7 @@
             </td>
             <td data-label="Action">
               <button class="delete-btn"
-                (click)="deleteUser(user.id)"
+                (click)="deleteUser(user)"
                 [disabled]="user.roles.includes('Admin')"
                 [title]="user.roles.includes('Admin') ? 'Impossible de supprimer un admin' : 'Supprimer'"
                 aria-label="Supprimer l'utilisateur">

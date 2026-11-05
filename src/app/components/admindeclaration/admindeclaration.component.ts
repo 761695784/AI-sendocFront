@@ -51,7 +51,8 @@ export class AdmindeclarationComponent {
   filteredDeclarations: Declaration[] = [];
   documentTypes: DocType[] = [];
   searchTerm: string = '';
-  selectedFilter: string = 'all';
+  // Par défaut : seulement les déclarations en cours (les supprimées ont leur propre filtre).
+  selectedFilter: string = 'active';
   selectedType: number | null = null;
   pasderesultat: boolean = false;
 
@@ -76,10 +77,7 @@ export class AdmindeclarationComponent {
           (a, b) =>
             new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
         );
-        this.filteredDeclarations = this.declarations; // ← initialise
-        this.totalPages = Math.ceil(
-          this.declarations.length / this.itemsPerPage,
-        );
+        this.filterDeclarations(); // applique le filtre par défaut (déclarations en cours)
       },
       (error) => console.error('Erreur:', error),
     );
@@ -172,9 +170,9 @@ export class AdmindeclarationComponent {
       const term = this.searchTerm.toLowerCase();
       results = results.filter(
         (d) =>
-          d.FirstNameInDoc.toLowerCase().includes(term) ||
-          d.LastNameInDoc.toLowerCase().includes(term) ||
-          d.Title.toLowerCase().includes(term) ||
+          (d.FirstNameInDoc ?? "").toLowerCase().includes(term) ||
+          (d.LastNameInDoc ?? "").toLowerCase().includes(term) ||
+          (d.Title ?? "").toLowerCase().includes(term) ||
           d.user?.FirstName?.toLowerCase().includes(term) ||
           d.user?.LastName?.toLowerCase().includes(term),
       );

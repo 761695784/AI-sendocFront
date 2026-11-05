@@ -7,14 +7,15 @@
 } @else if (items().length === 0) {
   <div class="dt-card">
     <app-empty-state icon="fa-handshake" title="Aucune remise en cours"
-      text="Quand un document que vous avez déclaré perdu est trouvé par un citoyen, vous pouvez lui demander de vous le remettre. Les demandes reçues pour les documents que vous avez publiés apparaissent aussi ici." />
+      text="Quand votre document est retrouvé, demandez-le depuis sa fiche : vous êtes mis en contact avec le citoyen qui l'a trouvé, ou la structure qui le conserve est prévenue. Les demandes reçues pour les documents que vous avez publiés apparaissent aussi ici." />
   </div>
 } @else {
   <div class="dt-callout dt-callout--warning mt-0 mb-3">
     <i class="fas fa-shield-alt" aria-hidden="true"></i>
     <div>
       <strong>Pour votre sécurité</strong>
-      Rencontrez-vous dans un lieu public (commissariat, mairie, lieu fréquenté). Ne payez jamais pour récupérer un document.
+      Rencontrez-vous dans un lieu public et fréquenté, de préférence en journée. Rien n'est à payer. DocTrack ne garantit pas la sécurité
+      des rencontres entre citoyens : en cas de doute, passez par le commissariat ou la brigade la plus proche.
     </div>
   </div>
 
@@ -27,11 +28,14 @@
             <h3 class="dt-card__title">{{ r.document?.document_type ?? 'Document' }} au nom de {{ r.document?.owner_name }}</h3>
             <p class="dt-card__meta">Demande de {{ r.other_party.first_name ?? 'son propriétaire' }} · {{ r.created_at | date: 'd MMM y, HH:mm' }}</p>
           </div>
-          <app-status-badge [status]="r.status" [label]="label(r.status)" />
+          <app-status-badge [status]="r.status" [label]="label(r)" />
         </div>
 
         @if (r.status === 'pending') {
-          <p class="mt-3 mb-2">DocTrack a confirmé que cette personne est bien la propriétaire. Acceptez-vous d'être contacté pour lui remettre le document ?</p>
+          <p class="mt-3 mb-2">
+            <b>{{ r.other_party.first_name }} {{ r.other_party.last_name }}</b> dit être le titulaire de ce document, mais son nom diffère un peu
+            (deux noms de famille, nom d'épouse, numéro non saisi…). Comparez avec le document que vous avez : si vous acceptez, vous recevrez chacun le numéro de l'autre.
+          </p>
           @if (r.expires_at) {
             <p class="dt-muted small">Réponse attendue avant le {{ r.expires_at | date: 'd MMM, HH:mm' }}. Sans réponse, une structure proche prendra le relais.</p>
           }
@@ -39,13 +43,22 @@
             <button type="button" class="btn btn-dt" [disabled]="busy() === r.uuid" (click)="accept(r)">
               <i class="fas fa-check me-1" aria-hidden="true"></i> Accepter
             </button>
-            <button type="button" class="btn btn-outline-secondary" [disabled]="busy() === r.uuid" (click)="decline(r)">Refuser</button>
+            <button type="button" class="btn btn-outline-secondary" [disabled]="busy() === r.uuid" (click)="decline(r)">Passer par une structure</button>
           </div>
         }
-        @if (r.status === 'accepted' && r.other_party.phone) {
-          <div class="dt-callout dt-callout--success">
-            <i class="fas fa-phone" aria-hidden="true"></i>
-            <div>Contact du propriétaire : <b>{{ r.other_party.first_name }}</b> — <a [href]="'tel:' + r.other_party.phone">{{ r.other_party.phone }}</a></div>
+        @if (r.status === 'accepted') {
+          @if (r.other_party.phone) {
+            <div class="dt-callout dt-callout--success">
+              <i class="fas fa-phone" aria-hidden="true"></i>
+              <div>Contact de la personne : <b>{{ r.other_party.first_name }}</b> — <a [href]="'tel:' + r.other_party.phone">{{ r.other_party.phone }}</a>.
+                Vérifiez sa pièce d'identité (nom et photo) avant de lui remettre le document.</div>
+            </div>
+          }
+          <div class="d-flex flex-wrap gap-2 mt-2">
+            <button type="button" class="btn btn-dt" [disabled]="busy() === r.uuid" (click)="handedOver(r)">
+              <i class="fas fa-handshake me-1" aria-hidden="true"></i> Document remis
+            </button>
+            <button type="button" class="btn btn-outline-secondary" [disabled]="busy() === r.uuid" (click)="decline(r)">Passer par une structure</button>
           </div>
         }
       </article>
@@ -64,35 +77,57 @@
               Envoyée le {{ r.created_at | date: 'd MMM y, HH:mm' }}
             </p>
           </div>
-          <app-status-badge [status]="r.status" [label]="label(r.status)" />
+          <app-status-badge [status]="r.status" [label]="label(r)" />
         </div>
 
-        @switch (r.status) {
-          @case ('pending') {
-            <p class="mt-3 mb-2">Le trouveur a été prévenu par SMS et e-mail.
-              @if (r.expires_at) { Il a jusqu'au {{ r.expires_at | date: 'd MMM, HH:mm' }} pour répondre. }
-            </p>
-            <button type="button" class="btn btn-sm btn-outline-secondary" [disabled]="busy() === r.uuid" (click)="cancel(r)">Retirer ma demande</button>
-          }
-          @case ('accepted') {
-            <div class="dt-callout dt-callout--success">
-              <i class="fas fa-phone" aria-hidden="true"></i>
-              <div>
-                <strong>Le trouveur a accepté.</strong>
-                @if (r.other_party.phone) {
-                  Appelez {{ r.other_party.first_name }} au <a [href]="'tel:' + r.other_party.phone">{{ r.other_party.phone }}</a> pour convenir d'un rendez-vous.
-                } @else {
-                  Vous avez reçu son numéro par SMS.
-                }
+        @if (r.channel === 'counter') {
+          @switch (r.status) {
+            @case ('pending') {
+              <div class="dt-callout dt-callout--info">
+                <i class="fas fa-landmark" aria-hidden="true"></i>
+                <div>
+                  <strong>{{ r.structure?.name ?? 'La structure' }} est prévenue de votre demande.</strong>
+                  @if (r.structure?.address) { {{ r.structure?.address }}. }
+                  @if (r.structure?.phone) { Tél. <a [href]="'tel:' + r.structure?.phone">{{ r.structure?.phone }}</a>. }
+                  <br />Présentez-vous avec une pièce d'identité et la référence <span class="dt-mono">{{ r.document?.reference }}</span> :
+                  l'agent vous remettra le document contre une décharge.
+                </div>
               </div>
-            </div>
-            <button type="button" class="btn btn-sm btn-outline-secondary mt-2" [disabled]="busy() === r.uuid" (click)="cancel(r)">Retirer ma demande</button>
+              <button type="button" class="btn btn-sm btn-outline-secondary mt-2" [disabled]="busy() === r.uuid" (click)="cancel(r)">Retirer ma demande</button>
+            }
+            @case ('completed') {
+              <p class="dt-muted mt-3 mb-0">Document remis au guichet. Votre décharge de restitution est vérifiable sur DocTrack.</p>
+            }
           }
-          @case ('declined') {
-            <p class="dt-muted mt-3 mb-0">Le trouveur ne souhaite pas être contacté. Une structure officielle proche va récupérer le document : vous serez prévenu quand il sera disponible au guichet.</p>
-          }
-          @case ('expired') {
-            <p class="dt-muted mt-3 mb-0">Le trouveur n'a pas répondu à temps. Une structure officielle proche prend le relais.</p>
+        } @else {
+          @switch (r.status) {
+            @case ('pending') {
+              <p class="mt-3 mb-2">Le trouveur a été prévenu par SMS et e-mail.</p>
+              <button type="button" class="btn btn-sm btn-outline-secondary" [disabled]="busy() === r.uuid" (click)="cancel(r)">Retirer ma demande</button>
+            }
+            @case ('accepted') {
+              <div class="dt-callout dt-callout--success">
+                <i class="fas fa-phone" aria-hidden="true"></i>
+                <div>
+                  @if (r.other_party.phone) {
+                    Appelez <b>{{ r.other_party.first_name }}</b> au <a [href]="'tel:' + r.other_party.phone">{{ r.other_party.phone }}</a> pour convenir d'un rendez-vous dans un lieu public.
+                  } @else {
+                    Vous avez reçu le numéro du trouveur par SMS.
+                  }
+                  Il a aussi reçu votre numéro.
+                </div>
+              </div>
+              <button type="button" class="btn btn-sm btn-outline-secondary mt-2" [disabled]="busy() === r.uuid" (click)="cancel(r)">Retirer ma demande</button>
+            }
+            @case ('declined') {
+              <p class="dt-muted mt-3 mb-0">Le trouveur préfère passer par une structure officielle : elle va récupérer le document, vous serez prévenu quand il sera disponible au guichet.</p>
+            }
+            @case ('expired') {
+              <p class="dt-muted mt-3 mb-0">Le trouveur n'a pas répondu à temps. Une structure officielle proche prend le relais.</p>
+            }
+            @case ('completed') {
+              <p class="dt-muted mt-3 mb-0">Le trouveur a indiqué vous avoir remis le document.</p>
+            }
           }
         }
       </article>

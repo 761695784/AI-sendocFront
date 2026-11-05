@@ -99,7 +99,8 @@ export interface OnlineDeclarationLookup {
 
 /** Corps de POST /api/v2/online-declarations/{uuid}/certify. */
 export interface CertifyOnlinePayload {
-  person: { first_name: string; last_name: string; birth_date?: string | null; id_type: IdType; id_number: string };
+  /** Pièce présentée facultative : la victime peut avoir tout perdu (id_type et id_number à null). */
+  person: { first_name: string; last_name: string; birth_date?: string | null; id_type: IdType | null; id_number: string | null };
   checks: { identity_photo_matches: boolean };
   name_override_reason?: string | null;
   lost_at?: string | null;

@@ -6,7 +6,7 @@ import { apiUrl } from './apiUrl';
 import { catchError } from 'rxjs/operators';
 import { throwError } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
-import { IMAGE_URL_BASE } from './imageUrl';
+import { assetUrl } from './imageUrl';
 
 @Injectable({
   providedIn: 'root'
@@ -19,7 +19,7 @@ export class DetailsService {
   getDocumentDetails(uuid: string): Observable<DocumentDetails> {
     return this.http.get<DocumentDetails>(`${apiUrl}/documents/${uuid}`).pipe(
       map(details => {
-        details.image = details.image ? `${IMAGE_URL_BASE}${details.image}` : '';
+        details.image = assetUrl(details.image);
         return details;
       }),
       catchError((error) => {

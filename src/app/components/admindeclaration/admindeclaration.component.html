@@ -7,8 +7,8 @@
       (change)="filterDeclarations()"
       title="Filtrer les déclarations"
       >
-      <option value="all">Toutes les déclarations</option>
-      <option value="active">Actives</option>
+      <option value="all">Toutes (y compris supprimées)</option>
+      <option value="active">En cours</option>
       <option value="deleted">Supprimées</option>
     </select>
 
@@ -90,7 +90,7 @@
             <div class="card-meta">
               <span class="meta-label">Déclaré par</span>
               <span class="meta-value">
-                {{ declaration.user.FirstName }} {{ declaration.user.LastName }}
+                {{ declaration.user?.FirstName ?? '' }} {{ declaration.user?.LastName ?? '' }}
               </span>
             </div>
             <div class="card-meta">
@@ -101,7 +101,7 @@
             </div>
             <div class="card-meta">
               <span class="meta-label">Téléphone</span>
-              <span class="meta-value">📞 {{ declaration.user.Phone }}</span>
+              <span class="meta-value">📞 {{ declaration.user?.Phone ?? '—' }}</span>
             </div>
             <div class="card-divider"></div>
             <!-- Infos document -->

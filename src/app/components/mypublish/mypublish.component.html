@@ -61,7 +61,7 @@
               <div class="card-content">
                 <div class="card-meta">
                   <span class="meta-label">Publié par</span>
-                  <span class="meta-value">{{ pub.user.FirstName }} {{ pub.user.LastName }}</span>
+                  <span class="meta-value">{{ pub | publisher }}</span>
                 </div>
                 <div class="card-meta">
                   <span class="meta-label">Date</span>
@@ -124,7 +124,7 @@
                 <!-- <div class="blur-overlay"></div> -->
                 <!-- Badge type document -->
                 <div class="card-badge badge-blue">
-                  {{ publication.document_type.TypeName }}
+                  {{ publication.document_type?.TypeName }}
                 </div>
                 <!-- Badge statut -->
                 <div class="card-status-badge"
@@ -136,7 +136,7 @@
                 <div class="card-meta">
                   <span class="meta-label">Publié par</span>
                   <span class="meta-value">
-                    {{ publication.user.FirstName }} {{ publication.user.LastName }}
+                    {{ publication | publisher }}
                   </span>
                 </div>
                 <div class="card-meta">
@@ -145,7 +145,7 @@
                 </div>
                 <div class="card-meta">
                   <span class="meta-label">Téléphone</span>
-                  <span class="meta-value">{{ publication.user.Phone }}</span>
+                  <span class="meta-value">{{ publication.user?.Phone ?? '—' }}</span>
                 </div>
                 <div class="card-divider"></div>
                 <div class="card-meta">

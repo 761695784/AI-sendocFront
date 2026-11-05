@@ -110,8 +110,8 @@ showRestitutionHistory(): void {
   // Méthode pour filtrer les publications par nom ou prénom
   onSearch(searchTerm: string): void {
     this.filteredDocuments = this.documents.filter(doc =>
-      doc.user.FirstName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      doc.user.LastName.toLowerCase().includes(searchTerm.toLowerCase())
+      (doc.user?.FirstName ?? '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (doc.user?.LastName ?? '').toLowerCase().includes(searchTerm.toLowerCase())
     );
   }
 

@@ -363,10 +363,8 @@ body {
 }
 
 .footer-logo {
-  width: 48px; height: 48px;
-  border-radius: 10px;
-  object-fit: cover;
-  border: 2px solid rgba(246,165,0,0.3);
+  width: auto; height: 46px; max-width: 160px;
+  object-fit: contain;
   flex-shrink: 0;
 }
 

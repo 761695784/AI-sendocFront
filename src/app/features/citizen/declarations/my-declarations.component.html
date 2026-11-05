@@ -43,6 +43,15 @@
                 @if (doc.custody?.phone) { — tél. <a [href]="'tel:' + doc.custody?.phone">{{ doc.custody?.phone }}</a> }.
                 <br />Présentez-vous avec une pièce justificative (extrait de naissance, permis, passeport…) et la référence
                 <span class="dt-mono">{{ doc.reference }}</span>. Un proche peut venir avec une procuration.
+                <div class="mt-2">
+                  @if (doc.restitution_request?.active) {
+                    <span class="small"><i class="fas fa-check me-1" aria-hidden="true"></i>La structure est prévenue de votre passage.</span>
+                  } @else {
+                    <button type="button" class="btn btn-sm btn-dt-gold" [disabled]="busy() === doc.uuid" (click)="askRestitution(doc)">
+                      <i class="fas fa-bell me-1" aria-hidden="true"></i> Prévenir la structure de mon passage
+                    </button>
+                  }
+                </div>
               </div>
             </div>
           }
@@ -52,15 +61,14 @@
               <div>
                 <strong>Votre {{ doc.document_type ?? 'pièce' }} a été trouvée par un citoyen.</strong>
                 @if (doc.restitution_request?.active) {
-                  Votre demande de restitution est
-                  {{ doc.restitution_request?.status === 'accepted' ? 'acceptée : vous avez reçu le numéro du trouveur par SMS.' : 'envoyée ; le trouveur a 48 h pour répondre.' }}
+                  {{ doc.restitution_request?.status === 'accepted' ? 'Vous êtes en contact avec le trouveur : son numéro est dans « Remises » et vous l’avez reçu par SMS.' : 'Votre demande est envoyée au trouveur.' }}
                   <div class="mt-2">
                     <button type="button" class="btn btn-sm btn-outline-success" (click)="goToRequests()">Suivre ma demande</button>
                   </div>
                 } @else {
-                  Demandez-lui la restitution : il sera prévenu sans voir votre numéro.
+                  Demandez-lui la restitution : après avoir accepté les conditions, vous recevez son numéro et il reçoit le vôtre.
                   @if (doc.restitution_request) {
-                    <br /><small>Demande précédente : {{ doc.restitution_request.status === 'declined' ? 'refusée' : doc.restitution_request.status === 'expired' ? 'sans réponse' : 'close' }}. Une structure proche peut récupérer le document.</small>
+                    <br /><small>Demande précédente : {{ doc.restitution_request.status === 'declined' ? 'le trouveur préfère passer par une structure' : doc.restitution_request.status === 'expired' ? 'sans réponse' : 'close' }}. Une structure proche peut récupérer le document.</small>
                   }
                   <div class="mt-2">
                     <button type="button" class="btn btn-sm btn-dt-gold" [disabled]="busy() === doc.uuid" (click)="askRestitution(doc)">

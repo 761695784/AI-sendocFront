@@ -18,7 +18,7 @@
           <div class="img-badges">
             <span class="badge-type">
               <i class="fas fa-id-card"></i>
-              {{ documentDetails.document_type.TypeName }}
+              {{ documentDetails.document_type?.TypeName }}
             </span>
             <span class="badge-statut"
               [ngClass]="documentDetails.statut === 'récupéré' ? 'badge-green' : 'badge-orange'">
@@ -61,14 +61,14 @@
           <!-- Publicateur -->
           <div class="publisher-row">
             <div class="publisher-avatar">
-              {{ documentDetails.user.FirstName.charAt(0) }}{{ documentDetails.user.LastName.charAt(0) }}
+              {{ (documentDetails | publisher).charAt(0) }}
             </div>
             <div class="publisher-info">
               <span class="publisher-label">Publié par</span>
-              <strong>{{ documentDetails.user.FirstName }} {{ documentDetails.user.LastName }}</strong>
+              <strong>{{ documentDetails | publisher }}</strong>
               <span class="publisher-phone">
                 <i class="fas fa-phone"></i>
-                {{ documentDetails.user.Phone }}
+                {{ documentDetails.user?.Phone ?? '—' }}
               </span>
             </div>
           </div>
@@ -131,11 +131,11 @@
               <div class="comment-item"
                 >
                 <div class="comment-avatar">
-                  {{ commentaire.user.FirstName.charAt(0) }}{{ commentaire.user.LastName.charAt(0) }}
+                  {{ (commentaire | publisher).charAt(0) }}
                 </div>
                 <div class="comment-body">
                   <div class="comment-meta">
-                    <strong>{{ commentaire.user.FirstName }} {{ commentaire.user.LastName }}</strong>
+                    <strong>{{ commentaire | publisher }}</strong>
                     <span class="comment-date">{{ commentaire.created_at | date:'dd/MM/yyyy' }}</span>
                   </div>
                   <p class="comment-text">{{ commentaire.contenu }}</p>

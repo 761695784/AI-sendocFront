@@ -1,3 +1,4 @@
+import { PublisherPipe } from '../../shared/pipes/publisher.pipe';
 import { FooterComponent } from './../footer/footer.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NavbarComponent } from './../navbar/navbar.component';
@@ -19,9 +20,10 @@ export interface Document {
   statut: string; // Peut être 'récupéré' ou 'non récupéré'
   document_type_id: number;
   user_id: number;
+  custody?: { name: string; address?: string | null; phone?: string | null } | null;
   created_at: string;
   updated_at: string;
-  user: {
+  user: null | {
     id: number;
     FirstName: string;
     LastName: string;
@@ -30,7 +32,7 @@ export interface Document {
     email: string;
     email_verified_at?: string;  // Optionnel
   };
-  document_type :{
+  document_type: null | {
     id: number;
     TypeName: string;
   }
@@ -38,7 +40,7 @@ export interface Document {
 
 @Component({
     selector: 'app-mypublish',
-    imports: [NavbarComponent, FormsModule, ReactiveFormsModule, FooterComponent, CommonModule],
+    imports: [PublisherPipe, NavbarComponent, FormsModule, ReactiveFormsModule, FooterComponent, CommonModule],
     templateUrl: './mypublish.component.html',
     changeDetection: ChangeDetectionStrategy.Eager,
     styleUrls: ['./mypublish.component.css'] // Corrigé de styleUrl à styleUrls

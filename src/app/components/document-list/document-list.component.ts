@@ -1,3 +1,4 @@
+import { PublisherPipe } from '../../shared/pipes/publisher.pipe';
 import { Router } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { PublicationsService } from './../services/publications.service';
@@ -9,6 +10,8 @@ import { CommonModule } from '@angular/common';
 export interface Document {
   id: number;
   uuid:string;
+  found_channel?: string | null;
+  custody?: { uuid?: string; name: string; address?: string | null; phone?: string | null } | null;
   image: string;
   image_thumb: string;
   image_blurred: string;
@@ -21,7 +24,7 @@ export interface Document {
   user_id: number;
   created_at: string;
   updated_at: string;
-  user: {
+  user: null | {
     id: number;
     FirstName: string;
     LastName: string;
@@ -30,7 +33,7 @@ export interface Document {
     email: string;
     email_verified_at?: string;
   };
-  document_type: {
+  document_type: null | {
     id: number;
     TypeName: string;
   };
@@ -38,7 +41,7 @@ export interface Document {
 
 @Component({
     selector: 'app-document-list',
-    imports: [NavbarComponent, FooterComponent, CommonModule, FormsModule],
+    imports: [PublisherPipe, NavbarComponent, FooterComponent, CommonModule, FormsModule],
     templateUrl: './document-list.component.html',
     changeDetection: ChangeDetectionStrategy.Eager,
     styleUrls: ['./document-list.component.css']
@@ -46,6 +49,8 @@ export interface Document {
 export class DocumentListComponent implements OnInit {
   documents: Document[] = [];
   filteredDocuments: Document[] = [];
+  /** Images qui n'ont pas pu se charger : on affiche « Image non disponible » à la place. */
+  brokenImages = new Set<string>();
   searchTerm: string = '';
   currentPage: number = 1;
   itemsPerPage: number = 12;
@@ -90,8 +95,8 @@ fetchDocuments(): void {
       const lowerCaseSearchTerm = this.searchTerm.toLowerCase();
       this.filteredDocuments = this.documents.filter(
         (document) =>
-          document.OwnerFirstName.toLowerCase().includes(lowerCaseSearchTerm) ||
-          document.OwnerLastName.toLowerCase().includes(lowerCaseSearchTerm)
+          (document.OwnerFirstName ?? '').toLowerCase().includes(lowerCaseSearchTerm) ||
+          (document.OwnerLastName ?? '').toLowerCase().includes(lowerCaseSearchTerm)
       );
       // console.log('Filtered Documents:', this.filteredDocuments);
     } else {

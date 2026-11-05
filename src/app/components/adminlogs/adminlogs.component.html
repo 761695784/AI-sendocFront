@@ -20,68 +20,62 @@
         <div class="filters-row">
 
           <div class="filter-group">
-            <label><i class="fas fa-filter"></i> Type de sujet</label>
+            <label><i class="fas fa-filter" aria-hidden="true"></i> Type de sujet</label>
             <div class="filter-tabs">
-              <button class="filter-tab"
-                [class.active]="activeFilter === 'all'"
-                (click)="setFilter('all')">
-                <i class="fas fa-list"></i> Tous
-                <span class="filter-count">{{ totalLogs }}</span>
+              <button type="button" class="filter-tab" [class.active]="activeFilter() === 'all'" (click)="setFilter('all')">
+                <i class="fas fa-list" aria-hidden="true"></i> Tous
+                @if (activeFilter() === 'all') { <span class="filter-count">{{ totalLogs() }}</span> }
               </button>
-              <button class="filter-tab"
-                [class.active]="activeFilter === 'documents'"
-                (click)="setFilter('documents')">
-                <i class="fas fa-file-alt"></i> Documents
+              <button type="button" class="filter-tab" [class.active]="activeFilter() === 'documents'" (click)="setFilter('documents')">
+                <i class="fas fa-file-alt" aria-hidden="true"></i> Documents
               </button>
-              <button class="filter-tab"
-                [class.active]="activeFilter === 'declarations'"
-                (click)="setFilter('declarations')">
-                <i class="fas fa-clipboard-list"></i> Déclarations
+              <button type="button" class="filter-tab" [class.active]="activeFilter() === 'declarations'" (click)="setFilter('declarations')">
+                <i class="fas fa-clipboard-list" aria-hidden="true"></i> Déclarations
               </button>
-              <button class="filter-tab"
-                [class.active]="activeFilter === 'users'"
-                (click)="setFilter('users')">
-                <i class="fas fa-users"></i> Utilisateurs
+              <button type="button" class="filter-tab" [class.active]="activeFilter() === 'users'" (click)="setFilter('users')">
+                <i class="fas fa-users" aria-hidden="true"></i> Utilisateurs
               </button>
             </div>
           </div>
 
           <div class="filter-group">
-            <label><i class="fas fa-search"></i> Rechercher</label>
+            <label for="log-search"><i class="fas fa-search" aria-hidden="true"></i> Rechercher</label>
             <div class="search-wrap">
-              <i class="fas fa-search search-ico"></i>
-              <input type="text"
-                [(ngModel)]="searchTerm"
-                (input)="filterLogs()"
-                placeholder="Rechercher par description, utilisateur...">
+              <i class="fas fa-search search-ico" aria-hidden="true"></i>
+              <input id="log-search" type="search" [ngModel]="searchTerm" (ngModelChange)="onSearch($event)"
+                placeholder="Action, nom ou email de l’utilisateur…" autocomplete="off">
             </div>
           </div>
 
         </div>
       </div>
 
-      <!-- Loader -->
-      @if (isLoading) {
-        <div class="loader-center">
-          <l-ring-2 size="36" stroke="4" stroke-length="0.55"
-            bg-opacity="0.1" speed="0.8" color="#31287C">
-          </l-ring-2>
-          <span>Chargement des logs...</span>
+      @if (isLoading() && !logs().length) {
+        <div class="loader-center" role="status">
+          <span class="spinner-border" style="color:#31287C" aria-hidden="true"></span>
+          <span>Chargement du journal…</span>
         </div>
       }
 
-      <!-- Empty state -->
-      @if (!isLoading && filteredLogs.length === 0) {
+      @if (error(); as err) {
         <div class="empty-state">
-          <div class="empty-icon"><i class="fas fa-history"></i></div>
-          <h3>Aucune activité trouvée</h3>
-          <p>Aucun log ne correspond à vos critères de recherche.</p>
+          <div class="empty-icon"><i class="fas fa-exclamation-triangle" aria-hidden="true"></i></div>
+          <h3>Journal indisponible</h3>
+          <p>{{ err }}</p>
+          <button type="button" class="page-btn" (click)="loadLogs(currentPage())">Réessayer</button>
         </div>
       }
 
-      <!-- Table des logs -->
-      @if (!isLoading && filteredLogs.length > 0) {
-        <div class="logs-card">
+      @if (!isLoading() && !error() && logs().length === 0) {
+        <div class="empty-state">
+          <div class="empty-icon"><i class="fas fa-history" aria-hidden="true"></i></div>
+          <h3>Aucune activité trouvée</h3>
+          <p>Aucune action ne correspond à vos critères.</p>
+        </div>
+      }
+
+      @if (logs().length > 0) {
+        <div class="logs-card" [style.opacity]="isLoading() ? 0.55 : 1">
           <div class="logs-table-wrap">
             <table class="logs-table">
               <thead>
@@ -90,89 +84,60 @@
                   <th>Utilisateur</th>
                   <th>Sujet</th>
                   <th>Propriétés</th>
-                  <th>Date & Heure</th>
+                  <th>Date & heure</th>
                 </tr>
               </thead>
               <tbody>
-                @for (log of filteredLogs; track log; let i = $index) {
-                  <tr
-                    [style.animation-delay]="i * 0.03 + 's'"
-                    class="log-row"
-                    (click)="openDetail(log)">
-                    <!-- Action -->
+                @for (log of logs(); track log.id) {
+                  <tr class="log-row" tabindex="0" (click)="openDetail(log)" (keydown.enter)="openDetail(log)">
                     <td>
                       <div class="action-wrap">
-                        <div class="action-icon" [ngClass]="getActionClass(log.description)">
-                          <i class="fas" [ngClass]="getActionIcon(log.description)"></i>
+                        <div class="action-icon {{ log.actionClass }}">
+                          <i class="fas {{ log.actionIcon }}" aria-hidden="true"></i>
                         </div>
                         <div>
                           <span class="action-desc">{{ log.description }}</span>
-                          @if (log.event) {
-                            <span class="event-badge" [ngClass]="getEventClass(log.event)">
-                              {{ log.event }}
-                            </span>
-                          }
+                          @if (log.event) { <span class="event-badge {{ log.eventClass }}">{{ log.event }}</span> }
                         </div>
                       </div>
                     </td>
-                    <!-- Utilisateur -->
                     <td>
-                      @if (log.causer) {
+                      @if (log.causerName) {
                         <div class="user-wrap">
-                          <div class="user-avatar">
-                            {{ log.causer.FirstName?.charAt(0) }}{{ log.causer.LastName?.charAt(0) }}
-                          </div>
+                          <div class="user-avatar">{{ log.initials }}</div>
                           <div>
-                            <span class="user-name">
-                              {{ log.causer.FirstName }} {{ log.causer.LastName }}
-                            </span>
-                            <span class="user-email">{{ log.causer.email }}</span>
+                            <span class="user-name">{{ log.causerName }}</span>
+                            <span class="user-email">{{ log.causerEmail }}</span>
                           </div>
                         </div>
                       } @else {
                         <span class="text-muted">Système</span>
                       }
                     </td>
-                    <!-- Sujet -->
                     <td>
-                      @if (log.subject_type) {
+                      @if (log.subjectLabel) {
                         <div class="subject-wrap">
-                          <span class="subject-badge" [ngClass]="getSubjectClass(log.subject_type)">
-                            <i class="fas" [ngClass]="getSubjectIcon(log.subject_type)"></i>
-                            {{ getSubjectLabel(log.subject_type) }}
+                          <span class="subject-badge {{ log.subjectClass }}">
+                            <i class="fas {{ log.subjectIcon }}" aria-hidden="true"></i> {{ log.subjectLabel }}
                           </span>
-                          @if (log.subject) {
-                            <span class="subject-id">
-                              #{{ log.subject_id }}
-                            </span>
-                          }
+                          @if (log.subjectId) { <span class="subject-id">#{{ log.subjectId }}</span> }
                         </div>
                       } @else {
                         <span class="text-muted">—</span>
                       }
                     </td>
-                    <!-- Propriétés -->
                     <td>
                       <div class="props-wrap">
-                        @for (prop of getTopProps(log.properties) | slice:0:2; track prop) {
-                          <span class="prop-chip"
-                            >
-                            <strong>{{ prop.key }}</strong>: {{ prop.value }}
-                          </span>
+                        @for (prop of log.props.slice(0, 2); track $index) {
+                          <span class="prop-chip"><strong>{{ prop.key }}</strong> : {{ prop.value }}</span>
                         }
-                        @if (getTopProps(log.properties).length > 2) {
-                          <span class="prop-more"
-                            >
-                            +{{ getTopProps(log.properties).length - 2 }} autres
-                          </span>
-                        }
+                        @if (log.props.length > 2) { <span class="prop-more">+{{ log.props.length - 2 }} autres</span> }
                       </div>
                     </td>
-                    <!-- Date -->
                     <td>
                       <div class="date-wrap">
-                        <span class="date-main">{{ log.created_at | date:'dd/MM/yyyy' }}</span>
-                        <span class="date-time">{{ log.created_at | date:'HH:mm:ss' }}</span>
+                        <span class="date-main">{{ log.createdAt | date:'dd/MM/yyyy' }}</span>
+                        <span class="date-time">{{ log.createdAt | date:'HH:mm:ss' }}</span>
                       </div>
                     </td>
                   </tr>
@@ -180,111 +145,68 @@
               </tbody>
             </table>
           </div>
-          <!-- Pagination -->
           <div class="pagination-wrap">
             <span class="pagination-info">
-              Page {{ currentPage }} / {{ lastPage }} —
-              <strong>{{ totalLogs }}</strong> log(s) au total
+              Page {{ currentPage() }} / {{ lastPage() }} — <strong>{{ totalLogs() }}</strong> action(s)
             </span>
             <div class="pagination-btns">
-              <button class="page-btn"
-                [disabled]="currentPage === 1"
-                (click)="changePage(currentPage - 1)"
-                aria-label="Page précédente">
-                <i class="fas fa-chevron-left"></i>
+              <button type="button" class="page-btn" [disabled]="currentPage() === 1 || isLoading()" (click)="changePage(currentPage() - 1)" aria-label="Page précédente">
+                <i class="fas fa-chevron-left" aria-hidden="true"></i>
               </button>
-              <button class="page-btn active">{{ currentPage }}</button>
-              <button class="page-btn"
-                [disabled]="currentPage === lastPage"
-                (click)="changePage(currentPage + 1)"
-                aria-label="Page suivante">
-                <i class="fas fa-chevron-right"></i>
+              <span class="page-btn active" aria-current="page">{{ currentPage() }}</span>
+              <button type="button" class="page-btn" [disabled]="currentPage() >= lastPage() || isLoading()" (click)="changePage(currentPage() + 1)" aria-label="Page suivante">
+                <i class="fas fa-chevron-right" aria-hidden="true"></i>
               </button>
             </div>
           </div>
         </div>
       }
 
-      <!-- Modal détail -->
-      @if (selectedLog) {
+      @if (selectedLog(); as log) {
         <div class="modal-overlay" (click)="closeDetail()">
-          <div class="modal-card" (click)="$event.stopPropagation()">
+          <div class="modal-card" role="dialog" aria-modal="true" [attr.aria-label]="log.description" (click)="$event.stopPropagation()">
             <div class="modal-header">
               <div class="modal-title">
-                <div class="action-icon lg" [ngClass]="getActionClass(selectedLog.description)">
-                  <i class="fas" [ngClass]="getActionIcon(selectedLog.description)"></i>
+                <div class="action-icon lg {{ log.actionClass }}">
+                  <i class="fas {{ log.actionIcon }}" aria-hidden="true"></i>
                 </div>
                 <div>
-                  <h3>{{ selectedLog.description }}</h3>
-                  <span>{{ selectedLog.created_at | date:'dd/MM/yyyy à HH:mm:ss' }}</span>
+                  <h3>{{ log.description }}</h3>
+                  <span>{{ log.createdAt | date:'dd/MM/yyyy à HH:mm:ss' }}</span>
                 </div>
               </div>
-              <button class="modal-close" (click)="closeDetail()" aria-label="Fermer">
-                <i class="fas fa-times"></i>
+              <button type="button" class="modal-close" (click)="closeDetail()" aria-label="Fermer">
+                <i class="fas fa-times" aria-hidden="true"></i>
               </button>
             </div>
             <div class="modal-body">
-              <!-- Utilisateur -->
-              @if (selectedLog.causer) {
+              @if (log.causerName) {
                 <div class="modal-section">
-                  <h4><i class="fas fa-user"></i> Utilisateur</h4>
+                  <h4><i class="fas fa-user" aria-hidden="true"></i> Utilisateur</h4>
                   <div class="modal-row">
-                    <div class="user-avatar lg">
-                      {{ selectedLog.causer.FirstName?.charAt(0) }}{{ selectedLog.causer.LastName?.charAt(0) }}
-                    </div>
+                    <div class="user-avatar lg">{{ log.initials }}</div>
                     <div class="modal-user-info">
-                      <strong>{{ selectedLog.causer.FirstName }} {{ selectedLog.causer.LastName }}</strong>
-                      <span>{{ selectedLog.causer.email }}</span>
-                      <span>{{ selectedLog.causer.Phone }}</span>
+                      <strong>{{ log.causerName }}</strong>
+                      <span>{{ log.causerEmail }}</span>
                     </div>
                   </div>
                 </div>
               }
-              <!-- Sujet -->
-              @if (selectedLog.subject) {
+              @if (log.subjectLabel) {
                 <div class="modal-section">
-                  <h4><i class="fas fa-file-alt"></i> Sujet concerné</h4>
+                  <h4><i class="fas fa-file-alt" aria-hidden="true"></i> Élément concerné</h4>
                   <div class="modal-props">
-                    @for (prop of getSubjectProps(selectedLog.subject); track prop) {
-                      <div class="modal-prop">
-                        <span class="mp-key">{{ prop.key }}</span>
-                        <span class="mp-val">{{ prop.value }}</span>
-                      </div>
-                    }
+                    <div class="modal-prop"><span class="mp-key">Type</span><span class="mp-val">{{ log.subjectLabel }}</span></div>
+                    @if (log.subjectId) { <div class="modal-prop"><span class="mp-key">Numéro interne</span><span class="mp-val">#{{ log.subjectId }}</span></div> }
                   </div>
                 </div>
               }
-              <!-- Propriétés du log -->
-              @if (getTopProps(selectedLog.properties).length > 0) {
-                <div class="modal-section"
-                  >
-                  <h4><i class="fas fa-tags"></i> Données enregistrées</h4>
+              @if (log.props.length) {
+                <div class="modal-section">
+                  <h4><i class="fas fa-tags" aria-hidden="true"></i> Données enregistrées</h4>
                   <div class="modal-props">
-                    @for (prop of getTopProps(selectedLog.properties); track prop) {
-                      <div class="modal-prop"
-                        >
-                        <span class="mp-key">{{ prop.key }}</span>
-                        <span class="mp-val">{{ prop.value }}</span>
-                      </div>
-                    }
-                  </div>
-                </div>
-              }
-              <!-- IP / User agent si connexion -->
-              @if (selectedLog.properties?.ip) {
-                <div class="modal-section"
-                  >
-                  <h4><i class="fas fa-network-wired"></i> Informations réseau</h4>
-                  <div class="modal-props">
-                    <div class="modal-prop">
-                      <span class="mp-key">Adresse IP</span>
-                      <span class="mp-val">{{ selectedLog.properties.ip }}</span>
-                    </div>
-                    @if (selectedLog.properties.user_agent) {
-                      <div class="modal-prop">
-                        <span class="mp-key">User Agent</span>
-                        <span class="mp-val small">{{ selectedLog.properties.user_agent }}</span>
-                      </div>
+                    @for (prop of log.props; track $index) {
+                      <div class="modal-prop"><span class="mp-key">{{ prop.key }}</span><span class="mp-val">{{ prop.value }}</span></div>
                     }
                   </div>
                 </div>

@@ -72,7 +72,7 @@
                     }
                     <!-- <div class="blur-overlay"></div> -->
                     <div class="result-type-badge">
-                      {{ document.document_type.TypeName }}
+                      {{ document.document_type?.TypeName }}
                     </div>
                     <div class="result-status-badge"
                       [ngClass]="document.statut === 'récupéré' ? 'badge-green' : 'badge-orange'">
@@ -82,7 +82,7 @@
                   <div class="result-card-body">
                     <p class="result-publisher">
                       <i class="fas fa-user-circle"></i>
-                      {{ document.user.FirstName }} {{ document.user.LastName }}
+                      {{ document | publisher }}
                       · {{ document.created_at | date:'dd/MM/yyyy' }}
                     </p>
                     <div class="result-meta">

@@ -95,6 +95,11 @@ export class CounterApi {
     return this.api.post<FoundDocumentView>(['found-documents'], form);
   }
 
+  /** Suppression définitive (sans corbeille) d'un document enregistré au guichet. */
+  deleteFoundDocument(uuid: string): Observable<{ success: boolean; message: string }> {
+    return this.api.delete<{ success: boolean; message: string }>(['found-documents', uuid]);
+  }
+
   takeCustody(uuid: string): Observable<FoundDocumentView> {
     return this.api.post<FoundDocumentView>(['found-documents', uuid, 'take-custody']);
   }
