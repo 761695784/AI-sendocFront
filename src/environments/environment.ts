@@ -4,7 +4,7 @@
 export const environment = {
   production: true,
   /** Adresse de l'API Laravel (V1 : /api/..., V2 : /api/v2/...). */
-  apiUrl: 'https://doctrack.majeliconnect.com/api',
+  apiUrl: 'https://docapi.casaimpact.org/api',
   /** Adresse de base des images publiques (storage). */
-  imageUrl: 'https://doctrack.majeliconnect.com',
+  imageUrl: 'https://docapi.casaimpact.org',
 };
