@@ -85,15 +85,14 @@
 }
 
 .card-logo {
-  width: 72px; height: 72px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 3px solid #f0eeff;
-  padding: 3px;
+  display: block;
+  height: 48px;
+  width: auto;
+  max-width: 100%;
   transition: transform 0.3s;
 }
 
-.card-logo:hover { transform: scale(1.05) rotate(-3deg); }
+.card-logo:hover { transform: scale(1.03); }
 
 .card-badge {
   display: inline-flex;
