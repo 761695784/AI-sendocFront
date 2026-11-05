@@ -564,6 +564,20 @@ span { color: inherit; }
   object-fit: contain;
 }
 
+.perspective-icon i {
+  font-size: 26px;
+  color: #F6A500;
+}
+
+/* Badges alignés en bas des cartes, quelle que soit la longueur du texte. */
+.perspective-card .coming-soon { margin-top: auto; }
+
+/* Badge « À venir » plus discret que « Bientôt disponible » (carte mise en avant). */
+.perspective-card:not(.featured) .coming-soon {
+  background: rgba(255,255,255,0.12);
+  color: #fff;
+}
+
 .perspective-card h4 {
   font-size: 16px;
   font-weight: 700;
@@ -580,7 +594,7 @@ span { color: inherit; }
   font-size: 13px;
   color: rgba(255,255,255,0.65);
   line-height: 1.7;
-  text-align: justify;
+  text-align: left;
 }
 
 .coming-soon {
