@@ -49,6 +49,7 @@
             "outputMode": "server",
             "security": {
               "allowedHosts": [
+                "sendoctrack-ai.netlify.app",
                 "doctrack.majeliconnect.com",
                 "www.doctrack.majeliconnect.com",
                 "localhost",
