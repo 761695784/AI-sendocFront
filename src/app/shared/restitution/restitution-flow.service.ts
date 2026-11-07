@@ -137,7 +137,7 @@ export class RestitutionFlowService {
   private async send(doc: RestitutionTarget, payload: Record<string, unknown>): Promise<boolean> {
     const res = await this.call(doc.uuid, payload, true);
     if (res && typeof res === 'object' && 'identity_check' in res) {
-      return this.afterIdentityCheck(doc, res.has_number);
+      return this.afterIdentityCheck(doc, res.has_number, false, res.locked);
     }
     if (!res) {
       return false;
@@ -175,7 +175,7 @@ export class RestitutionFlowService {
    * - si le trouveur a saisi le numéro : les 4 derniers caractères, ou « laisser le trouveur vérifier » ;
    * - sinon : la demande part au trouveur, qui compare avec le document et accepte ou refuse.
    */
-  private async afterIdentityCheck(doc: RestitutionTarget, hasNumber: boolean, wrong = false): Promise<boolean> {
+  private async afterIdentityCheck(doc: RestitutionTarget, hasNumber: boolean, wrong = false, locked = false): Promise<boolean> {
     const choice = await Popup.fire({
       icon: 'info',
       title: 'Vérifions que c’est votre document',
@@ -186,7 +186,8 @@ export class RestitutionFlowService {
           <label for="rs-last4" style="font-weight:700;font-size:.82rem;color:#4b4766">4 derniers caractères du numéro de la pièce</label>
           <input id="rs-last4" class="swal2-input" style="margin:.35rem 0 .6rem;width:100%" maxlength="12" autocomplete="off" placeholder="Ex. 0123">
           <p style="font-size:.85rem;color:#5b5878">Vous ne le connaissez pas ? Envoyez la demande au trouveur : il compare avec le document qu'il a en main et accepte ou refuse.</p>`
-        : `<p>Le trouveur n'a pas saisi le numéro de la pièce. Votre demande lui sera envoyée avec votre nom : il compare avec le document
+        : `<p>${locked ? '<b>Trop d’essais pour les 4 caractères du numéro.</b>' : 'Le trouveur n\'a pas saisi le numéro de la pièce.'}
+            Votre demande lui sera envoyée avec votre nom : il compare avec le document
             qu'il a en main et accepte ou refuse. S'il accepte, vous recevez son numéro par SMS.</p>`}
       </div>`,
       showCancelButton: true,
@@ -220,7 +221,7 @@ export class RestitutionFlowService {
     }
     const res = await this.call(doc.uuid, { accept_terms: true, doc_last4: String(choice.value) }, true);
     if (res && typeof res === 'object' && 'identity_check' in res) {
-      return this.afterIdentityCheck(doc, res.has_number, true);
+      return this.afterIdentityCheck(doc, res.has_number, !res.locked, res.locked);
     }
     if (!res) {
       return false;
@@ -248,14 +249,14 @@ export class RestitutionFlowService {
 
   /** Appel de l'API ; affiche l'erreur. Renvoie { identity_check } si l'API demande une vérification. */
   private async call(uuid: string, payload: Record<string, unknown>, identityRetry = false)
-    : Promise<RestitutionAskResponse | { identity_check: true; has_number: boolean } | null> {
+    : Promise<RestitutionAskResponse | { identity_check: true; has_number: boolean; locked: boolean } | null> {
     showSending();
     try {
       return await firstValueFrom(this.api.askRestitution(uuid, payload));
     } catch (e) {
       const err = e as HttpErrorResponse;
       if (identityRetry && err?.status === 403 && err.error?.code === 'identity_check') {
-        return { identity_check: true, has_number: !!err.error?.has_number };
+        return { identity_check: true, has_number: !!err.error?.has_number, locked: !!err.error?.locked };
       }
       const message: string = err?.error?.message
         || (err?.status === 429 ? 'Trop de demandes. Réessayez un peu plus tard.' : 'La demande n’a pas pu être envoyée. Réessayez plus tard.');

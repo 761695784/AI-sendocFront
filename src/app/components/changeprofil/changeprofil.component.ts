@@ -112,12 +112,13 @@ export class ChangeprofilComponent implements OnInit {
           confirmButtonText: 'Ok'
         }).then(() => this.router.navigate(['/accueil']));
       },
-      error: () => {
+      error: (err) => {
         this.isLoading = false;
         Swal.fire({
           icon: 'error',
           title: 'Erreur',
-          text: 'Une erreur s\'est produite lors de la mise à jour.',
+          // Ex. changement d'email sans le mot de passe actuel : le serveur explique quoi faire.
+          text: err?.error?.errors?.current_password?.[0] ?? err?.error?.message ?? 'Une erreur s\'est produite lors de la mise à jour.',
           confirmButtonText: 'Ok'
         });
       }

@@ -63,7 +63,8 @@ export class AuthService {
   }
 
   sendResetPasswordEmail(email: string): Observable<any> {
-    return this.http.get(`${apiUrl}/forgot-password`, { params: { email } });
+    // POST : l'adresse email ne passe pas dans l'URL (journaux, historique) et la limite anti-abus s'applique.
+    return this.http.post(`${apiUrl}/forgot-password`, { email });
   }
 
   resetPassword(data: { token: string; email: string; password: string; password_confirmation: string }): Observable<any> {

@@ -83,11 +83,10 @@ export class AdminprofilComponent {
         },
         (error) => {
           this.isLoading = false;
-          // console.error(error);
           Swal.fire({
             icon: 'error',
             title: 'Erreur',
-            text: 'Une erreur s\'est produite lors de la mise à jour du profil.',
+            text: error?.error?.errors?.current_password?.[0] ?? error?.error?.message ?? 'Une erreur s\'est produite lors de la mise à jour du profil.',
             confirmButtonText: 'Ok'
           });
         }
