@@ -1,0 +1,21 @@
+# DocTrack — consignes pour les moteurs de recherche
+User-agent: *
+Allow: /
+
+# Espaces connectés et pages personnelles : rien à indexer
+Disallow: /espace
+Disallow: /admin
+Disallow: /mon-espace
+Disallow: /document/
+Disallow: /t/
+Disallow: /verifier/
+Disallow: /paiement/
+Disallow: /newpass
+Disallow: /reset
+Disallow: /found-qr
+Disallow: /lost
+Disallow: /mypub
+Disallow: /modify
+Disallow: /code
+
+Sitemap: https://sendoctrack-ai.netlify.app/sitemap.xml

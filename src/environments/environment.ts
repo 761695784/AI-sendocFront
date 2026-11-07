@@ -7,4 +7,6 @@ export const environment = {
   apiUrl: 'https://docapi.casaimpact.org/api',
   /** Adresse de base des images publiques (storage). */
   imageUrl: 'https://docapi.casaimpact.org',
+  /** Adresse publique du site (adresses canoniques, partage, plan du site). À changer avec le nom de domaine. */
+  siteUrl: 'https://sendoctrack-ai.netlify.app',
 };

@@ -13,6 +13,7 @@ export const serverRoutes: ServerRoute[] = [
   { path: 'connexion', renderMode: RenderMode.Prerender },
   { path: 'inscription', renderMode: RenderMode.Prerender },
   { path: 'reset', renderMode: RenderMode.Prerender },
+  { path: 'verifier', renderMode: RenderMode.Prerender },
 
   // Pages publiques dont le contenu vient de l'API (dernières publications, liste)
   { path: '', renderMode: RenderMode.Server },

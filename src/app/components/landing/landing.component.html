@@ -343,32 +343,15 @@
         </div>
 
         <div class="partners-track">
+          <!-- Logos répétés pour un défilement continu : seule la première série est lue par les lecteurs d'écran. -->
           <div class="partners-slide">
-            <div class="partner-item">
-              <img loading="lazy" src="/assets/simplon.webp" alt="Simplon">
-            </div>
-            <div class="partner-item">
-              <img loading="lazy" src="/assets/societe-generale-logo.webp" alt="Société Générale">
-            </div>
-            <div class="partner-item">
-              <img loading="lazy" src="/assets/simplon.webp" alt="Simplon">
-            </div>
-            <div class="partner-item">
-              <img loading="lazy" src="/assets/societe-generale-logo.webp" alt="Société Générale">
-            </div>
-            <div class="partner-item">
-              <img loading="lazy" src="/assets/simplon.webp" alt="Simplon">
-            </div>
-            <div class="partner-item">
-              <img loading="lazy" src="/assets/societe-generale-logo.webp" alt="Société Générale">
-            </div>
-            <!-- Duplicate pour boucle infinie -->
-            <div class="partner-item">
-              <img loading="lazy" src="/assets/simplon.webp" alt="Simplon">
-            </div>
-            <div class="partner-item">
-              <img loading="lazy" src="/assets/societe-generale-logo.webp" alt="Société Générale">
-            </div>
+            @for (loop of partnerLoops; track loop) {
+              @for (p of partners; track p.name) {
+                <div class="partner-item" [class.partner-item--tall]="p.tall" [attr.aria-hidden]="loop > 0 ? 'true' : null">
+                  <img loading="lazy" [src]="p.logo" [alt]="loop > 0 ? '' : p.name">
+                </div>
+              }
+            }
           </div>
         </div>
       </div>

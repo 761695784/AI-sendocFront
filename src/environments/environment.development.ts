@@ -11,4 +11,6 @@ export const environment = {
   production: false,
   apiUrl: `http://${host}:8000/api`,
   imageUrl: `http://${host}:8000`,
+  /** Adresse publique du site, utilisée pour les adresses canoniques (identique en développement). */
+  siteUrl: 'https://sendoctrack-ai.netlify.app',
 };

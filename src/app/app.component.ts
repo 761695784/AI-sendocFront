@@ -1,6 +1,7 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { PwaBarComponent } from './shared/pwa/pwa-bar.component';
+import { SeoService } from './core/seo/seo.service';
 
 @Component({
     selector: 'app-root',
@@ -11,4 +12,9 @@ import { PwaBarComponent } from './shared/pwa/pwa-bar.component';
 })
 export class AppComponent {
   title = 'DocTrackFront';
+
+  constructor() {
+    // Description, robots, adresse canonique et aperçus de partage mis à jour à chaque page.
+    inject(SeoService).init();
+  }
 }

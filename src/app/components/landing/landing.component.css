@@ -812,6 +812,10 @@ body { font-family: 'Poppins', Arial, sans-serif; }
   transition: filter 0.2s, opacity 0.2s;
 }
 
+.partner-item--tall img {
+  height: 72px;
+}
+
 .partner-item img:hover {
   filter: grayscale(0%);
   opacity: 1;
