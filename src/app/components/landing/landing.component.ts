@@ -26,8 +26,7 @@ export class LandingComponent implements OnInit {
     { name: 'PNUD', logo: '/assets/partners/logo-pnud.webp', tall: true },
     { name: 'timbuktoo', logo: '/assets/partners/logo-timbuktoo.webp', tall: false },
     { name: 'METI', logo: '/assets/partners/logo-meti.webp', tall: false },
-    { name: 'Simplon', logo: '/assets/simplon.webp', tall: false },
-    { name: 'Société Générale', logo: '/assets/societe-generale-logo.webp', tall: false },
+    { name: 'Simplon Sénégal', logo: '/assets/partners/logo-simplon-senegal.webp', tall: true },
   ];
   /** 4 séries identiques : la bande se décale de moitié puis recommence, sans vide à l'écran. */
   readonly partnerLoops = [0, 1, 2, 3];
