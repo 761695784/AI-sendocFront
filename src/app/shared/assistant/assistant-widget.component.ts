@@ -22,6 +22,8 @@ interface ChatLine {
 }
 
 const STORAGE_KEY = 'doctrack-assistant-conversation';
+/** Valeur du bouton « Partager ma position » (voir AssistantEngine::POSITION côté API). */
+const POSITION_VALUE = '__position__';
 /** Pages où la bulle n'apparaît pas (espaces de travail des agents et de l'administration). */
 const HIDDEN_PREFIXES = ['/espace', '/admin'];
 
@@ -240,10 +242,13 @@ export class AssistantWidgetComponent {
     this.quickReplies.set([]);
     this.sending.set(true);
     try {
+      // Bouton « Partager ma position » : le navigateur demande l'autorisation ; sans réponse, l'assistant redemande le lieu.
+      const position = value === POSITION_VALUE ? await this.currentPosition() : null;
       const res = await firstValueFrom(this.http.post<AssistantResponse>(`${environment.apiUrl}/v2/assistant/messages`, {
         conversation_id: this.conversationId,
         text: value,
         input_mode: mode,
+        ...(position ?? {}),
       }));
       this.conversationId = res.conversation.id;
       this.remember(res.conversation.id);
@@ -267,6 +272,20 @@ export class AssistantWidgetComponent {
     } finally {
       this.sending.set(false);
     }
+  }
+
+  /** Position du téléphone ou de l'ordinateur (arrondie à ~100 m), ou null si refusée ou indisponible. */
+  private currentPosition(): Promise<{ latitude: number; longitude: number } | null> {
+    if (!this.browser || !('geolocation' in navigator)) {
+      return Promise.resolve(null);
+    }
+    return new Promise((resolve) => {
+      navigator.geolocation.getCurrentPosition(
+        (p) => resolve({ latitude: Math.round(p.coords.latitude * 1000) / 1000, longitude: Math.round(p.coords.longitude * 1000) / 1000 }),
+        () => resolve(null),
+        { enableHighAccuracy: false, timeout: 10000, maximumAge: 300000 },
+      );
+    });
   }
 
   private push(lines: ChatLine[]): void {
