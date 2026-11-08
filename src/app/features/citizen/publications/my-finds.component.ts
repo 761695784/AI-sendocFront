@@ -1,3 +1,5 @@
+import { I18nService } from '../../../core/i18n/i18n.service';
+import { TranslatePipe, TranslateFrPipe } from '../../../core/i18n/translate.pipe';
 import { ChangeDetectionStrategy, Component, OnInit, inject, signal } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
@@ -26,11 +28,12 @@ const COLLECTION_TEXT: Record<string, string> = {
 /** Documents que j'ai trouvés et publiés, avec le suivi de leur récupération par une structure. */
 @Component({
   selector: 'app-my-finds',
-  imports: [DatePipe, RouterLink, StatusBadgeComponent, LoadingComponent, EmptyStateComponent, ErrorStateComponent, PaginatorComponent],
+  imports: [TranslatePipe, TranslateFrPipe, DatePipe, RouterLink, StatusBadgeComponent, LoadingComponent, EmptyStateComponent, ErrorStateComponent, PaginatorComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './my-finds.component.html',
 })
 export class MyFindsComponent implements OnInit {
+  private readonly i18n = inject(I18nService);
   private readonly api = inject(CitizenApi);
 
   readonly rows = signal<FindRow[]>([]);
@@ -64,7 +67,7 @@ export class MyFindsComponent implements OnInit {
         });
       },
       error: (e) => {
-        this.error.set(apiErrorMessage(e, 'Impossible de charger vos publications.'));
+        this.error.set(apiErrorMessage(e, this.i18n.t('myfinds.impossible_de_charger_vos_publications')));
         this.loading.set(false);
       },
     });

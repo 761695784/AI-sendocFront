@@ -7,18 +7,18 @@
     <div class="hero-content">
       <div class="hero-badge">
         <i class="fas fa-newspaper"></i>
-        Espace personnel
+        {{ 'lostdecl.espace_personnel' | t }}
       </div>
-      <h1>Mes Publications</h1>
-      <p>Gérez vos publications de documents trouvés. Mettez à jour le statut une fois la restitution effectuée, ou supprimez les publications obsolètes.</p>
+      <h1>{{ 'mypub.mes_publications' | t }}</h1>
+      <p>{{ 'mypub.gerez_vos_publications_de_documents_trou' | t }}</p>
       <div class="hero-actions">
         <a href="/publier" class="btn-publish">
           <i class="fas fa-plus-circle"></i>
-          Nouvelle publication
+          {{ 'mypub.nouvelle_publication' | t }}
         </a>
         <button class="btn-trash" (click)="showTrashedDocuments()">
           <i class="fas fa-trash-alt"></i>
-          {{ showTrashed ? 'Mes publications' : 'Corbeille' }}
+          {{ showTrashed ? ('list.mes_publications' | t) : ('lostdecl.corbeille' | t) }}
         </button>
       </div>
     </div>
@@ -35,16 +35,16 @@
               <i class="fas fa-trash-alt"></i>
             </div>
             <div>
-              <h2 class="section-title">Publications supprimées</h2>
-              <p class="section-subtitle">Ces publications peuvent être restaurées</p>
+              <h2 class="section-title">{{ 'mypub.publications_supprimees' | t }}</h2>
+              <p class="section-subtitle">{{ 'mypub.ces_publications_peuvent_etre_restaurees' | t }}</p>
             </div>
           </div>
         </div>
         @if (trashedPublications.length === 0) {
           <div class="empty-state">
             <div class="empty-icon">🗑️</div>
-            <h3>Corbeille vide</h3>
-            <p>Aucune publication supprimée pour le moment.</p>
+            <h3>{{ 'lostdecl.corbeille_vide' | t }}</h3>
+            <p>{{ 'mypub.aucune_publication_supprimee_pour_le_mom' | t }}</p>
           </div>
         }
         <div class="grid-container">
@@ -54,31 +54,31 @@
               <div class="card-image-wrap">
                 <img loading="lazy"
                   [src]="pub.image_blurred || '/assets/default-image.png'"
-                  alt="Document" />
+                  [alt]="'landing.doc_alt' | t" />
                 <!-- <div class="card-image-overlay"></div> -->
-                <div class="card-badge badge-red">Supprimée</div>
+                <div class="card-badge badge-red">{{ 'lostdecl.supprimee' | t }}</div>
               </div>
               <div class="card-content">
                 <div class="card-meta">
-                  <span class="meta-label">Publié par</span>
+                  <span class="meta-label">{{ 'list.publie_par' | t }}</span>
                   <span class="meta-value">{{ pub | publisher }}</span>
                 </div>
                 <div class="card-meta">
-                  <span class="meta-label">Date</span>
+                  <span class="meta-label">{{ 'verify.date' | t }}</span>
                   <span class="meta-value">{{ pub.created_at | date:'dd MMM yyyy' }}</span>
                 </div>
                 <div class="card-divider"></div>
                 <div class="card-meta">
-                  <span class="meta-label">Prénom</span>
+                  <span class="meta-label">{{ 'landing.first_name' | t }}</span>
                   <span class="meta-value highlight">{{ pub.OwnerFirstName }}</span>
                 </div>
                 <div class="card-meta">
-                  <span class="meta-label">Nom</span>
+                  <span class="meta-label">{{ 'landing.last_name' | t }}</span>
                   <span class="meta-value highlight">{{ pub.OwnerLastName }}</span>
                 </div>
                 <div class="card-actions">
                   <button class="btn-restore" (click)="restorePublication(pub.uuid)">
-                    <i class="fas fa-undo"></i> Restaurer
+                    <i class="fas fa-undo"></i> {{ 'lostdecl.restaurer' | t }}
                   </button>
                 </div>
               </div>
@@ -97,18 +97,18 @@
               <i class="fas fa-newspaper"></i>
             </div>
             <div>
-              <h2 class="section-title">Mes publications actives</h2>
-              <p class="section-subtitle">{{ publications.length }} publication(s) en ligne</p>
+              <h2 class="section-title">{{ 'mypub.mes_publications_actives' | t }}</h2>
+              <p class="section-subtitle">{{ publications.length }} {{ 'mypub.publication_s_en_ligne' | t }}</p>
             </div>
           </div>
         </div>
         @if (publications.length === 0) {
           <div class="empty-state">
             <div class="empty-icon">📰</div>
-            <h3>Aucune publication</h3>
-            <p>Vous n'avez pas encore publié de document trouvé.</p>
+            <h3>{{ 'mypub.aucune_publication' | t }}</h3>
+            <p>{{ 'mypub.vous_n_avez_pas_encore_publie' | t }}</p>
             <a href="/publier" class="btn-action-empty">
-              <i class="fas fa-plus-circle"></i> Publier un document
+              <i class="fas fa-plus-circle"></i> {{ 'landing.cta_publish' | t }}
             </a>
           </div>
         }
@@ -119,7 +119,7 @@
               <div class="card-image-wrap">
                 <img loading="lazy"
                   [src]="publication.image_blurred || '/assets/default-image.png'"
-                  alt="Document" />
+                  [alt]="'landing.doc_alt' | t" />
                 <div class="card-image-overlay"></div>
                 <!-- <div class="blur-overlay"></div> -->
                 <!-- Badge type document -->
@@ -129,46 +129,46 @@
                 <!-- Badge statut -->
                 <div class="card-status-badge"
                   [ngClass]="publication.statut === 'récupéré' ? 'badge-green' : 'badge-orange'">
-                  {{ publication.statut === 'récupéré' ? 'Récupéré' : 'Non récupéré' }}
+                  {{ publication.statut === 'récupéré' ? ('landing.status_recovered' | t) : ('mypub.non_recupere' | t) }}
                 </div>
               </div>
               <div class="card-content">
                 <div class="card-meta">
-                  <span class="meta-label">Publié par</span>
+                  <span class="meta-label">{{ 'list.publie_par' | t }}</span>
                   <span class="meta-value">
                     {{ publication | publisher }}
                   </span>
                 </div>
                 <div class="card-meta">
-                  <span class="meta-label">Date</span>
+                  <span class="meta-label">{{ 'verify.date' | t }}</span>
                   <span class="meta-value">{{ publication.created_at | date:'dd MMM yyyy' }}</span>
                 </div>
                 <div class="card-meta">
-                  <span class="meta-label">Téléphone</span>
+                  <span class="meta-label">{{ 'register.telephone' | t }}</span>
                   <span class="meta-value">{{ publication.user?.Phone ?? '—' }}</span>
                 </div>
                 <div class="card-divider"></div>
                 <div class="card-meta">
-                  <span class="meta-label">Prénom</span>
+                  <span class="meta-label">{{ 'landing.first_name' | t }}</span>
                   <span class="meta-value highlight">{{ publication.OwnerFirstName }}</span>
                 </div>
                 <div class="card-meta">
-                  <span class="meta-label">Nom</span>
+                  <span class="meta-label">{{ 'landing.last_name' | t }}</span>
                   <span class="meta-value highlight">{{ publication.OwnerLastName }}</span>
                 </div>
                 <div class="card-actions">
                   <button class="btn-delete"
                     (click)="deletePublication(publication.uuid)">
-                    <i class="fas fa-trash-alt"></i> Supprimer
+                    <i class="fas fa-trash-alt"></i> {{ 'lostdecl.supprimer' | t }}
                   </button>
                   <button class="btn-status"
                     (click)="toggleStatus(publication)"
                     [ngClass]="publication.statut === 'récupéré' ? 'btn-status-green' : 'btn-status-orange'"
-                    title="Cliquer pour changer le statut">
+                    [title]="'mypub.cliquer_pour_changer_le_statut' | t">
                     <i class="fas"
                       [ngClass]="publication.statut === 'récupéré' ? 'fa-check-circle' : 'fa-times-circle'">
                     </i>
-                    {{ publication.statut === 'récupéré' ? 'Récupéré' : 'Non récupéré' }}
+                    {{ publication.statut === 'récupéré' ? ('landing.status_recovered' | t) : ('mypub.non_recupere' | t) }}
                   </button>
                 </div>
               </div>

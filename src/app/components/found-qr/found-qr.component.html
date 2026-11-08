@@ -11,7 +11,7 @@
 
     <!-- Bouton fermer -->
     <button class="btn-close" (click)="navigateToHome()"
-      aria-label="Fermer">
+      [aria-label]="'foundqr.fermer' | t">
       <i class="fas fa-times"></i>
     </button>
 
@@ -22,16 +22,16 @@
       </a>
       <div class="card-badge">
         <i class="fas fa-map-marker-alt"></i>
-        Document trouvé
+        {{ 'foundqr.document_trouve' | t }}
       </div>
-      <h2>Document Retrouvé !</h2>
-      <p>Entrez votre numéro de téléphone pour que le propriétaire puisse vous contacter et récupérer son document.</p>
+      <h2>{{ 'foundqr.document_retrouve' | t }}</h2>
+      <p>{{ 'foundqr.entrez_votre_numero_de_telephone_pour' | t }}</p>
     </div>
 
     <!-- Info box -->
     <div class="info-box">
       <i class="fas fa-shield-alt"></i>
-      <span>Votre numéro sera transmis uniquement au propriétaire du document</span>
+      <span>{{ 'foundqr.votre_numero_sera_transmis_uniquement_au' | t }}</span>
     </div>
 
     <!-- Formulaire -->
@@ -39,7 +39,7 @@
 
       <div class="field-group">
         <label for="finderPhone" class="required">
-          <i class="fas fa-phone"></i> Numéro de téléphone
+          <i class="fas fa-phone"></i> {{ 'foundqr.numero_de_telephone' | t }}
         </label>
         <div class="input-wrap">
           <span class="input-prefix">🇸🇳</span>
@@ -58,12 +58,12 @@
           <div>
             @if (phoneInput.errors?.['required']) {
               <small class="error-text">
-                <i class="fas fa-exclamation-circle"></i> Ce champ est requis
+                <i class="fas fa-exclamation-circle"></i> {{ 'foundqr.ce_champ_est_requis' | t }}
               </small>
             }
             @if (phoneInput.errors?.['pattern']) {
               <small class="error-text">
-                <i class="fas fa-exclamation-circle"></i> Format invalide. Ex: +221771234567
+                <i class="fas fa-exclamation-circle"></i> {{ 'foundqr.format_invalide_ex_221771234567' | t }}
               </small>
             }
           </div>
@@ -74,11 +74,11 @@
         [disabled]="isLoading || !phoneForm.valid">
         @if (!isLoading) {
           <i class="fas fa-paper-plane"></i>
-          Valider et notifier le propriétaire
+          {{ 'foundqr.valider_et_notifier_le_proprietaire' | t }}
         }
         @if (isLoading) {
           <div class="spinner-border" role="status"></div>
-          Envoi en cours...
+          {{ 'foundqr.envoi_en_cours' | t }}
         }
       </button>
 
@@ -87,7 +87,7 @@
     <!-- Footer -->
     <p class="card-footer-text">
       <i class="fas fa-lock"></i>
-      Vos données sont protégées et ne seront pas stockées
+      {{ 'foundqr.vos_donnees_sont_protegees_et_ne' | t }}
     </p>
 
   </div>

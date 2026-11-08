@@ -1,3 +1,5 @@
+import { I18nService } from '../../../core/i18n/i18n.service';
+import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 import { ChangeDetectionStrategy, Component, OnInit, computed, inject, signal } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -19,7 +21,7 @@ import { CitizenBadges } from '../citizen-badges.service';
  */
 @Component({
   selector: 'app-my-qr-codes',
-  imports: [DatePipe, ReactiveFormsModule, StatusBadgeComponent, LoadingComponent, EmptyStateComponent, ErrorStateComponent],
+  imports: [TranslatePipe, DatePipe, ReactiveFormsModule, StatusBadgeComponent, LoadingComponent, EmptyStateComponent, ErrorStateComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './my-qr-codes.component.html',
   styles: `
@@ -33,6 +35,7 @@ import { CitizenBadges } from '../citizen-badges.service';
   `,
 })
 export class MyQrCodesComponent implements OnInit {
+  private readonly i18n = inject(I18nService);
   private readonly api = inject(CitizenApi);
   private readonly notify = inject(NotifyService);
   private readonly sanitizer = inject(DomSanitizer);
@@ -74,7 +77,7 @@ export class MyQrCodesComponent implements OnInit {
         this.showForm.set(list.length === 0);
       },
       error: (e) => {
-        this.error.set(apiErrorMessage(e, 'Impossible de charger vos QR codes.'));
+        this.error.set(apiErrorMessage(e, this.i18n.t('myqr.impossible_de_charger_vos_qr_codes')));
         this.loading.set(false);
       },
     });
@@ -93,7 +96,7 @@ export class MyQrCodesComponent implements OnInit {
         this.form.reset();
         this.showForm.set(false);
         this.remember(tag);
-        this.notify.success('QR code créé : imprimez-le et collez-le au dos de la pochette.');
+        this.notify.success(this.i18n.t('myqr.qr_code_cree_imprimez_le_et'));
         this.load();
       },
       error: (e: HttpErrorResponse) => {
@@ -101,7 +104,7 @@ export class MyQrCodesComponent implements OnInit {
         if (e.status === 402) {
           this.paymentNeeded();
         } else {
-          void this.notify.error(e, 'Création impossible');
+          void this.notify.error(e, this.i18n.t('myqr.creation_impossible'));
         }
       },
     });
@@ -133,8 +136,8 @@ export class MyQrCodesComponent implements OnInit {
 
   async renew(tag: DocumentTagView): Promise<void> {
     const ok = await this.notify.confirm({
-      title: 'Renouveler ce QR code ?',
-      text: 'À faire si l’étiquette est abîmée ou perdue. L’ancien QR sera désactivé.',
+      title: this.i18n.t('myqr.renouveler_ce_qr_code'),
+      text: this.i18n.t('myqr.a_faire_si_l_etiquette_est'),
       confirmText: 'Renouveler',
     });
     if (!ok) {
@@ -145,7 +148,7 @@ export class MyQrCodesComponent implements OnInit {
       next: (res) => {
         this.busy.set(null);
         this.remember(res.tag);
-        this.notify.success('Nouveau QR code prêt à imprimer.');
+        this.notify.success(this.i18n.t('myqr.nouveau_qr_code_pret_a_imprimer'));
         this.load();
       },
       error: (e: HttpErrorResponse) => {
@@ -161,8 +164,8 @@ export class MyQrCodesComponent implements OnInit {
 
   async revoke(tag: DocumentTagView): Promise<void> {
     const ok = await this.notify.confirm({
-      title: 'Désactiver ce QR code ?',
-      text: 'Un scan de ce QR n’enverra plus d’alerte. Cette action est définitive.',
+      title: this.i18n.t('myqr.desactiver_ce_qr_code'),
+      text: this.i18n.t('myqr.un_scan_de_ce_qr_n'),
       confirmText: 'Désactiver',
       danger: true,
     });
@@ -173,7 +176,7 @@ export class MyQrCodesComponent implements OnInit {
     this.api.revokeTag(tag.uuid).subscribe({
       next: () => {
         this.busy.set(null);
-        this.notify.success('QR code désactivé.');
+        this.notify.success(this.i18n.t('myqr.qr_code_desactive'));
         this.load();
       },
       error: (e) => {
@@ -194,9 +197,9 @@ export class MyQrCodesComponent implements OnInit {
     this.badges.refresh();
     void this.notify
       .confirm({
-        title: 'Paiement requis',
-        text: 'Le renouvellement du QR code est payant. Réglez-le avec Wave ; le nouveau QR sera actif dès le paiement confirmé.',
-        confirmText: 'Aller aux paiements',
+        title: this.i18n.t('myqr.paiement_requis'),
+        text: this.i18n.t('myqr.le_renouvellement_du_qr_code_est'),
+        confirmText: this.i18n.t('myqr.aller_aux_paiements'),
       })
       .then((go) => go && this.router.navigate(['/mon-espace/paiements']));
   }

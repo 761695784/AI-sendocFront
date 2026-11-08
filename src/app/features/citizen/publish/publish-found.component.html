@@ -4,15 +4,15 @@
   <!-- ── Bandeau ── -->
   <section class="cf-hero">
     <div class="cf-hero__inner">
-      <span class="cf-badge"><i class="fas fa-hands-helping" aria-hidden="true"></i> Document trouvé</span>
-      <h1>Publier un document trouvé</h1>
-      <p>Photographiez la pièce : DocTrack lit les informations, masque les numéros sur la photo publique et prévient son propriétaire.</p>
+      <span class="cf-badge"><i class="fas fa-hands-helping" aria-hidden="true"></i> {{ 'foundqr.document_trouve' | t }}</span>
+      <h1>{{ 'faq.a4_link' | t }}</h1>
+      <p>{{ 'publish.photographiez_la_piece_doctrack_lit_les' | t }}</p>
       @if (!result()) {
-        <ol class="cf-progress" aria-label="Étapes">
-          <li><b>1</b> Photo</li>
-          <li><b>2</b> Informations</li>
-          <li><b>3</b> Lieu</li>
-          <li><b>4</b> Remise</li>
+        <ol class="cf-progress" [aria-label]="'declare.etapes' | t">
+          <li><b>1</b> {{ 'publish.photo' | t }}</li>
+          <li><b>2</b> {{ 'publish.informations' | t }}</li>
+          <li><b>3</b> {{ 'detail.lieu' | t }}</li>
+          <li><b>4</b> {{ 'publish.remise' | t }}</li>
         </ol>
       }
     </div>
@@ -24,29 +24,29 @@
       <div class="cf-card" style="max-width: 760px; margin: 0 auto">
         <div class="cf-success">
           <span class="cf-success__icon"><i class="fas fa-check" aria-hidden="true"></i></span>
-          <h2>Merci pour votre geste !</h2>
+          <h2>{{ 'tagfound.merci_pour_votre_geste' | t }}</h2>
           <p>{{ r.message }}</p>
 
           @if (r.document.reference) {
             <div class="cf-ticket">
-              <small>Référence de la publication</small>
+              <small>{{ 'publish.reference_de_la_publication' | t }}</small>
               <span class="ref dt-mono">{{ r.document.reference }}</span>
-              <span class="sub">Conservez-la : elle permet de suivre ce document.</span>
+              <span class="sub">{{ 'publish.conservez_la_elle_permet_de_suivre' | t }}</span>
             </div>
           }
 
           @if (r.collection?.structure; as s) {
             <div class="dt-callout dt-callout--info text-start mx-auto" style="max-width: 30rem">
               <i class="fas fa-phone" aria-hidden="true"></i>
-              <div><strong>{{ s.name }}</strong> va vous appeler pour organiser la remise du document.
-                @if (s.phone) { Tél. <a [href]="'tel:' + s.phone">{{ s.phone }}</a> }</div>
+              <div><strong>{{ s.name }}</strong> {{ 'publish.va_vous_appeler_pour_organiser_la' | t }}
+                @if (s.phone) { {{ 'rf.phone_short' | t }} <a [href]="'tel:' + s.phone">{{ s.phone }}</a> }</div>
             </div>
           }
-          <p class="small dt-muted mt-3 mb-0">Si le propriétaire vous demande le document, vous serez prévenu : vous pourrez accepter ou refuser.</p>
+          <p class="small dt-muted mt-3 mb-0">{{ 'publish.si_le_proprietaire_vous_demande_le' | t }}</p>
 
           <div class="cf-actions">
-            <a routerLink="/mon-espace/trouvailles" class="cf-btn cf-btn--primary"><i class="fas fa-list" aria-hidden="true"></i> Suivre mes documents trouvés</a>
-            <button type="button" class="cf-btn cf-btn--ghost" (click)="another()"><i class="fas fa-plus" aria-hidden="true"></i> Publier un autre document</button>
+            <a routerLink="/mon-espace/trouvailles" class="cf-btn cf-btn--primary"><i class="fas fa-list" aria-hidden="true"></i> {{ 'publish.suivre_mes_documents_trouves' | t }}</a>
+            <button type="button" class="cf-btn cf-btn--ghost" (click)="another()"><i class="fas fa-plus" aria-hidden="true"></i> {{ 'publish.publier_un_autre_document' | t }}</button>
           </div>
         </div>
       </div>
@@ -58,8 +58,8 @@
             <header class="cf-card__head">
               <span class="cf-num">1</span>
               <div>
-                <h2>Photo du document</h2>
-                <p>Posez la pièce à plat, bien éclairée, sans reflet.</p>
+                <h2>{{ 'publish.photo_du_document' | t }}</h2>
+                <p>{{ 'publish.posez_la_piece_a_plat_bien' | t }}</p>
               </div>
             </header>
             <div class="cf-card__body">
@@ -67,39 +67,39 @@
                 <div class="cf-drops">
                   <label class="cf-drop">
                     <span class="cf-drop__icon"><i class="fas fa-camera" aria-hidden="true"></i></span>
-                    <strong>Prendre une photo</strong>
-                    <small>Avec l'appareil photo du téléphone</small>
+                    <strong>{{ 'publish.prendre_une_photo' | t }}</strong>
+                    <small>{{ 'publish.avec_l_appareil_photo_du_telephone' | t }}</small>
                     <input type="file" accept="image/*" capture="environment" hidden (change)="onPhoto($event)" />
                   </label>
                   <label class="cf-drop cf-drop--alt">
                     <span class="cf-drop__icon"><i class="fas fa-image" aria-hidden="true"></i></span>
-                    <strong>Choisir une image</strong>
-                    <small>JPG, PNG ou WEBP</small>
+                    <strong>{{ 'publish.choisir_une_image' | t }}</strong>
+                    <small>{{ 'publish.jpg_png_ou_webp' | t }}</small>
                     <input type="file" accept="image/jpeg,image/png,image/webp" hidden (change)="onPhoto($event)" />
                   </label>
                 </div>
               } @else {
                 <div class="cf-scan">
                   <div>
-                    <div class="cf-scan__label"><i class="fas fa-lock me-1" aria-hidden="true"></i> Votre photo (reste privée)</div>
-                    <img [src]="photoUrl()" alt="Photo du document" />
+                    <div class="cf-scan__label"><i class="fas fa-lock me-1" aria-hidden="true"></i> {{ 'publish.votre_photo_reste_privee' | t }}</div>
+                    <img [src]="photoUrl()" [alt]="'publish.photo_du_document' | t" />
                   </div>
                   <div>
                     @switch (scanState()) {
                       @case ('reading') {
-                        <div class="cf-scan__label">Lecture en cours</div>
+                        <div class="cf-scan__label">{{ 'publish.lecture_en_cours' | t }}</div>
                         <div class="cf-reading">
                           <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
-                          <span>Lecture de la pièce… (quelques secondes)</span>
+                          <span>{{ 'publish.lecture_de_la_piece_quelques_secondes' | t }}</span>
                         </div>
                       }
                       @case ('read') {
-                        <div class="cf-scan__label"><i class="fas fa-eye me-1" aria-hidden="true"></i> Ce que verra le public</div>
+                        <div class="cf-scan__label"><i class="fas fa-eye me-1" aria-hidden="true"></i> {{ 'publish.ce_que_verra_le_public' | t }}</div>
                         @if (scan()?.preview_url) {
-                          <img [src]="scan()!.preview_url" alt="Aperçu masqué" />
-                          <small class="dt-muted d-block mt-1">{{ scan()?.masked_regions ?? 0 }} zone(s) masquée(s) : numéros, dates, bande codée. La photo publiée est en plus floutée.</small>
+                          <img [src]="scan()!.preview_url" [alt]="'publish.apercu_masque' | t" />
+                          <small class="dt-muted d-block mt-1">{{ scan()?.masked_regions ?? 0 }} {{ 'publish.zone_s_masquee_s_numeros_dates' | t }}</small>
                         } @else {
-                          <p class="small dt-muted">La photo publiée sera floutée.</p>
+                          <p class="small dt-muted">{{ 'publish.la_photo_publiee_sera_floutee' | t }}</p>
                         }
                       }
                       @default {
@@ -119,10 +119,10 @@
                         <span>{{ c.message }}</span>
                       </div>
                     }
-                    <div class="cf-check cf-check--info"><i class="fas fa-pen" aria-hidden="true"></i><span>Vérifiez les champs surlignés en vert avant de publier.</span></div>
+                    <div class="cf-check cf-check--info"><i class="fas fa-pen" aria-hidden="true"></i><span>{{ 'publish.verifiez_les_champs_surlignes_en_vert' | t }}</span></div>
                   </div>
                 }
-                <button type="button" class="cf-link" (click)="retake()"><i class="fas fa-redo me-1" aria-hidden="true"></i> Reprendre la photo</button>
+                <button type="button" class="cf-link" (click)="retake()"><i class="fas fa-redo me-1" aria-hidden="true"></i> {{ 'publish.reprendre_la_photo' | t }}</button>
               }
               @if (photoError()) { <small class="dt-error">{{ photoError() }}</small> }
             </div>
@@ -133,32 +133,32 @@
             <header class="cf-card__head">
               <span class="cf-num">2</span>
               <div>
-                <h2>Informations inscrites sur la pièce</h2>
-                <p>Pré-remplies par la lecture automatique : vérifiez-les.</p>
+                <h2>{{ 'publish.informations_inscrites_sur_la_piece' | t }}</h2>
+                <p>{{ 'publish.pre_remplies_par_la_lecture_automatique' | t }}</p>
               </div>
             </header>
             <div class="cf-card__body">
               <div class="row g-3">
                 <div class="col-md-6">
-                  <label for="type" class="dt-required">Type de document</label>
+                  <label for="type" class="dt-required">{{ 'detail.type_de_document' | t }}</label>
                   <select id="type" class="form-select" formControlName="document_type_id" [class.prefilled]="isPrefilled('document_type_id')">
-                    <option value="" disabled>Choisir…</option>
+                    <option value="" disabled>{{ 'declare.choisir' | t }}</option>
                     @for (t of types(); track t.id) { <option [value]="t.id">{{ t.TypeName }}</option> }
                   </select>
                   @if (fieldError(form.controls.document_type_id, 'Le type'); as err) { <small class="dt-error">{{ err }}</small> }
                 </div>
                 <div class="col-md-6">
-                  <label for="number">Numéro de la pièce</label>
+                  <label for="number">{{ 'publish.numero_de_la_piece' | t }}</label>
                   <input id="number" class="form-control dt-mono" formControlName="DocIdentification" autocomplete="off" [class.prefilled]="isPrefilled('DocIdentification')" />
-                  <small class="form-text">Jamais affiché en entier au public ; il sert à retrouver le propriétaire.</small>
+                  <small class="form-text">{{ 'publish.jamais_affiche_en_entier_au_public' | t }}</small>
                 </div>
                 <div class="col-md-6">
-                  <label for="last" class="dt-required">Nom du propriétaire</label>
+                  <label for="last" class="dt-required">{{ 'publish.nom_du_proprietaire' | t }}</label>
                   <input id="last" class="form-control" formControlName="OwnerLastName" autocomplete="off" [class.prefilled]="isPrefilled('OwnerLastName')" />
                   @if (fieldError(form.controls.OwnerLastName, 'Le nom'); as err) { <small class="dt-error">{{ err }}</small> }
                 </div>
                 <div class="col-md-6">
-                  <label for="first" class="dt-required">Prénom(s)</label>
+                  <label for="first" class="dt-required">{{ 'declare.prenom_s' | t }}</label>
                   <input id="first" class="form-control" formControlName="OwnerFirstName" autocomplete="off" [class.prefilled]="isPrefilled('OwnerFirstName')" />
                   @if (fieldError(form.controls.OwnerFirstName, 'Le prénom'); as err) { <small class="dt-error">{{ err }}</small> }
                 </div>
@@ -171,21 +171,21 @@
             <header class="cf-card__head">
               <span class="cf-num">3</span>
               <div>
-                <h2>Où l'avez-vous trouvé ?</h2>
-                <p>Le lieu aide à choisir la structure officielle la plus proche.</p>
+                <h2>{{ 'tagfound.ou_l_avez_vous_trouve' | t }}</h2>
+                <p>{{ 'publish.le_lieu_aide_a_choisir_la' | t }}</p>
               </div>
             </header>
             <div class="cf-card__body">
               <div class="row g-3">
                 <div class="col-md-6">
-                  <label for="place" class="dt-required">Lieu</label>
-                  <input id="place" class="form-control" formControlName="Location" placeholder="Ex. Marché Sandaga, Dakar Plateau" />
+                  <label for="place" class="dt-required">{{ 'detail.lieu' | t }}</label>
+                  <input id="place" class="form-control" formControlName="Location" [placeholder]="'declare.ex_marche_sandaga_dakar_plateau' | t" />
                   @if (fieldError(form.controls.Location, 'Le lieu'); as err) { <small class="dt-error">{{ err }}</small> }
                 </div>
                 <div class="col-md-6">
-                  <label for="dept">Département</label>
+                  <label for="dept">{{ 'publish.departement' | t }}</label>
                   <select id="dept" class="form-select" formControlName="territory_code">
-                    <option value="">Je ne sais pas</option>
+                    <option value="">{{ 'publish.je_ne_sais_pas' | t }}</option>
                     @for (d of departments(); track d.code) {
                       <option [value]="d.code">{{ d.name }}@if (d.parent) { ({{ d.parent.name }}) }</option>
                     }
@@ -195,9 +195,9 @@
               <div class="mt-3 d-flex flex-wrap align-items-center gap-2">
                 <button type="button" class="cf-btn cf-btn--ghost py-2" [disabled]="gpsBusy()" (click)="locate()">
                   <i class="fas fa-location-arrow" aria-hidden="true"></i>
-                  {{ gpsBusy() ? 'Localisation…' : gps() ? 'Position enregistrée' : 'Utiliser ma position actuelle' }}
+                  {{ gpsBusy() ? ('publish.localisation' | t) : gps() ? ('publish.position_enregistree' | t) : ('publish.utiliser_ma_position_actuelle' | t) }}
                 </button>
-                @if (gps(); as g) { <small class="dt-muted">Précision ≈ {{ g.accuracy }} m — sert à choisir la structure la plus proche.</small> }
+                @if (gps(); as g) { <small class="dt-muted">{{ 'publish.precision' | t }} {{ g.accuracy }} {{ 'publish.m_sert_a_choisir_la_structure' | t }}</small> }
                 @if (gpsError()) { <small class="dt-error">{{ gpsError() }}</small> }
               </div>
             </div>
@@ -208,62 +208,62 @@
             <header class="cf-card__head">
               <span class="cf-num">4</span>
               <div>
-                <h2>Remise du document</h2>
-                <p>Comment le document rejoindra son propriétaire.</p>
+                <h2>{{ 'publish.remise_du_document' | t }}</h2>
+                <p>{{ 'publish.comment_le_document_rejoindra_son_propri' | t }}</p>
               </div>
             </header>
             <div class="cf-card__body">
               <div class="form-check">
                 <input class="form-check-input" type="checkbox" id="consent" formControlName="contact_consent" />
                 <label class="form-check-label" for="consent">
-                  J'accepte d'être contacté par la <b>structure officielle la plus proche</b> (commissariat, brigade…) pour lui remettre le document.
+                  {{ 'publish.j_accepte_d_etre_contacte_par' | t }} <b>{{ 'publish.structure_officielle_la_plus_proche' | t }}</b> {{ 'publish.commissariat_brigade_pour_lui_remettre_l' | t }}
                 </label>
               </div>
               @if (form.controls.contact_consent.value) {
                 <div class="row mt-2">
                   <div class="col-md-6">
-                    <label for="phone" class="dt-required">Mon numéro de téléphone</label>
+                    <label for="phone" class="dt-required">{{ 'publish.mon_numero_de_telephone' | t }}</label>
                     <input id="phone" class="form-control" type="tel" inputmode="tel" formControlName="contact_phone" placeholder="77 123 45 67" />
                     @if (fieldError(form.controls.contact_phone, 'Le numéro'); as err) { <small class="dt-error">{{ err }}</small> }
-                    <small class="form-text">Visible uniquement par la structure, jamais publié.</small>
+                    <small class="form-text">{{ 'publish.visible_uniquement_par_la_structure_jama' | t }}</small>
                   </div>
                 </div>
               } @else {
                 <p class="cf-hint mb-0"><i class="fas fa-info-circle" aria-hidden="true"></i>
-                  Vous pourrez aussi remettre le document directement à son propriétaire s'il vous le demande (vous serez prévenu).</p>
+                  {{ 'publish.vous_pourrez_aussi_remettre_le_document' | t }}</p>
               }
             </div>
           </section>
 
           <button type="submit" class="cf-submit" [disabled]="sending() || scanState() === 'reading'">
             <i class="fas fa-paper-plane" aria-hidden="true"></i>
-            {{ sending() ? 'Publication…' : 'Publier le document' }}
+            {{ sending() ? ('publish.publication' | t) : ('publish.publier_le_document' | t) }}
           </button>
         </form>
 
         <!-- ── Colonne d'aide ── -->
-        <aside class="cf-aside" aria-label="Aide">
+        <aside class="cf-aside" [aria-label]="'declare.aide' | t">
           <img class="cf-aside__img" src="/assets/imageformpub.webp" alt="" loading="lazy" />
           <div class="cf-box">
-            <h3><i class="fas fa-lightbulb" aria-hidden="true"></i> Bon à savoir</h3>
+            <h3><i class="fas fa-lightbulb" aria-hidden="true"></i> {{ 'publish.bon_a_savoir' | t }}</h3>
             <ul class="cf-tips">
-              <li><i class="fas fa-check-circle" aria-hidden="true"></i> Votre photo reste privée : le public voit une version masquée et floutée.</li>
-              <li><i class="fas fa-check-circle" aria-hidden="true"></i> Le numéro de la pièce n'est jamais affiché en entier.</li>
-              <li><i class="fas fa-check-circle" aria-hidden="true"></i> Si le propriétaire réclame le document, il reçoit votre numéro et vous recevez le sien (SMS et e-mail). Vous pouvez aussi le déposer dans une structure.</li>
-              <li><i class="fas fa-check-circle" aria-hidden="true"></i> Ne demandez jamais d'argent pour rendre un document.</li>
+              <li><i class="fas fa-check-circle" aria-hidden="true"></i> {{ 'publish.votre_photo_reste_privee_le_public' | t }}</li>
+              <li><i class="fas fa-check-circle" aria-hidden="true"></i> {{ 'publish.le_numero_de_la_piece_n' | t }}</li>
+              <li><i class="fas fa-check-circle" aria-hidden="true"></i> {{ 'publish.si_le_proprietaire_reclame_le_document' | t }}</li>
+              <li><i class="fas fa-check-circle" aria-hidden="true"></i> {{ 'publish.ne_demandez_jamais_d_argent_pour' | t }}</li>
             </ul>
           </div>
           <div class="cf-box">
-            <h3><i class="fas fa-route" aria-hidden="true"></i> Et ensuite ?</h3>
+            <h3><i class="fas fa-route" aria-hidden="true"></i> {{ 'publish.et_ensuite' | t }}</h3>
             <ol class="cf-steps">
-              <li>DocTrack cherche le propriétaire</li>
-              <li>Le propriétaire est prévenu</li>
-              <li>Le document lui est remis en sécurité</li>
+              <li>{{ 'publish.doctrack_cherche_le_proprietaire' | t }}</li>
+              <li>{{ 'publish.le_proprietaire_est_prevenu' | t }}</li>
+              <li>{{ 'publish.le_document_lui_est_remis_en' | t }}</li>
             </ol>
           </div>
           <div class="cf-shield">
             <i class="fas fa-shield-alt" aria-hidden="true"></i>
-            <span>Toute remise se fait après vérification de l'identité du propriétaire.</span>
+            <span>{{ 'publish.toute_remise_se_fait_apres_verification' | t }}</span>
           </div>
         </aside>
       </div>

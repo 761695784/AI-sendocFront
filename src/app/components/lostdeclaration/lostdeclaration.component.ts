@@ -1,7 +1,9 @@
+import { I18nService } from '../../core/i18n/i18n.service';
+import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { FormsModule } from '@angular/forms';
 import { FooterComponent } from './../footer/footer.component';
 import { NavbarComponent } from './../navbar/navbar.component';
-import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DeclarationService } from '../services/declaration.service';
 import { HttpClient } from '@angular/common/http';
@@ -9,12 +11,13 @@ import Swal from 'sweetalert2';
 
 @Component({
     selector: 'app-lostdeclaration',
-    imports: [NavbarComponent, FooterComponent, FormsModule, CommonModule],
+    imports: [TranslatePipe, NavbarComponent, FooterComponent, FormsModule, CommonModule],
     templateUrl: './lostdeclaration.component.html',
     changeDetection: ChangeDetectionStrategy.Eager,
     styleUrl: './lostdeclaration.component.css'
 })
 export class LostdeclarationComponent {
+  private readonly i18n = inject(I18nService);
   declarations: any[] = [];
   trashedDeclarations: any[] = [];
   showTrashedDeclarations: boolean = false;
@@ -41,14 +44,14 @@ export class LostdeclarationComponent {
   // Nouvelle méthode de suppression avec confirmation
   deleteDeclaration(uuid: string) {
     Swal.fire({
-      title: 'Êtes-vous sûr ?',
-      text: "Cette action est irréversible !",
+      title: this.i18n.t('lostdecl.etes_vous_sur'),
+      text: this.i18n.t('lostdecl.cette_action_est_irreversible'),
       icon: 'warning',
       showCancelButton: true,
       confirmButtonColor: '#3085d6',
       cancelButtonColor: '#d33',
-      confirmButtonText: 'Oui, supprimer !',
-      cancelButtonText: 'Annuler'
+      confirmButtonText: this.i18n.t('lostdecl.oui_supprimer'),
+      cancelButtonText: this.i18n.t('rf.cancel')
     }).then((result) => {
       if (result.isConfirmed) {
         // Si l'utilisateur confirme, effectuer la suppression

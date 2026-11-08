@@ -1,3 +1,5 @@
+import { I18nService } from '../../core/i18n/i18n.service';
+import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { ChangeDetectionStrategy, Component, ElementRef, PLATFORM_ID, computed, inject, signal, viewChild } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
@@ -33,28 +35,28 @@ const HIDDEN_PREFIXES = ['/espace', '/admin'];
  */
 @Component({
   selector: 'app-assistant-widget',
-  imports: [RouterLink],
+  imports: [TranslatePipe, RouterLink],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     @if (visible()) {
       @if (!open()) {
-        <button type="button" class="aw-fab" (click)="toggle()" aria-label="Ouvrir l'assistant DocTrack">
+        <button type="button" class="aw-fab" (click)="toggle()" [aria-label]="'assistant.ouvrir_l_assistant_doctrack' | t">
           <i class="fas fa-comment-dots" aria-hidden="true"></i>
           <span class="aw-fab__dot" aria-hidden="true"></span>
-          <span class="aw-fab__label">Une question ?</span>
+          <span class="aw-fab__label">{{ 'assistant.une_question' | t }}</span>
         </button>
       } @else {
-        <section class="aw-panel" role="dialog" aria-label="Assistant DocTrack" aria-modal="false">
+        <section class="aw-panel" role="dialog" [aria-label]="'assistant.assistant_doctrack' | t" aria-modal="false">
           <header class="aw-head">
             <div class="aw-head__avatar" aria-hidden="true"><i class="fas fa-robot"></i></div>
             <div class="aw-head__titles">
-              <strong>Assistant DocTrack</strong>
-              <span>Réponses automatiques · vérifiez les informations importantes</span>
+              <strong>{{ 'assistant.assistant_doctrack' | t }}</strong>
+              <span>{{ 'assistant.reponses_automatiques_verifiez_les_infor' | t }}</span>
             </div>
-            <button type="button" class="aw-icon" (click)="restart()" title="Nouvelle conversation" aria-label="Nouvelle conversation">
+            <button type="button" class="aw-icon" (click)="restart()" [title]="'assistant.nouvelle_conversation' | t" [aria-label]="'assistant.nouvelle_conversation' | t">
               <i class="fas fa-redo-alt" aria-hidden="true"></i>
             </button>
-            <button type="button" class="aw-icon" (click)="toggle()" aria-label="Fermer l'assistant">
+            <button type="button" class="aw-icon" (click)="toggle()" [aria-label]="'assistant.fermer_l_assistant' | t">
               <i class="fas fa-times" aria-hidden="true"></i>
             </button>
           </header>
@@ -88,25 +90,25 @@ const HIDDEN_PREFIXES = ['/espace', '/admin'];
                   }
                   @case ('login_required') {
                     <div class="aw-links">
-                      <a routerLink="/connexion" (click)="onNavigate()" class="aw-link"><i class="fas fa-sign-in-alt" aria-hidden="true"></i> Se connecter</a>
-                      <a routerLink="/inscription" (click)="onNavigate()" class="aw-link"><i class="fas fa-user-plus" aria-hidden="true"></i> Créer un compte</a>
+                      <a routerLink="/connexion" (click)="onNavigate()" class="aw-link"><i class="fas fa-sign-in-alt" aria-hidden="true"></i> {{ 'register.se_connecter' | t }}</a>
+                      <a routerLink="/inscription" (click)="onNavigate()" class="aw-link"><i class="fas fa-user-plus" aria-hidden="true"></i> {{ 'about.creer_un_compte' | t }}</a>
                     </div>
                   }
                   @case ('declaration_created') {
                     <div class="aw-links">
-                      <a routerLink="/mon-espace" (click)="onNavigate()" class="aw-link"><i class="fas fa-folder-open" aria-hidden="true"></i> Voir ma déclaration {{ card.data['reference'] }}</a>
+                      <a routerLink="/mon-espace" (click)="onNavigate()" class="aw-link"><i class="fas fa-folder-open" aria-hidden="true"></i> {{ 'assistant.voir_ma_declaration' | t }} {{ card.data['reference'] }}</a>
                     </div>
                   }
                   @case ('open_form') {
                     <div class="aw-links">
-                      <a routerLink="/publier" (click)="onNavigate()" class="aw-link"><i class="fas fa-camera" aria-hidden="true"></i> Ouvrir le formulaire de publication</a>
+                      <a routerLink="/publier" (click)="onNavigate()" class="aw-link"><i class="fas fa-camera" aria-hidden="true"></i> {{ 'assistant.ouvrir_le_formulaire_de_publication' | t }}</a>
                     </div>
                   }
                 }
               }
             }
             @if (sending()) {
-              <div class="aw-msg aw-typing" aria-label="L'assistant écrit"><span></span><span></span><span></span></div>
+              <div class="aw-msg aw-typing" [aria-label]="'assistant.l_assistant_ecrit' | t"><span></span><span></span><span></span></div>
             }
           </div>
 
@@ -119,11 +121,11 @@ const HIDDEN_PREFIXES = ['/espace', '/admin'];
           }
 
           <form class="aw-input" (submit)="$event.preventDefault(); sendTyped(input)">
-            <label class="visually-hidden" for="aw-text">Votre question</label>
-            <input #input id="aw-text" type="text" maxlength="500" autocomplete="off" placeholder="Posez votre question…" [disabled]="sending()">
-            <button type="submit" [disabled]="sending()" aria-label="Envoyer"><i class="fas fa-paper-plane" aria-hidden="true"></i></button>
+            <label class="visually-hidden" for="aw-text">{{ 'assistant.votre_question' | t }}</label>
+            <input #input id="aw-text" type="text" maxlength="500" autocomplete="off" [placeholder]="'assistant.posez_votre_question' | t" [disabled]="sending()">
+            <button type="submit" [disabled]="sending()" [aria-label]="'assistant.envoyer' | t"><i class="fas fa-paper-plane" aria-hidden="true"></i></button>
           </form>
-          <p class="aw-foot">Ne partagez jamais le numéro de votre pièce, un mot de passe ou un code reçu par SMS.</p>
+          <p class="aw-foot">{{ 'assistant.ne_partagez_jamais_le_numero_de' | t }}</p>
         </section>
       }
     }
@@ -185,6 +187,7 @@ const HIDDEN_PREFIXES = ['/espace', '/admin'];
   `,
 })
 export class AssistantWidgetComponent {
+  private readonly i18n = inject(I18nService);
   private readonly http = inject(HttpClient);
   private readonly router = inject(Router);
   private readonly browser = isPlatformBrowser(inject(PLATFORM_ID));
@@ -273,8 +276,8 @@ export class AssistantWidgetComponent {
         this.remember(null);
       }
       this.push([{ from: 'bot', text: e?.status === 429
-        ? 'Vous envoyez beaucoup de messages. Patientez une minute, puis réessayez.'
-        : 'L’assistant ne répond pas pour le moment. Réessayez dans un instant, ou consultez la page « À propos ».' }]);
+        ? this.i18n.t('assistant.vous_envoyez_beaucoup_de_messages_patien')
+        : this.i18n.t('assistant.l_assistant_ne_repond_pas_pour') }]);
     } finally {
       this.sending.set(false);
     }

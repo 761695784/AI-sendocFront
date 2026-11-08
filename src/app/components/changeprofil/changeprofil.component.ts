@@ -1,5 +1,7 @@
+import { I18nService } from '../../core/i18n/i18n.service';
+import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { assetUrl } from './../services/imageUrl';
-import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit, ChangeDetectionStrategy, inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { NavbarComponent } from '../navbar/navbar.component';
@@ -9,13 +11,14 @@ import Swal from 'sweetalert2';
 
 @Component({
     selector: 'app-changeprofil',
-    imports: [NavbarComponent, FormsModule, ReactiveFormsModule, CommonModule],
+    imports: [TranslatePipe, NavbarComponent, FormsModule, ReactiveFormsModule, CommonModule],
     templateUrl: './changeprofil.component.html',
     styleUrls: ['./changeprofil.component.css'],
     changeDetection: ChangeDetectionStrategy.Eager,
     schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class ChangeprofilComponent implements OnInit {
+  private readonly i18n = inject(I18nService);
 
   profileForm: FormGroup;
   isLoading = false;
@@ -91,8 +94,8 @@ export class ChangeprofilComponent implements OnInit {
     if (!this.profileForm.valid) {
       Swal.fire({
         icon: 'warning',
-        title: 'Formulaire invalide',
-        text: 'Veuillez remplir tous les champs requis.',
+        title: this.i18n.t('profile.formulaire_invalide'),
+        text: this.i18n.t('profile.veuillez_remplir_tous_les_champs_requis'),
         confirmButtonText: 'Ok'
       });
       return;
@@ -107,8 +110,8 @@ export class ChangeprofilComponent implements OnInit {
         this.isLoading = false;
         Swal.fire({
           icon: 'success',
-          title: 'Profil mis à jour',
-          text: 'Vos informations ont été mises à jour avec succès !',
+          title: this.i18n.t('profile.profil_mis_a_jour'),
+          text: this.i18n.t('profile.vos_informations_ont_ete_mises_a'),
           confirmButtonText: 'Ok'
         }).then(() => this.router.navigate(['/accueil']));
       },
@@ -116,9 +119,9 @@ export class ChangeprofilComponent implements OnInit {
         this.isLoading = false;
         Swal.fire({
           icon: 'error',
-          title: 'Erreur',
+          title: this.i18n.t('detail.erreur'),
           // Ex. changement d'email sans le mot de passe actuel : le serveur explique quoi faire.
-          text: err?.error?.errors?.current_password?.[0] ?? err?.error?.message ?? 'Une erreur s\'est produite lors de la mise à jour.',
+          text: err?.error?.errors?.current_password?.[0] ?? err?.error?.message ?? this.i18n.t('profile.une_erreur_s_est_produite_lors'),
           confirmButtonText: 'Ok'
         });
       }
@@ -134,16 +137,16 @@ export class ChangeprofilComponent implements OnInit {
         next: () => {
           Swal.fire({
             icon: 'success',
-            title: 'Mot de passe changé',
-            text: 'Votre mot de passe a été changé avec succès !',
+            title: this.i18n.t('profile.mot_de_passe_change'),
+            text: this.i18n.t('profile.votre_mot_de_passe_a_ete'),
             confirmButtonText: 'Ok'
           });
         },
         error: () => {
           Swal.fire({
             icon: 'error',
-            title: 'Erreur mot de passe',
-            text: 'Le mot de passe actuel est incorrect.',
+            title: this.i18n.t('profile.erreur_mot_de_passe'),
+            text: this.i18n.t('profile.le_mot_de_passe_actuel_est'),
             confirmButtonText: 'Ok'
           });
         }
@@ -168,14 +171,14 @@ export class ChangeprofilComponent implements OnInit {
   // ── QR Code : renouveler ──
   renewQrCode() {
     Swal.fire({
-      title: 'Confirmer le renouvellement',
-      text: "Voulez-vous vraiment générer un nouveau QR code ? Vous devrez l'imprimer à nouveau.",
+      title: this.i18n.t('profile.confirmer_le_renouvellement'),
+      text: this.i18n.t('profile.voulez_vous_vraiment_generer_un_nouveau'),
       icon: 'warning',
       showCancelButton: true,
       confirmButtonColor: '#F6A500',
       cancelButtonColor:  '#31287C',
-      confirmButtonText:  'Oui, renouveler',
-      cancelButtonText:   'Annuler'
+      confirmButtonText:  this.i18n.t('profile.oui_renouveler'),
+      cancelButtonText:   this.i18n.t('rf.cancel')
     }).then((result) => {
       if (!result.isConfirmed) return;
 
@@ -189,8 +192,8 @@ export class ChangeprofilComponent implements OnInit {
           }
           Swal.fire({
             icon: 'success',
-            title: 'QR Code renouvelé !',
-            text: 'Votre nouveau QR code est disponible.',
+            title: this.i18n.t('profile.qr_code_renouvele'),
+            text: this.i18n.t('profile.votre_nouveau_qr_code_est_disponible'),
             timer: 3000,
             showConfirmButton: false
           });
@@ -199,8 +202,8 @@ export class ChangeprofilComponent implements OnInit {
           this.isLoading = false;
           Swal.fire({
             icon: 'error',
-            title: 'Erreur',
-            text: 'Échec du renouvellement du QR code.',
+            title: this.i18n.t('detail.erreur'),
+            text: this.i18n.t('profile.echec_du_renouvellement_du_qr_code'),
             confirmButtonText: 'Ok'
           });
         }

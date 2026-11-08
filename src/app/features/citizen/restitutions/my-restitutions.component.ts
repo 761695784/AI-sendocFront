@@ -1,3 +1,5 @@
+import { I18nService } from '../../../core/i18n/i18n.service';
+import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 import { ChangeDetectionStrategy, Component, OnInit, computed, inject, signal } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { CitizenApi } from '../../../core/api/citizen.api';
@@ -25,11 +27,12 @@ const LABELS: Record<string, string> = {
  */
 @Component({
   selector: 'app-my-restitutions',
-  imports: [DatePipe, StatusBadgeComponent, LoadingComponent, EmptyStateComponent, ErrorStateComponent],
+  imports: [TranslatePipe, DatePipe, StatusBadgeComponent, LoadingComponent, EmptyStateComponent, ErrorStateComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './my-restitutions.component.html',
 })
 export class MyRestitutionsComponent implements OnInit {
+  private readonly i18n = inject(I18nService);
   private readonly api = inject(CitizenApi);
   private readonly notify = inject(NotifyService);
   private readonly badges = inject(CitizenBadges);
@@ -55,7 +58,7 @@ export class MyRestitutionsComponent implements OnInit {
         this.loading.set(false);
       },
       error: (e) => {
-        this.error.set(apiErrorMessage(e, 'Impossible de charger vos demandes.'));
+        this.error.set(apiErrorMessage(e, this.i18n.t('myrest.impossible_de_charger_vos_demandes')));
         this.loading.set(false);
       },
     });
@@ -74,20 +77,20 @@ export class MyRestitutionsComponent implements OnInit {
       return;
     }
     const ok = await this.notify.confirm({
-      title: 'Le document a été remis ?',
-      text: 'Votre publication sera marquée « récupéré » et la demande close. Merci pour votre geste !',
-      confirmText: 'Oui, il est remis',
+      title: this.i18n.t('myrest.le_document_a_ete_remis'),
+      text: this.i18n.t('myrest.votre_publication_sera_marquee_recupere'),
+      confirmText: this.i18n.t('myrest.oui_il_est_remis'),
     });
     if (ok) {
-      this.run(r, this.api.markHandedOver(r.document.uuid) as ReturnType<CitizenApi['cancelRestitution']>, 'Merci ! La remise est enregistrée.');
+      this.run(r, this.api.markHandedOver(r.document.uuid) as ReturnType<CitizenApi['cancelRestitution']>, this.i18n.t('myrest.merci_la_remise_est_enregistree'));
     }
   }
 
   async accept(r: RestitutionRequestView): Promise<void> {
     const ok = await this.notify.confirm({
-      title: 'Accepter d’être contacté ?',
-      text: `${r.other_party.first_name ?? 'Le propriétaire'} recevra votre numéro et vous recevrez le sien par SMS. Rencontrez-vous dans un lieu public.`,
-      confirmText: 'J’accepte',
+      title: this.i18n.t('myrest.accepter_d_etre_contacte'),
+      text: this.i18n.t('myrest.accept_text', { name: r.other_party.first_name ?? this.i18n.t('myrest.the_owner') }),
+      confirmText: this.i18n.t('myrest.i_accept'),
     });
     if (ok) {
       this.run(r, this.api.acceptRestitution(r.uuid));
@@ -96,10 +99,10 @@ export class MyRestitutionsComponent implements OnInit {
 
   async decline(r: RestitutionRequestView): Promise<void> {
     const reason = await this.notify.confirmWithNote({
-      title: 'Passer par une structure ?',
-      text: 'Vous ne remettez pas le document vous-même : la structure de police ou de gendarmerie la plus proche le récupérera auprès de vous, et le propriétaire sera prévenu.',
-      label: 'Motif (facultatif)',
-      confirmText: 'Passer par une structure',
+      title: this.i18n.t('myrest.passer_par_une_structure_2'),
+      text: this.i18n.t('myrest.vous_ne_remettez_pas_le_document'),
+      label: this.i18n.t('myrest.motif_facultatif'),
+      confirmText: this.i18n.t('myrest.passer_par_une_structure'),
       danger: false,
     });
     if (reason !== null) {
@@ -108,13 +111,13 @@ export class MyRestitutionsComponent implements OnInit {
   }
 
   async cancel(r: RestitutionRequestView): Promise<void> {
-    const ok = await this.notify.confirm({ title: 'Retirer votre demande ?', confirmText: 'Retirer', danger: true });
+    const ok = await this.notify.confirm({ title: this.i18n.t('myrest.retirer_votre_demande'), confirmText: this.i18n.t('myrest.retirer'), danger: true });
     if (ok) {
       this.run(r, this.api.cancelRestitution(r.uuid));
     }
   }
 
-  private run(r: RestitutionRequestView, call: ReturnType<CitizenApi['cancelRestitution']>, fallback = 'C’est fait.'): void {
+  private run(r: RestitutionRequestView, call: ReturnType<CitizenApi['cancelRestitution']>, fallback = this.i18n.t('myrest.c_est_fait')): void {
     this.busy.set(r.uuid);
     call.subscribe({
       next: (res) => {

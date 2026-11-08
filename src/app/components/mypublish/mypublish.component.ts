@@ -1,8 +1,10 @@
+import { I18nService } from '../../core/i18n/i18n.service';
+import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { PublisherPipe } from '../../shared/pipes/publisher.pipe';
 import { FooterComponent } from './../footer/footer.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NavbarComponent } from './../navbar/navbar.component';
-import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, inject } from '@angular/core';
 import { PublicationsService } from '../services/publications.service';
 import { CommonModule } from '@angular/common';
 import Swal from 'sweetalert2';
@@ -40,12 +42,13 @@ export interface Document {
 
 @Component({
     selector: 'app-mypublish',
-    imports: [PublisherPipe, NavbarComponent, FormsModule, ReactiveFormsModule, FooterComponent, CommonModule],
+    imports: [TranslatePipe, PublisherPipe, NavbarComponent, FormsModule, ReactiveFormsModule, FooterComponent, CommonModule],
     templateUrl: './mypublish.component.html',
     changeDetection: ChangeDetectionStrategy.Eager,
     styleUrls: ['./mypublish.component.css'] // Corrigé de styleUrl à styleUrls
 })
 export class MypublishComponent implements OnInit {
+  private readonly i18n = inject(I18nService);
   publications: Document[] = [];
   trashedPublications: Document[] = []; // Pour stocker les documents supprimés
   showTrashed: boolean = false; // État pour afficher ou masquer les documents supprimés
@@ -91,11 +94,11 @@ loadTrashedDocuments() {
   // Restaurer un document supprimé
   restorePublication(uuid: string): void {
     Swal.fire({
-      title: 'Êtes-vous sûr de vouloir restaurer cette publication ?',
+      title: this.i18n.t('mypub.etes_vous_sur_de_vouloir_restaurer'),
       icon: 'warning',
       showCancelButton: true,
-      confirmButtonText: 'Oui, restaurer!',
-      cancelButtonText: 'Annuler'
+      confirmButtonText: this.i18n.t('mypub.oui_restaurer'),
+      cancelButtonText: this.i18n.t('rf.cancel')
     }).then((result) => {
       if (result.isConfirmed) {
         this.publicationService.restoreDocument(uuid).subscribe({
@@ -115,22 +118,22 @@ loadTrashedDocuments() {
   // Supprimer une publication
   deletePublication(uuid: string): void {
     Swal.fire({
-      title: 'Êtes-vous sûr de vouloir supprimer cette publication ?',
-      text: "Cette action est irréversible !",
+      title: this.i18n.t('mypub.etes_vous_sur_de_vouloir_supprimer'),
+      text: this.i18n.t('lostdecl.cette_action_est_irreversible'),
       icon: 'warning',
       showCancelButton: true,
       confirmButtonColor: '#3085d6',
       cancelButtonColor: '#d33',
-      confirmButtonText: 'Oui, supprimer!',
-      cancelButtonText: 'Annuler'
+      confirmButtonText: this.i18n.t('mypub.oui_supprimer'),
+      cancelButtonText: this.i18n.t('rf.cancel')
     }).then((result) => {
       if (result.isConfirmed) {
         this.publicationService.deletePublication(uuid).subscribe({
           next: () => {
             this.publications = this.publications.filter(publication => publication.uuid !== uuid);
             Swal.fire({
-              title: 'Supprimé!',
-              text: 'Publication supprimée avec succès.',
+              title: this.i18n.t('mypub.supprime'),
+              text: this.i18n.t('mypub.publication_supprimee_avec_succes'),
               icon: 'success',
               timer: 2000,
               showConfirmButton: false
@@ -150,22 +153,22 @@ loadTrashedDocuments() {
       const newStatus = publication.statut === 'récupéré' ? 'non récupéré' : 'récupéré';
 
       Swal.fire({
-        title: 'Êtes-vous sûr ?',
-        text: `Le statut va être changé en "${newStatus}".`,
+        title: this.i18n.t('lostdecl.etes_vous_sur'),
+        text: this.i18n.t('mypub.status_will_change', { s: this.i18n.fromFr(newStatus === 'récupéré' ? 'Récupéré' : 'Non récupéré') }),
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#3085d6',
         cancelButtonColor: '#d33',
-        confirmButtonText: 'Oui, changer!',
-        cancelButtonText: 'Annuler'
+        confirmButtonText: this.i18n.t('mypub.oui_changer'),
+        cancelButtonText: this.i18n.t('rf.cancel')
       }).then((result) => {
         if (result.isConfirmed) {
           this.publicationService.updatePublicationStatus(publication.uuid, newStatus).subscribe({
             next: (response) => {
               publication.statut = response.document.statut;  // Mettre à jour le statut affiché
               Swal.fire({
-                title: 'Mise à jour!',
-                text: `Le statut a été mis à jour à "${publication.statut}".`,
+                title: this.i18n.t('mypub.mise_a_jour'),
+                text: this.i18n.t('mypub.status_changed', { s: this.i18n.fromFr(publication.statut === 'récupéré' ? 'Récupéré' : 'Non récupéré') }),
                 icon: 'success',
                 timer: 2000,
                 showConfirmButton: false

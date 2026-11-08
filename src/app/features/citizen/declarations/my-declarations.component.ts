@@ -1,3 +1,5 @@
+import { I18nService } from '../../../core/i18n/i18n.service';
+import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 import { RestitutionFlowService } from '../../../shared/restitution/restitution-flow.service';
 import { ChangeDetectionStrategy, Component, OnInit, inject, signal } from '@angular/core';
 import { DatePipe } from '@angular/common';
@@ -18,11 +20,12 @@ import { openBlob } from '../../../shared/media/open-blob';
  */
 @Component({
   selector: 'app-my-declarations',
-  imports: [DatePipe, RouterLink, StatusBadgeComponent, LoadingComponent, EmptyStateComponent, ErrorStateComponent],
+  imports: [TranslatePipe, DatePipe, RouterLink, StatusBadgeComponent, LoadingComponent, EmptyStateComponent, ErrorStateComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './my-declarations.component.html',
 })
 export class MyDeclarationsComponent implements OnInit {
+  private readonly i18n = inject(I18nService);
   private readonly api = inject(CitizenApi);
   private readonly restitutionFlow = inject(RestitutionFlowService);
   private readonly declarations = inject(DeclarationService);
@@ -48,14 +51,14 @@ export class MyDeclarationsComponent implements OnInit {
         this.loading.set(false);
       },
       error: (e) => {
-        this.error.set(apiErrorMessage(e, 'Impossible de charger vos déclarations.'));
+        this.error.set(apiErrorMessage(e, this.i18n.t('mydecl.impossible_de_charger_vos_declarations')));
         this.loading.set(false);
       },
     });
   }
 
   typeName(d: MyDeclaration): string {
-    return d.document_type?.TypeName ?? d.Title ?? 'Document';
+    return d.document_type?.TypeName ?? d.Title ?? this.i18n.t('landing.doc_alt');
   }
 
   viewCertificate(d: MyDeclaration): void {
@@ -74,7 +77,7 @@ export class MyDeclarationsComponent implements OnInit {
       },
       error: (e) => {
         this.busy.set(null);
-        void this.notify.error(e, 'Document indisponible');
+        void this.notify.error(e, this.i18n.t('mydecl.document_indisponible'));
       },
     });
   }

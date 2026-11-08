@@ -14,7 +14,7 @@
     <div class="container">
       <!-- Breadcrumb -->
       <div class="breadcrumb">
-        <a href="/liste"><i class="fas fa-arrow-left"></i> Retour aux publications</a>
+        <a href="/liste"><i class="fas fa-arrow-left"></i> {{ 'detail.retour_aux_publications' | t }}</a>
       </div>
       <!-- Card principale -->
       <div class="doc-card">
@@ -25,7 +25,7 @@
               @if (documentDetails.image_blurred || documentDetails.image) {
                 <img
                   [src]="documentDetails.image_blurred || documentDetails.image"
-                  alt="Document"
+                  [alt]="'landing.doc_alt' | t"
                   class="doc-image"
                   loading="lazy"
                   oncontextmenu="return false;" />
@@ -35,7 +35,7 @@
               <div class="doc-status-badge"
                 [ngClass]="documentDetails.statut === 'récupéré' ? 'badge-green' : 'badge-orange'">
                 <i class="fas" [ngClass]="documentDetails.statut === 'récupéré' ? 'fa-check-circle' : 'fa-clock'"></i>
-                {{ documentDetails.statut === 'récupéré' ? 'Récupéré' : 'En attente' }}
+                {{ documentDetails.statut === 'récupéré' ? ('status.collected' | t) : ('status.pending' | t) }}
               </div>
               <!-- Badge type -->
               <div class="doc-type-badge">
@@ -53,11 +53,11 @@
                   <i class="fas fa-hand-holding"></i>
                 </div>
                 <div class="alert-text">
-                  <strong>Ce document vous appartient ?</strong>
+                  <strong>{{ 'detail.ce_document_vous_appartient' | t }}</strong>
                   @if ($any(documentDetails).custody) {
-                    <p>Il est conservé par <b>{{ $any(documentDetails).custody.name }}</b> : faites votre demande, puis présentez-vous avec une pièce d'identité pour le retirer.</p>
+                    <p>{{ 'detail.il_est_conserve_par' | t }} <b>{{ $any(documentDetails).custody.name }}</b> {{ 'detail.faites_votre_demande_puis_presentez_vous' | t }}</p>
                   } @else {
-                    <p>Faites votre demande : après avoir accepté les conditions, vous obtenez le numéro de la personne qui l'a trouvé.</p>
+                    <p>{{ 'detail.faites_votre_demande_apres_avoir_accepte' | t }}</p>
                   }
                 </div>
               </div>
@@ -66,7 +66,7 @@
             <div class="doc-meta">
               <div class="meta-row publisher">
                 <i class="fas fa-user-circle"></i>
-                <span>Publié par
+                <span>{{ 'list.publie_par' | t }}
                   <strong>{{ documentDetails | publisher }}</strong>
                   · {{ documentDetails.created_at | date:'dd/MM/yyyy, HH:mm' }}
                 </span>
@@ -74,30 +74,30 @@
               <div class="meta-divider"></div>
               <div class="meta-row">
                 <div class="meta-item">
-                  <span class="meta-label">Type de document</span>
+                  <span class="meta-label">{{ 'detail.type_de_document' | t }}</span>
                   <span class="meta-value">{{ documentDetails.document_type?.TypeName }}</span>
                 </div>
               </div>
               <div class="meta-row">
                 <div class="meta-item">
-                  <span class="meta-label">Prénom propriétaire</span>
+                  <span class="meta-label">{{ 'detail.prenom_proprietaire' | t }}</span>
                   <span class="meta-value highlight">{{ documentDetails.OwnerFirstName }}</span>
                 </div>
                 <div class="meta-item">
-                  <span class="meta-label">Nom propriétaire</span>
+                  <span class="meta-label">{{ 'detail.nom_proprietaire' | t }}</span>
                   <span class="meta-value highlight">{{ documentDetails.OwnerLastName }}</span>
                 </div>
               </div>
               <div class="meta-row">
                 <div class="meta-item">
                   <span class="meta-label">
-                    <i class="fas fa-map-marker-alt"></i> Lieu
+                    <i class="fas fa-map-marker-alt"></i> {{ 'detail.lieu' | t }}
                   </span>
                   <span class="meta-value">{{ documentDetails.Location }}</span>
                 </div>
                 @if (documentDetails.identification) {
                   <div class="meta-item">
-                    <span class="meta-label">Identification</span>
+                    <span class="meta-label">{{ 'detail.identification' | t }}</span>
                     <span class="meta-value">{{ documentDetails.identification }}</span>
                   </div>
                 }
@@ -111,7 +111,7 @@
                   (click)="requestRestitution()"
                   [disabled]="isRestitutionRequested">
                   <i class="fas fa-hand-holding"></i>
-                  {{ isRestitutionRequested ? 'Demande envoyée ✓' : ($any(documentDetails).custody ? 'Le retirer au guichet' : 'C’est mon document : le récupérer') }}
+                  {{ isRestitutionRequested ? ('detail.demande_envoyee' | t) : ($any(documentDetails).custody ? ('detail.le_retirer_au_guichet' | t) : ('detail.c_est_mon_document_le_recuperer' | t)) }}
                 </button>
               </div>
             }
@@ -119,7 +119,7 @@
             @if (documentDetails.statut === 'récupéré') {
               <div class="recovered-badge">
                 <i class="fas fa-check-circle"></i>
-                <span>Ce document a été récupéré par son propriétaire</span>
+                <span>{{ 'detail.ce_document_a_ete_recupere_par' | t }}</span>
               </div>
             }
           </div>
@@ -130,7 +130,7 @@
         <div class="comments-header">
           <div class="comments-title">
             <i class="fas fa-comments"></i>
-            <h3>Commentaires
+            <h3>{{ 'detail.commentaires' | t }}
               <span class="comments-count">{{ commentaires.length }}</span>
             </h3>
           </div>
@@ -140,7 +140,7 @@
           @if (commentaires.length === 0) {
             <div class="empty-comments">
               <i class="fas fa-comment-slash"></i>
-              <p>Aucun commentaire pour le moment. Soyez le premier !</p>
+              <p>{{ 'detail.aucun_commentaire_pour_le_moment_soyez' | t }}</p>
             </div>
           }
           @for (commentaire of commentaires; track commentaire) {
@@ -164,13 +164,13 @@
             <i class="fas fa-pen comment-input-icon"></i>
             <input class="comment-input"
               [(ngModel)]="newComment"
-              placeholder="Écrire un commentaire..."
+              [placeholder]="'detail.ecrire_un_commentaire' | t"
               (keyup.enter)="addCommentaire()">
             </div>
             <button class="btn-comment" (click)="addCommentaire()"
               [disabled]="isLoading || !newComment.trim()">
               <i class="fas fa-paper-plane"></i>
-              {{ isLoading ? 'Envoi...' : 'Envoyer' }}
+              {{ isLoading ? ('detail.envoi' | t) : ('assistant.envoyer' | t) }}
             </button>
           </div>
         </div>

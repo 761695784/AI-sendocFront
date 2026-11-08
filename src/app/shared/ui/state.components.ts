@@ -1,13 +1,15 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
+import { TranslateFrPipe } from '../../core/i18n/translate.pipe';
 
 /** Indicateur de chargement : <app-loading /> ou <app-loading label="Lecture de la pièce…" />. */
 @Component({
   selector: 'app-loading',
+  imports: [TranslateFrPipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="dt-state" role="status" aria-live="polite">
       <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
-      <span>{{ label() }}</span>
+      <span>{{ label() | tfr }}</span>
     </div>
   `,
   styles: `.dt-state { display: flex; align-items: center; justify-content: center; gap: .6rem; padding: 2rem 1rem; color: #5f6b7a; }`,

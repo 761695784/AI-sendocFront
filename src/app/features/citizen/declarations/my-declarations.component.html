@@ -1,19 +1,19 @@
 <div class="dt-toolbar">
-  <h2>Mes déclarations de perte</h2>
-  <a routerLink="/declarer" class="btn btn-dt"><i class="fas fa-plus me-1" aria-hidden="true"></i> Déclarer une perte</a>
+  <h2>{{ 'mydecl.mes_declarations_de_perte' | t }}</h2>
+  <a routerLink="/declarer" class="btn btn-dt"><i class="fas fa-plus me-1" aria-hidden="true"></i> {{ 'landing.cta_declare' | t }}</a>
 </div>
 
 @if (loading()) {
-  <app-loading label="Chargement de vos déclarations…" />
+  <app-loading [label]="'mydecl.chargement_de_vos_declarations' | t" />
 } @else if (error()) {
   <app-error-state [message]="error()!">
-    <button type="button" class="btn btn-sm btn-outline-danger" (click)="load()">Réessayer</button>
+    <button type="button" class="btn btn-sm btn-outline-danger" (click)="load()">{{ 'mydecl.reessayer' | t }}</button>
   </app-error-state>
 } @else if (items().length === 0) {
   <div class="dt-card">
-    <app-empty-state icon="fa-file-alt" title="Aucune déclaration"
-      text="Vous avez perdu une pièce ? Déclarez-la : DocTrack vous prévient dès qu'un document correspondant est trouvé.">
-      <a routerLink="/declarer" class="btn btn-dt btn-sm mt-2">Déclarer une perte</a>
+    <app-empty-state icon="fa-file-alt" [title]="'mydecl.aucune_declaration' | t"
+      [text]="'mydecl.vous_avez_perdu_une_piece_declarez' | t">
+      <a routerLink="/declarer" class="btn btn-dt btn-sm mt-2">{{ 'landing.cta_declare' | t }}</a>
     </app-empty-state>
   </div>
 } @else {
@@ -24,8 +24,8 @@
           <h3 class="dt-card__title">{{ typeName(d) }} — {{ d.FirstNameInDoc }} {{ d.LastNameInDoc }}</h3>
           <p class="dt-card__meta">
             @if (d.reference) { <span class="dt-mono">{{ d.reference }}</span> · }
-            Déclarée le {{ d.created_at | date: 'd MMMM y' }}
-            {{ d.channel === 'counter' ? '· au guichet' : (d.certified_at ? '· en ligne, certifiée au guichet' : '· en ligne') }}
+            {{ 'mydecl.declaree_le' | t }} {{ d.created_at | date: 'd MMMM y' }}
+            {{ d.channel === 'counter' ? ('mydecl.au_guichet' | t) : (d.certified_at ? ('mydecl.en_ligne_certifiee_au_guichet' | t) : ('mydecl.en_ligne' | t)) }}
           </p>
         </div>
         <app-status-badge [status]="d.status" />
@@ -37,18 +37,18 @@
             <div class="dt-callout dt-callout--success">
               <i class="fas fa-landmark" aria-hidden="true"></i>
               <div>
-                <strong>Bonne nouvelle : votre {{ doc.document_type ?? 'pièce' }} a été retrouvée.</strong>
-                Elle est conservée par <b>{{ doc.custody?.name }}</b>
+                <strong>{{ 'mydecl.bonne_nouvelle_votre' | t }} {{ doc.document_type ?? ('mydecl.piece' | t) }} {{ 'mydecl.a_ete_retrouvee' | t }}</strong>
+                {{ 'mydecl.elle_est_conservee_par' | t }} <b>{{ doc.custody?.name }}</b>
                 @if (doc.custody?.address) { , {{ doc.custody?.address }} }
-                @if (doc.custody?.phone) { — tél. <a [href]="'tel:' + doc.custody?.phone">{{ doc.custody?.phone }}</a> }.
-                <br />Présentez-vous avec une pièce justificative (extrait de naissance, permis, passeport…) et la référence
-                <span class="dt-mono">{{ doc.reference }}</span>. Un proche peut venir avec une procuration.
+                @if (doc.custody?.phone) { {{ 'mydecl.tel' | t }} <a [href]="'tel:' + doc.custody?.phone">{{ doc.custody?.phone }}</a> }.
+                <br />{{ 'mydecl.presentez_vous_avec_une_piece_justificat' | t }}
+                <span class="dt-mono">{{ doc.reference }}</span>{{ 'mydecl.un_proche_peut_venir_avec_une' | t }}
                 <div class="mt-2">
                   @if (doc.restitution_request?.active) {
-                    <span class="small"><i class="fas fa-check me-1" aria-hidden="true"></i>La structure est prévenue de votre passage.</span>
+                    <span class="small"><i class="fas fa-check me-1" aria-hidden="true"></i>{{ 'mydecl.la_structure_est_prevenue_de_votre' | t }}</span>
                   } @else {
                     <button type="button" class="btn btn-sm btn-dt-gold" [disabled]="busy() === doc.uuid" (click)="askRestitution(doc)">
-                      <i class="fas fa-bell me-1" aria-hidden="true"></i> Prévenir la structure de mon passage
+                      <i class="fas fa-bell me-1" aria-hidden="true"></i> {{ 'mydecl.prevenir_la_structure_de_mon_passage' | t }}
                     </button>
                   }
                 </div>
@@ -59,21 +59,21 @@
             <div class="dt-callout dt-callout--success">
               <i class="fas fa-user-check" aria-hidden="true"></i>
               <div>
-                <strong>Votre {{ doc.document_type ?? 'pièce' }} a été trouvée par un citoyen.</strong>
+                <strong>{{ 'mydecl.votre' | t }} {{ doc.document_type ?? ('mydecl.piece' | t) }} {{ 'mydecl.a_ete_trouvee_par_un_citoyen' | t }}</strong>
                 @if (doc.restitution_request?.active) {
-                  {{ doc.restitution_request?.status === 'accepted' ? 'Vous êtes en contact avec le trouveur : son numéro est dans « Remises » et vous l’avez reçu par SMS.' : 'Votre demande est envoyée au trouveur.' }}
+                  {{ doc.restitution_request?.status === 'accepted' ? ('mydecl.vous_etes_en_contact_avec_le' | t) : ('mydecl.votre_demande_est_envoyee_au_trouveur' | t) }}
                   <div class="mt-2">
-                    <button type="button" class="btn btn-sm btn-outline-success" (click)="goToRequests()">Suivre ma demande</button>
+                    <button type="button" class="btn btn-sm btn-outline-success" (click)="goToRequests()">{{ 'mydecl.suivre_ma_demande' | t }}</button>
                   </div>
                 } @else {
-                  Demandez-lui la restitution : après avoir accepté les conditions, vous recevez son numéro et il reçoit le vôtre.
+                  {{ 'mydecl.demandez_lui_la_restitution_apres_avoir' | t }}
                   @if (doc.restitution_request) {
-                    <br /><small>Demande précédente : {{ doc.restitution_request.status === 'declined' ? 'le trouveur préfère passer par une structure' : doc.restitution_request.status === 'expired' ? 'sans réponse' : 'close' }}. Une structure proche peut récupérer le document.</small>
+                    <br /><small>{{ 'mydecl.demande_precedente' | t }} {{ doc.restitution_request.status === 'declined' ? ('mydecl.le_trouveur_prefere_passer_par_une' | t) : doc.restitution_request.status === 'expired' ? ('mydecl.sans_reponse' | t) : ('mydecl.close' | t) }}{{ 'mydecl.une_structure_proche_peut_recuperer_le' | t }}</small>
                   }
                   <div class="mt-2">
                     <button type="button" class="btn btn-sm btn-dt-gold" [disabled]="busy() === doc.uuid" (click)="askRestitution(doc)">
                       <i class="fas fa-hand-holding me-1" aria-hidden="true"></i>
-                      {{ busy() === doc.uuid ? 'Envoi…' : 'Demander la restitution' }}
+                      {{ busy() === doc.uuid ? ('mydecl.envoi' | t) : ('about.demander_la_restitution' | t) }}
                     </button>
                   </div>
                 }
@@ -84,15 +84,15 @@
             <div class="dt-callout dt-callout--info">
               <i class="fas fa-truck" aria-hidden="true"></i>
               <div>
-                <strong>Votre {{ doc.document_type ?? 'pièce' }} a été retrouvée.</strong>
-                Une structure officielle est en train de la récupérer. Vous recevrez un SMS dès qu'elle sera disponible au guichet.
+                <strong>{{ 'mydecl.votre' | t }} {{ doc.document_type ?? ('mydecl.piece' | t) }} {{ 'mydecl.a_ete_retrouvee' | t }}</strong>
+                {{ 'mydecl.une_structure_officielle_est_en_train' | t }}
               </div>
             </div>
           }
           @case ('done') {
             <div class="dt-callout dt-callout--info">
               <i class="fas fa-check-circle" aria-hidden="true"></i>
-              <div><strong>Document restitué.</strong> Merci d'avoir utilisé DocTrack.</div>
+              <div><strong>{{ 'mydecl.document_restitue' | t }}</strong> {{ 'mydecl.merci_d_avoir_utilise_doctrack' | t }}</div>
             </div>
           }
         }
@@ -101,7 +101,7 @@
       @if (d.found_documents.length === 0 && d.status === 'registered') {
         <p class="dt-muted small mt-3 mb-0">
           <i class="fas fa-search me-1" aria-hidden="true"></i>
-          Recherche en cours : vous serez prévenu par SMS et e-mail dès qu'un document correspondant est trouvé.
+          {{ 'mydecl.recherche_en_cours_vous_serez_prevenu' | t }}
         </p>
       }
 
@@ -110,17 +110,17 @@
         <div class="dt-callout dt-callout--success mt-3">
           <i class="fas fa-certificate" aria-hidden="true"></i>
           <div>
-            <strong>Certificat de perte délivré</strong>
-            @if (cert.issuing_organization?.name) { par {{ cert.issuing_organization?.name }} }
-            @if (cert.created_at) { le {{ cert.created_at | date: 'd MMMM y' }} }
-            — N° <span class="dt-mono">{{ cert.certificat_number }}</span>.
+            <strong>{{ 'mydecl.certificat_de_perte_delivre' | t }}</strong>
+            @if (cert.issuing_organization?.name) { {{ 'verify.par' | t }} {{ cert.issuing_organization?.name }} }
+            @if (cert.created_at) { {{ 'mydecl.le' | t }} {{ cert.created_at | date: 'd MMMM y' }} }
+            {{ 'mydecl.n' | t }} <span class="dt-mono">{{ cert.certificat_number }}</span>.
             <div class="mt-2 d-flex flex-wrap gap-2">
               <button type="button" class="btn btn-sm btn-dt" [disabled]="busy() === cert.uuid" (click)="openPdf(cert.uuid, cert.certificat_number)">
-                <i class="fas fa-file-pdf me-1" aria-hidden="true"></i> Ouvrir le certificat
+                <i class="fas fa-file-pdf me-1" aria-hidden="true"></i> {{ 'mydecl.ouvrir_le_certificat' | t }}
               </button>
               @if (d.receipt; as rec) {
                 <button type="button" class="btn btn-sm btn-outline-secondary" [disabled]="busy() === rec.uuid" (click)="openPdf(rec.uuid, rec.certificat_number)">
-                  Récépissé en ligne
+                  {{ 'mydecl.recepisse_en_ligne' | t }}
                 </button>
               }
             </div>
@@ -130,12 +130,11 @@
         <div class="dt-callout dt-callout--info mt-3">
           <i class="fas fa-receipt" aria-hidden="true"></i>
           <div>
-            <strong>Récépissé de déclaration en ligne</strong> — N° <span class="dt-mono">{{ rec.certificat_number }}</span>.
-            Ce n'est pas un certificat de perte : pour l'obtenir, présentez-vous dans un commissariat ou une brigade partenaire
-            avec la référence <span class="dt-mono">{{ d.reference }}</span> et une pièce justifiant de votre identité.
+            <strong>{{ 'declare.recepisse_de_declaration_en_ligne' | t }}</strong> {{ 'mydecl.n' | t }} <span class="dt-mono">{{ rec.certificat_number }}</span>.
+            {{ 'mydecl.ce_n_est_pas_un_certificat' | t }} <span class="dt-mono">{{ d.reference }}</span> {{ 'mydecl.et_une_piece_justifiant_de_votre' | t }}
             <div class="mt-2">
               <button type="button" class="btn btn-sm btn-outline-secondary" [disabled]="busy() === rec.uuid" (click)="openPdf(rec.uuid, rec.certificat_number)">
-                <i class="fas fa-file-pdf me-1" aria-hidden="true"></i> Ouvrir le récépissé
+                <i class="fas fa-file-pdf me-1" aria-hidden="true"></i> {{ 'mydecl.ouvrir_le_recepisse' | t }}
               </button>
             </div>
           </div>
@@ -143,7 +142,7 @@
       } @else if (d.certificat?.uuid) {
         <div class="mt-3">
           <button type="button" class="btn btn-sm btn-outline-secondary" (click)="viewCertificate(d)">
-            <i class="fas fa-file-pdf me-1" aria-hidden="true"></i> Voir le document
+            <i class="fas fa-file-pdf me-1" aria-hidden="true"></i> {{ 'mydecl.voir_le_document' | t }}
           </button>
         </div>
       }

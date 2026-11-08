@@ -7,18 +7,18 @@
     <div class="hero-content">
       <div class="hero-badge">
         <i class="fas fa-search"></i>
-        Plateforme nationale de documents
+        {{ 'list.plateforme_nationale_de_documents' | t }}
       </div>
-      <h1>Documents trouvés au Sénégal</h1>
-      <p>Parcourez les documents publiés par nos citoyens. Si vous reconnaissez votre document, contactez le publicateur ou demandez sa restitution directement depuis la plateforme.</p>
+      <h1>{{ 'list.documents_trouves_au_senegal' | t }}</h1>
+      <p>{{ 'list.parcourez_les_documents_publies_par_nos' | t }}</p>
       <div class="hero-legend">
         <span class="legend-item">
           <span class="legend-dot green"></span>
-          Document récupéré par son propriétaire
+          {{ 'list.document_recupere_par_son_proprietaire' | t }}
         </span>
         <span class="legend-item">
           <span class="legend-dot red"></span>
-          Document en attente de récupération
+          {{ 'list.document_en_attente_de_recuperation' | t }}
         </span>
       </div>
     </div>
@@ -33,16 +33,16 @@
           <i class="fas fa-search search-icon"></i>
           <input
             type="text"
-            placeholder="Rechercher par nom, prénom, type de document..."
+            [placeholder]="'list.rechercher_par_nom_prenom_type_de' | t"
             [(ngModel)]="searchTerm"
             (input)="filterDocuments()"
             />
           </div>
           <button class="search-btn" (click)="filterDocuments()">
-            <i class="fas fa-search"></i> Rechercher
+            <i class="fas fa-search"></i> {{ 'adv.search_title' | t }}
           </button>
           <button class="mypub-btn" (click)="goToMyPublications()">
-            <i class="fas fa-folder-open"></i> Mes publications
+            <i class="fas fa-folder-open"></i> {{ 'list.mes_publications' | t }}
           </button>
         </div>
       </div>
@@ -50,7 +50,7 @@
       <!-- Compteur résultats -->
       <div class="results-info">
         <span class="results-count">
-          <strong>{{ paginatedFilteredDocuments.length }}</strong> document(s) affiché(s)
+          <strong>{{ paginatedFilteredDocuments.length }}</strong> {{ 'list.document_s_affiche_s' | t }}
         </span>
       </div>
 
@@ -62,13 +62,13 @@
             <!-- Statut badge -->
             <div class="card-status-badge"
               [ngClass]="document.statut === 'récupéré' ? 'badge-green' : 'badge-orange'">
-              {{ document.statut === 'récupéré' ? 'Récupéré' : 'Non récupéré' }}
+              {{ document.statut === 'récupéré' ? ('status.collected' | t) : ('mypub.non_recupere' | t) }}
             </div>
             <!-- Image -->
             <div class="image-container">
               @if ((document.image_blurred || document.image) && !brokenImages.has(document.uuid)) {
                 <img loading="lazy"
-                  [src]="document.image_blurred || document.image" alt="document" decoding="async"
+                  [src]="document.image_blurred || document.image" [alt]="'list.document' | t" decoding="async"
                   class="image" oncontextmenu="return false;" (error)="brokenImages.add(document.uuid)" />
               }
               <!-- <div class="blur-overlay"></div> -->
@@ -76,33 +76,33 @@
             </div>
             @if (!(document.image_blurred || document.image) || brokenImages.has(document.uuid)) {
               <p class="no-image">
-                <i class="fas fa-image"></i> Image non disponible
+                <i class="fas fa-image"></i> {{ 'list.image_non_disponible' | t }}
               </p>
             }
             <!-- Contenu -->
             <div class="card-content">
               <div class="published-by">
                 <i class="fas fa-user-circle"></i>
-                Publié par <strong>{{ document | publisher }}</strong>
+                {{ 'list.publie_par' | t }} <strong>{{ document | publisher }}</strong>
                 <span class="pub-date">· {{ document.created_at | date:'dd/MM/yyyy' }}</span>
               </div>
               <div class="card-info">
                 <div class="info-row">
-                  <span class="info-label">Prénom</span>
+                  <span class="info-label">{{ 'landing.first_name' | t }}</span>
                   <span class="info-value">{{ document.OwnerFirstName }}</span>
                 </div>
                 <div class="info-row">
-                  <span class="info-label">Nom</span>
+                  <span class="info-label">{{ 'landing.last_name' | t }}</span>
                   <span class="info-value">{{ document.OwnerLastName }}</span>
                 </div>
               </div>
               <div class="card-actions">
                 <button class="details-btn" (click)="viewDetails(document.uuid)">
-                  <i class="fas fa-eye"></i> Voir détails
+                  <i class="fas fa-eye"></i> {{ 'list.voir_details' | t }}
                 </button>
                 <div class="status-icon"
                   [ngClass]="document.statut === 'récupéré' ? 'status-green' : 'status-red'"
-                  [title]="document.statut === 'récupéré' ? 'Retrouvé' : 'Non retrouvé'">
+                  [title]="document.statut === 'récupéré' ? ('status.found' | t) : ('list.non_retrouve' | t)">
                   <i class="fas" [ngClass]="document.statut === 'récupéré' ? 'fa-check-circle' : 'fa-times-circle'"></i>
                 </div>
               </div>
@@ -114,11 +114,11 @@
       <!-- Pagination -->
       <div class="pagination-controls">
         <button (click)="pageChanged(currentPage - 1)" [disabled]="currentPage === 1">
-          <i class="fas fa-chevron-left"></i> Précédent
+          <i class="fas fa-chevron-left"></i> {{ 'list.precedent' | t }}
         </button>
-        <span>Page <strong>{{ currentPage }}</strong> sur <strong>{{ totalPages }}</strong></span>
+        <span>{{ 'list.page' | t }} <strong>{{ currentPage }}</strong> {{ 'list.sur' | t }} <strong>{{ totalPages }}</strong></span>
         <button (click)="pageChanged(currentPage + 1)" [disabled]="currentPage === totalPages">
-          Suivant <i class="fas fa-chevron-right"></i>
+          {{ 'list.suivant' | t }} <i class="fas fa-chevron-right"></i>
         </button>
       </div>
 

@@ -5,11 +5,14 @@ import { SessionStore } from '../../core/session/session.store';
 import { MEMBERSHIP_ROLE_LABELS } from '../../core/session/session.models';
 
 import { FormsModule } from '@angular/forms';
+import { I18nService } from '../../core/i18n/i18n.service';
+import { TranslatePipe } from '../../core/i18n/translate.pipe';
+import { LanguageSwitcherComponent } from '../../core/i18n/language-switcher.component';
 import { RouterModule } from '@angular/router';
 
 @Component({
     selector: 'app-navbar',
-    imports: [FormsModule, RouterModule],
+    imports: [FormsModule, RouterModule, TranslatePipe, LanguageSwitcherComponent],
     templateUrl: './navbar.component.html',
     changeDetection: ChangeDetectionStrategy.Eager,
     styleUrls: ['./navbar.component.css']
@@ -21,14 +24,16 @@ export class NavbarComponent implements OnInit {
   userInitial = '';
 
   readonly session = inject(SessionStore);
+  private readonly i18n = inject(I18nService);
 
   /** Libellé du profil affiché sous le nom. */
   readonly roleLabel = computed(() => {
+    this.i18n.lang(); // recalculé quand la langue change
     if (this.session.isSuperAdmin()) {
-      return 'Administrateur DocTrack';
+      return this.i18n.t('nav.role_admin');
     }
     const m = this.session.activeMembership();
-    return m ? `${MEMBERSHIP_ROLE_LABELS[m.role] ?? m.role} · ${m.organization.name}` : 'Membre DocTrack';
+    return m ? `${MEMBERSHIP_ROLE_LABELS[m.role] ?? m.role} · ${m.organization.name}` : this.i18n.t('nav.role_member');
   });
 
   constructor(public authService: AuthService, private router: Router) {}

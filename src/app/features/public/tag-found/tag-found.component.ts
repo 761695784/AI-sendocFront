@@ -1,3 +1,5 @@
+import { I18nService } from '../../../core/i18n/i18n.service';
+import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 import { ChangeDetectionStrategy, Component, OnInit, inject, input, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
@@ -17,11 +19,12 @@ import { fieldError, senegalPhoneValidator } from '../../../shared/forms/validat
  */
 @Component({
   selector: 'app-tag-found',
-  imports: [ReactiveFormsModule, RouterLink, NavbarComponent, FooterComponent, LoadingComponent],
+  imports: [TranslatePipe, ReactiveFormsModule, RouterLink, NavbarComponent, FooterComponent, LoadingComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './tag-found.component.html',
 })
 export class TagFoundComponent implements OnInit {
+  private readonly i18n = inject(I18nService);
   private readonly api = inject(CitizenApi);
   private readonly fb = inject(FormBuilder);
 
@@ -54,7 +57,7 @@ export class TagFoundComponent implements OnInit {
         this.loading.set(false);
       },
       error: (e) => {
-        this.view.set(e?.error?.valid === false ? e.error : { valid: false, message: apiErrorMessage(e, 'QR code inconnu.') });
+        this.view.set(e?.error?.valid === false ? e.error : { valid: false, message: apiErrorMessage(e, this.i18n.t('tagfound.qr_code_inconnu')) });
         this.loading.set(false);
       },
     });
@@ -68,7 +71,7 @@ export class TagFoundComponent implements OnInit {
       if (isInSenegal(p)) {
         this.gps.set(p);
       } else {
-        this.gpsError.set('Position hors du Sénégal : décrivez plutôt le lieu.');
+        this.gpsError.set(this.i18n.t('tagfound.position_hors_du_senegal_decrivez_plutot'));
       }
     } catch (e) {
       this.gpsError.set((e as Error).message);
@@ -84,7 +87,7 @@ export class TagFoundComponent implements OnInit {
     }
     const v = this.form.getRawValue();
     if (!v.place.trim() && !this.gps()) {
-      this.error.set('Indiquez le lieu ou partagez votre position.');
+      this.error.set(this.i18n.t('tagfound.indiquez_le_lieu_ou_partagez_votre'));
       return;
     }
     this.error.set(null);
@@ -106,7 +109,7 @@ export class TagFoundComponent implements OnInit {
         },
         error: (e) => {
           this.sending.set(false);
-          this.error.set(apiErrorMessage(e, 'Envoi impossible pour le moment. Réessayez.'));
+          this.error.set(apiErrorMessage(e, this.i18n.t('tagfound.envoi_impossible_pour_le_moment_reessaye')));
         },
       });
   }

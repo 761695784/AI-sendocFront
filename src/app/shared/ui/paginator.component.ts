@@ -1,3 +1,4 @@
+import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
 
 /**
@@ -6,18 +7,19 @@ import { ChangeDetectionStrategy, Component, computed, input, output } from '@an
  */
 @Component({
   selector: 'app-paginator',
+  imports: [TranslatePipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     @if (last() > 1) {
-      <nav class="dt-paginator" aria-label="Pagination">
+      <nav class="dt-paginator" [aria-label]="'pager.pagination' | t">
         <button type="button" class="btn btn-outline-secondary btn-sm" [disabled]="current() <= 1"
           (click)="pageChange.emit(current() - 1)">
-          <i class="fas fa-chevron-left" aria-hidden="true"></i> Précédent
+          <i class="fas fa-chevron-left" aria-hidden="true"></i> {{ 'list.precedent' | t }}
         </button>
-        <span>Page {{ current() }} / {{ last() }} · {{ total() }} résultat{{ total() > 1 ? 's' : '' }}</span>
+        <span>{{ (total() > 1 ? 'pager.summary_many' : 'pager.summary_one') | t: { c: current(), l: last(), n: total() } }}</span>
         <button type="button" class="btn btn-outline-secondary btn-sm" [disabled]="current() >= last()"
           (click)="pageChange.emit(current() + 1)">
-          Suivant <i class="fas fa-chevron-right" aria-hidden="true"></i>
+          {{ 'list.suivant' | t }} <i class="fas fa-chevron-right" aria-hidden="true"></i>
         </button>
       </nav>
     }

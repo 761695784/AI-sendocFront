@@ -7,10 +7,10 @@
         <div class="not-connected-icon">
           <i class="fas fa-lock"></i>
         </div>
-        <h3>Accès restreint</h3>
-        <p>Vous devez être connecté pour accéder à votre QR Code.</p>
+        <h3>{{ 'qrcode.acces_restreint' | t }}</h3>
+        <p>{{ 'qrcode.vous_devez_etre_connecte_pour_acceder' | t }}</p>
         <a routerLink="/connexion" class="btn-connect">
-          <i class="fas fa-sign-in-alt"></i> Se connecter
+          <i class="fas fa-sign-in-alt"></i> {{ 'register.se_connecter' | t }}
         </a>
       </div>
     </div>
@@ -28,7 +28,7 @@
       }
       <!-- Bouton fermer -->
       <button class="btn-close" (click)="navigateToModify()"
-        aria-label="Fermer">
+        [aria-label]="'foundqr.fermer' | t">
         <i class="fas fa-times"></i>
       </button>
       <!-- Header -->
@@ -36,40 +36,40 @@
         <div class="qr-logo">
           <i class="fas fa-qrcode"></i>
         </div>
-        <h2>Votre QR Code</h2>
+        <h2>{{ 'qrcode.votre_qr_code' | t }}</h2>
         <p class="qr-validity">
           <i class="fas fa-clock"></i>
-          Valide jusqu'au
+          {{ 'profile.valide_jusqu_au' | t }}
           <strong>{{ user.qr_code_expires_at | date:'dd MMM yyyy' }}</strong>
         </p>
       </div>
       <!-- QR Code image -->
       <div class="qr-image-wrap qr-code-print">
         @if (qrCodeUrl) {
-          <img [src]="qrCodeUrl" alt="Votre QR Code DocTrack"
+          <img [src]="qrCodeUrl" [alt]="'qrcode.votre_qr_code_doctrack' | t"
             />
         }
         @if (!qrCodeUrl) {
           <div class="qr-placeholder">
             <i class="fas fa-spinner fa-spin"></i>
-            <span>Chargement...</span>
+            <span>{{ 'qrcode.chargement' | t }}</span>
           </div>
         }
       </div>
       <!-- Info -->
       <div class="qr-info">
         <i class="fas fa-info-circle"></i>
-        <span>Imprimez et plastifiez ce QR code pour le porter avec vous</span>
+        <span>{{ 'qrcode.imprimez_et_plastifiez_ce_qr_code' | t }}</span>
       </div>
       <!-- Boutons -->
       <div class="button-group">
         <button class="btn-print print-button" (click)="printQrCode()">
           <i class="fas fa-print"></i>
-          Imprimer
+          {{ 'myqr.imprimer' | t }}
         </button>
         <button class="btn-renew renew-button" (click)="renewQRCode()">
           <i class="fas fa-sync-alt"></i>
-          Renouveler
+          {{ 'myqr.renouveler' | t }}
         </button>
       </div>
     </div>

@@ -1,3 +1,5 @@
+import { I18nService } from '../../../core/i18n/i18n.service';
+import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 import { ChangeDetectionStrategy, Component, OnDestroy, OnInit, computed, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
@@ -24,12 +26,13 @@ type ScanState = 'idle' | 'reading' | 'read' | 'manual' | 'failed';
  */
 @Component({
   selector: 'app-publish-found',
-  imports: [ReactiveFormsModule, RouterLink, NavbarComponent, FooterComponent],
+  imports: [TranslatePipe, ReactiveFormsModule, RouterLink, NavbarComponent, FooterComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './publish-found.component.html',
   styleUrl: '../citizen-form.css',
 })
 export class PublishFoundComponent implements OnInit, OnDestroy {
+  private readonly i18n = inject(I18nService);
   private readonly api = inject(CitizenApi);
   private readonly session = inject(SessionStore);
   private readonly notify = inject(NotifyService);
@@ -121,7 +124,7 @@ export class PublishFoundComponent implements OnInit, OnDestroy {
       error: (e: HttpErrorResponse) => {
         // 503 : lecture indisponible → saisie à la main avec la photo ; 422 : photo illisible.
         this.scanState.set(e.status === 422 ? 'failed' : 'manual');
-        this.scanMessage.set(apiErrorMessage(e, 'Lecture automatique indisponible : remplissez le formulaire à la main.'));
+        this.scanMessage.set(apiErrorMessage(e, this.i18n.t('publish.lecture_automatique_indisponible_remplis')));
       },
     });
   }
@@ -162,7 +165,7 @@ export class PublishFoundComponent implements OnInit, OnDestroy {
     try {
       const point = await currentPosition();
       if (!isInSenegal(point)) {
-        this.gpsError.set('Votre position semble hors du Sénégal : choisissez le département à la place.');
+        this.gpsError.set(this.i18n.t('publish.votre_position_semble_hors_du_senegal'));
       } else {
         this.gps.set(point);
       }
@@ -181,7 +184,7 @@ export class PublishFoundComponent implements OnInit, OnDestroy {
     this.form.controls.contact_phone.updateValueAndValidity();
 
     if (!this.photo() && !this.usableScan()) {
-      this.photoError.set('Ajoutez une photo du document.');
+      this.photoError.set(this.i18n.t('publish.ajoutez_une_photo_du_document'));
       return;
     }
     if (this.form.invalid) {
@@ -216,7 +219,7 @@ export class PublishFoundComponent implements OnInit, OnDestroy {
       next: (res) => {
         this.sending.set(false);
         this.result.set(res);
-        this.notify.success('Document publié : merci pour votre geste !');
+        this.notify.success(this.i18n.t('publish.document_publie_merci_pour_votre_geste'));
         window.scrollTo?.({ top: 0, behavior: 'smooth' });
       },
       error: (e: HttpErrorResponse) => {
@@ -224,10 +227,10 @@ export class PublishFoundComponent implements OnInit, OnDestroy {
         // Scan expiré entre-temps : on renvoie la photo à la place.
         if (e.status === 422 && e.error?.errors?.ocr_scan_id && this.photo()) {
           this.scan.set(null);
-          void this.notify.info('La lecture a expiré : la photo sera envoyée directement. Appuyez à nouveau sur « Publier ».');
+          void this.notify.info(this.i18n.t('publish.la_lecture_a_expire_la_photo'));
           return;
         }
-        void this.notify.error(e, 'Publication impossible');
+        void this.notify.error(e, this.i18n.t('publish.publication_impossible'));
       },
     });
   }

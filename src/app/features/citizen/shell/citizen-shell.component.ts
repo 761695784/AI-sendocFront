@@ -1,3 +1,4 @@
+import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 import { ChangeDetectionStrategy, Component, OnInit, computed, inject } from '@angular/core';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { NavbarComponent } from '../../../components/navbar/navbar.component';
@@ -8,33 +9,33 @@ import { CitizenBadges } from '../citizen-badges.service';
 /** Mise en page de l'espace citoyen : barre publique, bandeau, onglets. */
 @Component({
   selector: 'app-citizen-shell',
-  imports: [RouterOutlet, RouterLink, RouterLinkActive, NavbarComponent, FooterComponent],
+  imports: [TranslatePipe, RouterOutlet, RouterLink, RouterLinkActive, NavbarComponent, FooterComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <app-navbar />
     <div class="dt-page">
       <section class="dt-hero">
         <div class="dt-hero__inner">
-          <h1>Mon espace DocTrack</h1>
-          <p>Bonjour {{ firstName() }}. Suivez vos déclarations, les documents que vous avez trouvés et vos QR codes.</p>
-          <nav class="dt-tabs" aria-label="Rubriques de mon espace">
+          <h1>{{ 'space.mon_espace_doctrack' | t }}</h1>
+          <p>{{ 'space.bonjour' | t }} {{ firstName() }}{{ 'space.suivez_vos_declarations_les_documents_qu' | t }}</p>
+          <nav class="dt-tabs" [aria-label]="'space.rubriques_de_mon_espace' | t">
             <a class="dt-tab" routerLink="declarations" routerLinkActive="active">
-              <i class="fas fa-file-alt me-1" aria-hidden="true"></i> Mes déclarations
+              <i class="fas fa-file-alt me-1" aria-hidden="true"></i> {{ 'space.mes_declarations' | t }}
             </a>
             <a class="dt-tab" routerLink="restitutions" routerLinkActive="active">
-              <i class="fas fa-handshake me-1" aria-hidden="true"></i> Remises
+              <i class="fas fa-handshake me-1" aria-hidden="true"></i> {{ 'space.remises' | t }}
               @if (badges.restitutionsToAnswer() > 0) {
                 <span class="dt-count">{{ badges.restitutionsToAnswer() }}</span>
               }
             </a>
             <a class="dt-tab" routerLink="trouvailles" routerLinkActive="active">
-              <i class="fas fa-search-location me-1" aria-hidden="true"></i> Documents trouvés
+              <i class="fas fa-search-location me-1" aria-hidden="true"></i> {{ 'space.documents_trouves' | t }}
             </a>
             <a class="dt-tab" routerLink="qr" routerLinkActive="active">
-              <i class="fas fa-qrcode me-1" aria-hidden="true"></i> Mes QR codes
+              <i class="fas fa-qrcode me-1" aria-hidden="true"></i> {{ 'space.mes_qr_codes' | t }}
             </a>
             <a class="dt-tab" routerLink="paiements" routerLinkActive="active">
-              <i class="fas fa-wallet me-1" aria-hidden="true"></i> Paiements
+              <i class="fas fa-wallet me-1" aria-hidden="true"></i> {{ 'space.paiements' | t }}
               @if (badges.chargesToPay() > 0) {
                 <span class="dt-count">{{ badges.chargesToPay() }}</span>
               }

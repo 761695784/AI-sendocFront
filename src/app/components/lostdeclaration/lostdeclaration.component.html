@@ -7,18 +7,18 @@
     <div class="hero-content">
       <div class="hero-badge">
         <i class="fas fa-file-alt"></i>
-        Espace personnel
+        {{ 'lostdecl.espace_personnel' | t }}
       </div>
-      <h1>Mes Déclarations de Perte</h1>
-      <p>Consultez et gérez l'historique de vos déclarations. Retrouvez vos certificats officiels et suivez l'état de vos dossiers.</p>
+      <h1>{{ 'lostdecl.mes_declarations_de_perte' | t }}</h1>
+      <p>{{ 'lostdecl.consultez_et_gerez_l_historique_de' | t }}</p>
       <div class="hero-actions">
         <a href="/declarer" class="btn-declare">
           <i class="fas fa-plus-circle"></i>
-          Nouvelle déclaration
+          {{ 'lostdecl.nouvelle_declaration' | t }}
         </a>
         <button class="btn-trash" (click)="toggleTrashedView()">
           <i class="fas fa-trash-alt"></i>
-          {{ showTrashedDeclarations ? 'Mes déclarations' : 'Corbeille' }}
+          {{ showTrashedDeclarations ? ('space.mes_declarations' | t) : ('lostdecl.corbeille' | t) }}
         </button>
       </div>
     </div>
@@ -35,43 +35,43 @@
               <i class="fas fa-trash-alt"></i>
             </div>
             <div>
-              <h2 class="section-title">Déclarations supprimées</h2>
-              <p class="section-subtitle">Ces déclarations peuvent être restaurées</p>
+              <h2 class="section-title">{{ 'lostdecl.declarations_supprimees' | t }}</h2>
+              <p class="section-subtitle">{{ 'lostdecl.ces_declarations_peuvent_etre_restaurees' | t }}</p>
             </div>
           </div>
         </div>
         @if (trashedDeclarations.length === 0) {
           <div class="empty-state">
             <div class="empty-icon">🗑️</div>
-            <h3>Corbeille vide</h3>
-            <p>Aucune déclaration supprimée pour le moment.</p>
+            <h3>{{ 'lostdecl.corbeille_vide' | t }}</h3>
+            <p>{{ 'lostdecl.aucune_declaration_supprimee_pour_le_mom' | t }}</p>
           </div>
         }
         <div class="grid-container">
           @for (declaration of trashedDeclarations; track declaration) {
             <div class="card trashed">
               <div class="card-image-wrap">
-                <img src="/assets/declaration.webp" alt="Déclaration" />
+                <img src="/assets/declaration.webp" [alt]="'lostdecl.declaration' | t" />
                 <div class="card-image-overlay"></div>
-                <div class="card-badge badge-red">Supprimée</div>
+                <div class="card-badge badge-red">{{ 'lostdecl.supprimee' | t }}</div>
               </div>
               <div class="card-content">
                 <h3 class="card-title">{{ declaration.Title }}</h3>
                 <div class="card-meta">
-                  <span class="meta-label">Supprimée le</span>
+                  <span class="meta-label">{{ 'lostdecl.supprimee_le' | t }}</span>
                   <span class="meta-value">{{ declaration.deleted_at | date:'dd MMM yyyy' }}</span>
                 </div>
                 <div class="card-meta">
-                  <span class="meta-label">Prénom</span>
+                  <span class="meta-label">{{ 'landing.first_name' | t }}</span>
                   <span class="meta-value highlight">{{ declaration.FirstNameInDoc }}</span>
                 </div>
                 <div class="card-meta">
-                  <span class="meta-label">Nom</span>
+                  <span class="meta-label">{{ 'landing.last_name' | t }}</span>
                   <span class="meta-value highlight">{{ declaration.LastNameInDoc }}</span>
                 </div>
                 <div class="card-actions">
                   <button class="btn-restore" (click)="restoreDeclaration(declaration.uuid)">
-                    <i class="fas fa-undo"></i> Restaurer
+                    <i class="fas fa-undo"></i> {{ 'lostdecl.restaurer' | t }}
                   </button>
                 </div>
               </div>
@@ -90,18 +90,18 @@
               <i class="fas fa-file-alt"></i>
             </div>
             <div>
-              <h2 class="section-title">Mes déclarations actives</h2>
-              <p class="section-subtitle">{{ declarations.length }} déclaration(s) enregistrée(s)</p>
+              <h2 class="section-title">{{ 'lostdecl.mes_declarations_actives' | t }}</h2>
+              <p class="section-subtitle">{{ declarations.length }} {{ 'lostdecl.declaration_s_enregistree_s' | t }}</p>
             </div>
           </div>
         </div>
         @if (declarations.length === 0) {
           <div class="empty-state">
             <div class="empty-icon">📋</div>
-            <h3>Aucune déclaration</h3>
-            <p>Vous n'avez pas encore effectué de déclaration de perte.</p>
+            <h3>{{ 'mydecl.aucune_declaration' | t }}</h3>
+            <p>{{ 'lostdecl.vous_n_avez_pas_encore_effectue' | t }}</p>
             <a routerLink="/lost" class="btn-declare-empty">
-              <i class="fas fa-plus-circle"></i> Faire une déclaration
+              <i class="fas fa-plus-circle"></i> {{ 'howto.step1_btn' | t }}
             </a>
           </div>
         }
@@ -110,45 +110,45 @@
             <div class="card"
               [style.animation-delay]="i * 0.05 + 's'">
               <div class="card-image-wrap">
-                <img src="/assets/declaration.webp" alt="Déclaration" />
+                <img src="/assets/declaration.webp" [alt]="'lostdecl.declaration' | t" />
                 <div class="card-image-overlay"></div>
                 <div class="card-badge badge-blue">{{ declaration.document_type?.TypeName }}</div>
                 @if (declaration.certificat?.uuid) {
                   <div class="card-cert-badge">
-                    <i class="fas fa-certificate"></i> Certifié
+                    <i class="fas fa-certificate"></i> {{ 'lostdecl.certifie' | t }}
                   </div>
                 }
               </div>
               <div class="card-content">
                 <h3 class="card-title">{{ declaration.Title }}</h3>
                 <div class="card-meta">
-                  <span class="meta-label">Déclarant</span>
+                  <span class="meta-label">{{ 'lostdecl.declarant' | t }}</span>
                   <span class="meta-value">
                     {{ declaration.user?.FirstName }} {{ declaration.user?.LastName }}
                   </span>
                 </div>
                 <div class="card-meta">
-                  <span class="meta-label">Date</span>
+                  <span class="meta-label">{{ 'verify.date' | t }}</span>
                   <span class="meta-value">{{ declaration.created_at | date:'dd MMM yyyy' }}</span>
                 </div>
                 <div class="card-divider"></div>
                 <div class="card-meta">
-                  <span class="meta-label">Prénom</span>
+                  <span class="meta-label">{{ 'landing.first_name' | t }}</span>
                   <span class="meta-value highlight">{{ declaration.FirstNameInDoc }}</span>
                 </div>
                 <div class="card-meta">
-                  <span class="meta-label">Nom</span>
+                  <span class="meta-label">{{ 'landing.last_name' | t }}</span>
                   <span class="meta-value highlight">{{ declaration.LastNameInDoc }}</span>
                 </div>
                 <div class="card-actions">
                   <button class="btn-delete" (click)="deleteDeclaration(declaration.uuid)">
-                    <i class="fas fa-trash-alt"></i> Supprimer
+                    <i class="fas fa-trash-alt"></i> {{ 'lostdecl.supprimer' | t }}
                   </button>
                   @if (declaration.certificat?.uuid) {
                     <button
                       class="btn-view"
                       (click)="viewCertificate(declaration.certificat.uuid)">
-                      <i class="fas fa-eye"></i> Certificat
+                      <i class="fas fa-eye"></i> {{ 'lostdecl.certificat' | t }}
                     </button>
                   }
                 </div>

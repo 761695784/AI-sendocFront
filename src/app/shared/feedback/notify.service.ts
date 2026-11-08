@@ -1,4 +1,5 @@
-import { Injectable } from '@angular/core';
+import { I18nService } from '../../core/i18n/i18n.service';
+import { Injectable, inject } from '@angular/core';
 import Swal from 'sweetalert2';
 import { apiErrorMessage } from '../../core/api/api-v2.client';
 
@@ -11,17 +12,18 @@ const COLORS = { confirm: '#31287C', cancel: '#8a86a3', danger: '#c62828' };
  */
 @Injectable({ providedIn: 'root' })
 export class NotifyService {
+  private readonly i18n = inject(I18nService);
   /** Petit message en haut à droite qui disparaît seul. */
   success(message: string): void {
     void Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: message, timer: 2500, showConfirmButton: false });
   }
 
-  info(message: string, title = 'Information'): Promise<unknown> {
+  info(message: string, title = this.i18n.t('notify.information')): Promise<unknown> {
     return Swal.fire({ icon: 'info', title, text: message, confirmButtonColor: COLORS.confirm });
   }
 
   /** Erreur : accepte un texte ou une erreur HTTP de l'API (message de validation compris). */
-  error(error: unknown, title = 'Action impossible'): Promise<unknown> {
+  error(error: unknown, title = this.i18n.t('notify.action_impossible')): Promise<unknown> {
     const text = typeof error === 'string' ? error : apiErrorMessage(error);
     return Swal.fire({ icon: 'error', title, text, confirmButtonColor: COLORS.confirm });
   }
@@ -33,8 +35,8 @@ export class NotifyService {
       title: options.title,
       text: options.text,
       showCancelButton: true,
-      confirmButtonText: options.confirmText ?? 'Confirmer',
-      cancelButtonText: 'Annuler',
+      confirmButtonText: options.confirmText ?? this.i18n.t('notify.confirmer'),
+      cancelButtonText: this.i18n.t('rf.cancel'),
       confirmButtonColor: options.danger ? COLORS.danger : COLORS.confirm,
       cancelButtonColor: COLORS.cancel,
       reverseButtons: true,
@@ -59,15 +61,15 @@ export class NotifyService {
       title: options.title,
       text: options.text,
       input: 'textarea',
-      inputLabel: options.label ?? 'Motif',
+      inputLabel: options.label ?? this.i18n.t('verify.motif'),
       inputAttributes: { maxlength: '1000' },
       showCancelButton: true,
-      confirmButtonText: options.confirmText ?? 'Confirmer',
-      cancelButtonText: 'Annuler',
+      confirmButtonText: options.confirmText ?? this.i18n.t('notify.confirmer'),
+      cancelButtonText: this.i18n.t('rf.cancel'),
       confirmButtonColor: options.danger ? COLORS.danger : COLORS.confirm,
       cancelButtonColor: COLORS.cancel,
       reverseButtons: true,
-      inputValidator: (value) => (options.required && !value?.trim() ? 'Ce champ est obligatoire.' : null),
+      inputValidator: (value) => (options.required && !value?.trim() ? this.i18n.t('notify.ce_champ_est_obligatoire') : null),
     });
     return result.isConfirmed ? String(result.value ?? '').trim() : null;
   }
@@ -91,12 +93,12 @@ export class NotifyService {
       inputValue: options.value ?? '',
       inputPlaceholder: options.placeholder,
       showCancelButton: true,
-      confirmButtonText: options.confirmText ?? 'Valider',
-      cancelButtonText: 'Annuler',
+      confirmButtonText: options.confirmText ?? this.i18n.t('notify.valider'),
+      cancelButtonText: this.i18n.t('rf.cancel'),
       confirmButtonColor: COLORS.confirm,
       cancelButtonColor: COLORS.cancel,
       reverseButtons: true,
-      inputValidator: (value: unknown) => (options.required && !String(value ?? '').trim() ? 'Ce champ est obligatoire.' : null),
+      inputValidator: (value: unknown) => (options.required && !String(value ?? '').trim() ? this.i18n.t('notify.ce_champ_est_obligatoire') : null),
     });
     return result.isConfirmed ? String(result.value ?? '').trim() : null;
   }

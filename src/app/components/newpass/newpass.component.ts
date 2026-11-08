@@ -1,5 +1,7 @@
+import { I18nService } from '../../core/i18n/i18n.service';
+import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { CommonModule } from '@angular/common';
-import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit, ChangeDetectionStrategy, inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import Swal from 'sweetalert2';
@@ -8,13 +10,14 @@ import { NavbarComponent } from '../navbar/navbar.component';
 
 @Component({
     selector: 'app-newpass',
-    imports: [NavbarComponent, CommonModule, ReactiveFormsModule],
+    imports: [TranslatePipe, NavbarComponent, CommonModule, ReactiveFormsModule],
     templateUrl: './newpass.component.html',
     styleUrls: ['./newpass.component.css'],
     changeDetection: ChangeDetectionStrategy.Eager,
     schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class NewpassComponent implements OnInit {
+  private readonly i18n = inject(I18nService);
   newPasswordForm!: FormGroup;
   token!: string; // Pour capturer le token dans l'URL
   email!: string; // Si besoin, capturer l'email
@@ -40,9 +43,9 @@ get strengthClass(): string {
 
 get strengthLabel(): string {
   const s = this.passwordStrength;
-  if (s <= 25) return 'Faible';
-  if (s <= 60) return 'Moyen';
-  return 'Fort';
+  if (s <= 25) return this.i18n.t('newpass.faible');
+  if (s <= 60) return this.i18n.t('newpass.moyen');
+  return this.i18n.t('newpass.fort');
 }
 
 
@@ -99,8 +102,8 @@ get strengthLabel(): string {
         this.isLoading = false; // Désactivation du loader
         Swal.fire({
           icon: 'success',
-          title: 'Mot de passe réinitialisé',
-          text: 'Votre mot de passe a été réinitialisé avec succès.',
+          title: this.i18n.t('newpass.mot_de_passe_reinitialise'),
+          text: this.i18n.t('newpass.votre_mot_de_passe_a_ete'),
           timer: 2000,
           timerProgressBar: true,
         }).then(() => {
@@ -111,8 +114,8 @@ get strengthLabel(): string {
         this.isLoading = false; // Désactivation du loader
         Swal.fire({
           icon: 'error',
-          title: 'Erreur',
-          text: error.error.message || 'Une erreur est survenue lors de la réinitialisation du mot de passe.',
+          title: this.i18n.t('detail.erreur'),
+          text: error.error.message || this.i18n.t('newpass.une_erreur_est_survenue_lors_de'),
           timer: 2000,
           timerProgressBar: true,
         });

@@ -4,14 +4,14 @@
   <!-- ── Bandeau ── -->
   <section class="cf-hero">
     <div class="cf-hero__inner">
-      <span class="cf-badge"><i class="fas fa-file-alt" aria-hidden="true"></i> Déclaration en ligne</span>
-      <h1>Déclarer une perte</h1>
-      <p>Enregistrez votre déclaration : DocTrack vous prévient dès qu'un document correspondant est publié ou déposé dans une structure.</p>
+      <span class="cf-badge"><i class="fas fa-file-alt" aria-hidden="true"></i> {{ 'declare.declaration_en_ligne' | t }}</span>
+      <h1>{{ 'landing.cta_declare' | t }}</h1>
+      <p>{{ 'declare.enregistrez_votre_declaration_doctrack_v' | t }}</p>
       @if (!result()) {
-        <ol class="cf-progress" aria-label="Étapes">
-          <li><b>1</b> Le document</li>
-          <li><b>2</b> Le nom</li>
-          <li><b>3</b> Où et quand</li>
+        <ol class="cf-progress" [aria-label]="'declare.etapes' | t">
+          <li><b>1</b> {{ 'declare.le_document' | t }}</li>
+          <li><b>2</b> {{ 'declare.le_nom' | t }}</li>
+          <li><b>3</b> {{ 'declare.ou_et_quand' | t }}</li>
         </ol>
       }
     </div>
@@ -23,35 +23,35 @@
       <div class="cf-card" style="max-width: 760px; margin: 0 auto">
         <div class="cf-success">
           <span class="cf-success__icon"><i class="fas fa-check" aria-hidden="true"></i></span>
-          <h2>Déclaration enregistrée</h2>
-          <p>Votre récépissé de déclaration en ligne est prêt.</p>
+          <h2>{{ 'declare.declaration_enregistree' | t }}</h2>
+          <p>{{ 'declare.votre_recepisse_de_declaration_en_ligne' | t }}</p>
 
           <div class="cf-ticket">
-            <small>Référence de votre déclaration</small>
+            <small>{{ 'declare.reference_de_votre_declaration' | t }}</small>
             <span class="ref dt-mono">{{ r.data.declaration.reference }}</span>
-            <span class="sub">Récépissé N° <span class="dt-mono">{{ r.data.certificat.certificat_number }}</span>
+            <span class="sub">{{ 'declare.recepisse_n' | t }} <span class="dt-mono">{{ r.data.certificat.certificat_number }}</span>
               @if (r.data.declaration.created_at) { — {{ r.data.declaration.created_at | date: 'd MMMM y à HH:mm' }} }</span>
           </div>
 
           <div class="dt-callout dt-callout--warning cf-steps-inline">
             <i class="fas fa-info-circle" aria-hidden="true"></i>
             <div>
-              <strong>Ce récépissé n'est pas un certificat de perte.</strong>
-              Pour obtenir le certificat (demandé pour un duplicata ou un renouvellement) :
+              <strong>{{ 'declare.ce_recepisse_n_est_pas_un' | t }}</strong>
+              {{ 'declare.pour_obtenir_le_certificat_demande_pour' | t }}
               <ol class="mb-0 mt-1 ps-3">
-                <li>présentez-vous en personne dans un commissariat ou une brigade partenaire de DocTrack ;</li>
-                <li>donnez votre référence ou montrez le QR code du récépissé, avec une pièce justifiant de votre identité ;</li>
-                <li>l'agent vérifie votre identité et vous délivre le certificat de perte.</li>
+                <li>{{ 'declare.presentez_vous_en_personne_dans_un' | t }}</li>
+                <li>{{ 'declare.donnez_votre_reference_ou_montrez_le' | t }}</li>
+                <li>{{ 'declare.l_agent_verifie_votre_identite_et' | t }}</li>
               </ol>
             </div>
           </div>
 
           <div class="cf-actions">
             <button type="button" class="cf-btn cf-btn--primary" [disabled]="opening()" (click)="openReceipt()">
-              <i class="fas fa-file-pdf" aria-hidden="true"></i> {{ opening() ? 'Ouverture…' : 'Ouvrir mon récépissé' }}
+              <i class="fas fa-file-pdf" aria-hidden="true"></i> {{ opening() ? ('mypay.ouverture' | t) : ('declare.ouvrir_mon_recepisse' | t) }}
             </button>
-            <a routerLink="/mon-espace/declarations" class="cf-btn cf-btn--ghost"><i class="fas fa-list" aria-hidden="true"></i> Suivre mes déclarations</a>
-            <button type="button" class="cf-btn cf-btn--link" (click)="another()">Déclarer une autre perte</button>
+            <a routerLink="/mon-espace/declarations" class="cf-btn cf-btn--ghost"><i class="fas fa-list" aria-hidden="true"></i> {{ 'declare.suivre_mes_declarations' | t }}</a>
+            <button type="button" class="cf-btn cf-btn--link" (click)="another()">{{ 'declare.declarer_une_autre_perte' | t }}</button>
           </div>
         </div>
       </div>
@@ -63,24 +63,24 @@
             <header class="cf-card__head">
               <span class="cf-num">1</span>
               <div>
-                <h2>Le document perdu</h2>
-                <p>Choisissez le type de pièce et, si vous le connaissez, son numéro.</p>
+                <h2>{{ 'declare.le_document_perdu' | t }}</h2>
+                <p>{{ 'declare.choisissez_le_type_de_piece_et' | t }}</p>
               </div>
             </header>
             <div class="cf-card__body">
               <div class="row g-3">
                 <div class="col-md-6">
-                  <label for="type" class="dt-required">Type de document</label>
+                  <label for="type" class="dt-required">{{ 'detail.type_de_document' | t }}</label>
                   <select id="type" class="form-select" formControlName="document_type_id">
-                    <option value="" disabled>Choisir…</option>
+                    <option value="" disabled>{{ 'declare.choisir' | t }}</option>
                     @for (t of types(); track t.id) { <option [value]="t.id">{{ t.TypeName }}</option> }
                   </select>
                   @if (fieldError(form.controls.document_type_id, 'Le type'); as err) { <small class="dt-error">{{ err }}</small> }
                 </div>
                 <div class="col-md-6">
-                  <label for="number">Numéro du document <span class="cf-opt">Facultatif</span></label>
+                  <label for="number">{{ 'declare.numero_du_document' | t }} <span class="cf-opt">{{ 'declare.facultatif' | t }}</span></label>
                   <input id="number" class="form-control dt-mono" formControlName="DocIdentification" autocomplete="off" />
-                  <small class="form-text">Il aide à retrouver le document ; il n'est jamais affiché en entier.</small>
+                  <small class="form-text">{{ 'declare.il_aide_a_retrouver_le_document' | t }}</small>
                 </div>
               </div>
             </div>
@@ -91,19 +91,19 @@
             <header class="cf-card__head">
               <span class="cf-num">2</span>
               <div>
-                <h2>Nom inscrit sur le document</h2>
-                <p>Écrivez-le exactement comme sur la pièce : c'est ainsi que DocTrack la retrouve.</p>
+                <h2>{{ 'declare.nom_inscrit_sur_le_document' | t }}</h2>
+                <p>{{ 'declare.ecrivez_le_exactement_comme_sur_la' | t }}</p>
               </div>
             </header>
             <div class="cf-card__body">
               <div class="row g-3">
                 <div class="col-md-6">
-                  <label for="first" class="dt-required">Prénom(s)</label>
+                  <label for="first" class="dt-required">{{ 'declare.prenom_s' | t }}</label>
                   <input id="first" class="form-control" formControlName="FirstNameInDoc" autocomplete="given-name" />
                   @if (nameError('FirstNameInDoc', 'Le prénom'); as err) { <small class="dt-error">{{ err }}</small> }
                 </div>
                 <div class="col-md-6">
-                  <label for="last" class="dt-required">Nom</label>
+                  <label for="last" class="dt-required">{{ 'landing.last_name' | t }}</label>
                   <input id="last" class="form-control" formControlName="LastNameInDoc" autocomplete="family-name" />
                   @if (nameError('LastNameInDoc', 'Le nom'); as err) { <small class="dt-error">{{ err }}</small> }
                 </div>
@@ -116,18 +116,18 @@
             <header class="cf-card__head">
               <span class="cf-num">3</span>
               <div>
-                <h2>Où et quand ? <span class="cf-opt">Facultatif</span></h2>
-                <p>Ces informations aident les correspondances et seront reprises sur votre certificat.</p>
+                <h2>{{ 'declare.ou_et_quand_2' | t }} <span class="cf-opt">{{ 'declare.facultatif' | t }}</span></h2>
+                <p>{{ 'declare.ces_informations_aident_les_correspondan' | t }}</p>
               </div>
             </header>
             <div class="cf-card__body">
               <div class="row g-3">
                 <div class="col-md-7">
-                  <label for="place">Lieu de la perte</label>
-                  <input id="place" class="form-control" formControlName="lost_place" placeholder="Ex. Marché Sandaga, Dakar Plateau" />
+                  <label for="place">{{ 'declare.lieu_de_la_perte' | t }}</label>
+                  <input id="place" class="form-control" formControlName="lost_place" [placeholder]="'declare.ex_marche_sandaga_dakar_plateau' | t" />
                 </div>
                 <div class="col-md-5">
-                  <label for="date">Date de la perte</label>
+                  <label for="date">{{ 'declare.date_de_la_perte' | t }}</label>
                   <input id="date" type="date" class="form-control" formControlName="lost_at" [max]="today" />
                 </div>
               </div>
@@ -137,41 +137,40 @@
           <div class="cf-note">
             <i class="fas fa-receipt" aria-hidden="true"></i>
             <div>
-              <strong>Récépissé de déclaration en ligne</strong>
-              <p>Vous le recevez immédiatement. Le <b>certificat de perte</b> est délivré par un commissariat ou une brigade partenaire,
-                sur présentation de la référence et d'une pièce d'identité.</p>
+              <strong>{{ 'declare.recepisse_de_declaration_en_ligne' | t }}</strong>
+              <p>{{ 'declare.vous_le_recevez_immediatement_le' | t }} <b>{{ 'declare.certificat_de_perte' | t }}</b> {{ 'declare.est_delivre_par_un_commissariat_ou' | t }}</p>
             </div>
           </div>
 
           <button type="submit" class="cf-submit" [disabled]="sending()">
             <i class="fas fa-paper-plane" aria-hidden="true"></i>
-            {{ sending() ? 'Enregistrement…' : 'Enregistrer ma déclaration' }}
+            {{ sending() ? ('declare.enregistrement' | t) : ('declare.enregistrer_ma_declaration' | t) }}
           </button>
         </form>
 
         <!-- ── Colonne d'aide ── -->
-        <aside class="cf-aside" aria-label="Aide">
+        <aside class="cf-aside" [aria-label]="'declare.aide' | t">
           <img class="cf-aside__img" src="/assets/declarepub.webp" alt="" loading="lazy" />
           <div class="cf-box">
-            <h3><i class="fas fa-lightbulb" aria-hidden="true"></i> Informations importantes</h3>
+            <h3><i class="fas fa-lightbulb" aria-hidden="true"></i> {{ 'declare.informations_importantes' | t }}</h3>
             <ul class="cf-tips">
-              <li><i class="fas fa-check-circle" aria-hidden="true"></i> Indiquez les informations exactes du document.</li>
-              <li><i class="fas fa-check-circle" aria-hidden="true"></i> Le prénom et le nom doivent correspondre à la pièce.</li>
-              <li><i class="fas fa-check-circle" aria-hidden="true"></i> Vous êtes prévenu si le document est retrouvé.</li>
-              <li><i class="fas fa-check-circle" aria-hidden="true"></i> Gratuit pendant la phase pilote.</li>
+              <li><i class="fas fa-check-circle" aria-hidden="true"></i> {{ 'declare.indiquez_les_informations_exactes_du_doc' | t }}</li>
+              <li><i class="fas fa-check-circle" aria-hidden="true"></i> {{ 'declare.le_prenom_et_le_nom_doivent' | t }}</li>
+              <li><i class="fas fa-check-circle" aria-hidden="true"></i> {{ 'declare.vous_etes_prevenu_si_le_document' | t }}</li>
+              <li><i class="fas fa-check-circle" aria-hidden="true"></i> {{ 'declare.gratuit_pendant_la_phase_pilote' | t }}</li>
             </ul>
           </div>
           <div class="cf-box">
-            <h3><i class="fas fa-list-ol" aria-hidden="true"></i> Étapes suivantes</h3>
+            <h3><i class="fas fa-list-ol" aria-hidden="true"></i> {{ 'declare.etapes_suivantes' | t }}</h3>
             <ol class="cf-steps">
-              <li>Recevez votre récépissé</li>
-              <li>Suivez votre déclaration dans Mon espace</li>
-              <li>Obtenez le certificat au guichet</li>
+              <li>{{ 'declare.recevez_votre_recepisse' | t }}</li>
+              <li>{{ 'declare.suivez_votre_declaration_dans_mon_espace' | t }}</li>
+              <li>{{ 'declare.obtenez_le_certificat_au_guichet' | t }}</li>
             </ol>
           </div>
           <div class="cf-shield">
             <i class="fas fa-shield-alt" aria-hidden="true"></i>
-            <span>Vos données personnelles sont protégées : le numéro de la pièce n'est jamais publié.</span>
+            <span>{{ 'declare.vos_donnees_personnelles_sont_protegees' | t }}</span>
           </div>
         </aside>
       </div>

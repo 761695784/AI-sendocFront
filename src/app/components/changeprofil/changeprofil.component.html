@@ -21,7 +21,7 @@
         {{ profileForm.get('FirstName')?.value }} {{ profileForm.get('LastName')?.value }}
       </div>
       <div class="profile-email">{{ profileForm.get('email')?.value }}</div>
-      <div class="profile-role-badge">Membre DocTrack</div>
+      <div class="profile-role-badge">{{ 'nav.role_member' | t }}</div>
 
       <div class="profile-meta">
         <div class="meta-item">
@@ -38,16 +38,16 @@
       <div class="qr-section">
         <div class="qr-section-title">
           <i class="fas fa-qrcode"></i>
-          <span>Mon QR Code personnel</span>
+          <span>{{ 'profile.mon_qr_code_personnel' | t }}</span>
         </div>
 
         @if (qrCodeUrl) {
           <div class="qr-image-wrap qr-code-print">
-            <img [src]="qrCodeUrl" alt="QR Code DocTrack" />
+            <img [src]="qrCodeUrl" [alt]="'profile.qr_code_doctrack' | t" />
             @if (user?.qr_code_expires_at) {
               <div class="qr-validity-badge">
                 <i class="fas fa-clock"></i>
-                Valide jusqu'au {{ user.qr_code_expires_at | date:'dd/MM/yyyy' }}
+                {{ 'profile.valide_jusqu_au' | t }} {{ user.qr_code_expires_at | date:'dd/MM/yyyy' }}
               </div>
             }
           </div>
@@ -56,23 +56,23 @@
         @if (!qrCodeUrl) {
           <div class="qr-placeholder">
             <i class="fas fa-spinner fa-spin"></i>
-            <span>Chargement du QR code...</span>
+            <span>{{ 'profile.chargement_du_qr_code' | t }}</span>
           </div>
         }
 
         <div class="qr-info">
           <i class="fas fa-info-circle"></i>
-          <span>Imprimez et plastifiez ce QR code</span>
+          <span>{{ 'profile.imprimez_et_plastifiez_ce_qr_code' | t }}</span>
         </div>
 
         <div class="qr-actions">
           <button class="btn-qr-print" (click)="printQrCode()" type="button"
-            aria-label="Imprimer le QR code">
-            <i class="fas fa-print"></i> Imprimer
+            [aria-label]="'profile.imprimer_le_qr_code' | t">
+            <i class="fas fa-print"></i> {{ 'myqr.imprimer' | t }}
           </button>
           <button class="btn-qr-renew" (click)="renewQrCode()" type="button"
-            aria-label="Renouveler le QR code">
-            <i class="fas fa-sync-alt"></i> Renouveler
+            [aria-label]="'profile.renouveler_le_qr_code' | t">
+            <i class="fas fa-sync-alt"></i> {{ 'myqr.renouveler' | t }}
           </button>
         </div>
       </div>
@@ -83,37 +83,37 @@
     <div class="form-card">
       <div class="form-card-header">
         <i class="fas fa-user-edit"></i>
-        <span>Modifier mon profil</span>
+        <span>{{ 'nav.edit_profile' | t }}</span>
       </div>
 
       <form [formGroup]="profileForm" (ngSubmit)="onSubmit()">
 
-        <div class="form-section-title">Informations personnelles</div>
+        <div class="form-section-title">{{ 'profile.informations_personnelles' | t }}</div>
 
         <div class="form-row">
           <div class="field-group">
-            <label for="LastName">Nom</label>
+            <label for="LastName">{{ 'landing.last_name' | t }}</label>
             <input type="text" id="LastName"
               formControlName="LastName"
-              placeholder="Votre nom">
+              [placeholder]="'register.votre_nom' | t">
           </div>
           <div class="field-group">
-            <label for="FirstName">Prénom</label>
+            <label for="FirstName">{{ 'landing.first_name' | t }}</label>
             <input type="text" id="FirstName"
               formControlName="FirstName"
-              placeholder="Votre prénom">
+              [placeholder]="'register.votre_prenom' | t">
           </div>
         </div>
 
         <div class="form-row">
           <div class="field-group">
-            <label for="email">Email</label>
+            <label for="email">{{ 'profile.email' | t }}</label>
             <input type="email" id="email"
               formControlName="email"
-              placeholder="votre@email.com">
+              [placeholder]="'login.votre_email_com' | t">
           </div>
           <div class="field-group">
-            <label for="Phone">Téléphone</label>
+            <label for="Phone">{{ 'register.telephone' | t }}</label>
             <input type="tel" id="Phone"
               formControlName="Phone"
               placeholder="+221 XX XXX XX XX">
@@ -122,19 +122,19 @@
 
         <div class="form-row">
           <div class="field-group full">
-            <label for="Adress">Adresse</label>
+            <label for="Adress">{{ 'register.adresse' | t }}</label>
             <input type="text" id="Adress"
               formControlName="Adress"
-              placeholder="Votre adresse">
+              [placeholder]="'profile.votre_adresse' | t">
           </div>
         </div>
 
         <div class="form-divider"></div>
-        <div class="form-section-title">Changer le mot de passe</div>
+        <div class="form-section-title">{{ 'profile.changer_le_mot_de_passe' | t }}</div>
 
         <div class="form-row">
           <div class="field-group">
-            <label for="oldPassword">Ancien mot de passe</label>
+            <label for="oldPassword">{{ 'profile.ancien_mot_de_passe' | t }}</label>
             <input type="password" id="oldPassword"
               formControlName="oldPassword"
               placeholder="••••••••">
@@ -143,20 +143,20 @@
 
         <div class="form-row">
           <div class="field-group">
-            <label for="newPassword">Nouveau mot de passe</label>
+            <label for="newPassword">{{ 'newpass.nouveau_mot_de_passe' | t }}</label>
             <input type="password" id="newPassword"
               formControlName="newPassword"
               placeholder="••••••••">
           </div>
           <div class="field-group">
-            <label for="newPasswordConfirm">Confirmation</label>
+            <label for="newPasswordConfirm">{{ 'register.confirmation' | t }}</label>
             <input type="password" id="newPasswordConfirm"
               formControlName="newPasswordConfirm"
               placeholder="••••••••">
             @if (profileForm.hasError('passwordMismatch')) {
               <small class="error-text"
                 >
-                Les mots de passe ne correspondent pas.
+                {{ 'newpass.les_mots_de_passe_ne_correspondent' | t }}
               </small>
             }
           </div>
@@ -165,7 +165,7 @@
         <div class="form-actions">
           <button type="submit" class="btn-save" [disabled]="isLoading">
             <i class="fas fa-save"></i>
-            {{ isLoading ? 'Enregistrement...' : 'Enregistrer les modifications' }}
+            {{ isLoading ? ('profile.enregistrement' | t) : ('profile.enregistrer_les_modifications' | t) }}
           </button>
         </div>
 

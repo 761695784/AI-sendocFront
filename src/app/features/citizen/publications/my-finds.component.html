@@ -1,22 +1,22 @@
 <div class="dt-toolbar">
-  <h2>Documents que j'ai trouvés</h2>
+  <h2>{{ 'myfinds.documents_que_j_ai_trouves' | t }}</h2>
   <div class="d-flex gap-2">
-    <a routerLink="/mypub" class="btn btn-outline-secondary">Modifier mes publications</a>
-    <a routerLink="/publier" class="btn btn-dt"><i class="fas fa-camera me-1" aria-hidden="true"></i> Publier un document trouvé</a>
+    <a routerLink="/mypub" class="btn btn-outline-secondary">{{ 'myfinds.modifier_mes_publications' | t }}</a>
+    <a routerLink="/publier" class="btn btn-dt"><i class="fas fa-camera me-1" aria-hidden="true"></i> {{ 'faq.a4_link' | t }}</a>
   </div>
 </div>
 
 @if (loading()) {
-  <app-loading label="Chargement de vos publications…" />
+  <app-loading [label]="'myfinds.chargement_de_vos_publications' | t" />
 } @else if (error()) {
   <app-error-state [message]="error()!">
-    <button type="button" class="btn btn-sm btn-outline-danger" (click)="load(1)">Réessayer</button>
+    <button type="button" class="btn btn-sm btn-outline-danger" (click)="load(1)">{{ 'mydecl.reessayer' | t }}</button>
   </app-error-state>
 } @else if (rows().length === 0) {
   <div class="dt-card">
-    <app-empty-state icon="fa-search-location" title="Aucun document publié"
-      text="Vous avez trouvé une pièce ? Photographiez-la : DocTrack lit les informations, masque les numéros et prévient son propriétaire.">
-      <a routerLink="/publier" class="btn btn-dt btn-sm mt-2">Publier un document trouvé</a>
+    <app-empty-state icon="fa-search-location" [title]="'myfinds.aucun_document_publie' | t"
+      [text]="'myfinds.vous_avez_trouve_une_piece_photographiez' | t">
+      <a routerLink="/publier" class="btn btn-dt btn-sm mt-2">{{ 'faq.a4_link' | t }}</a>
     </app-empty-state>
   </div>
 } @else {
@@ -28,9 +28,9 @@
             <img [src]="row.doc.image_thumb || row.doc.image" alt="" width="84" height="64" class="rounded object-fit-cover flex-shrink-0" />
           }
           <div class="min-w-0">
-            <h3 class="dt-card__title text-truncate">{{ row.doc.document_type?.TypeName ?? 'Document' }}</h3>
+            <h3 class="dt-card__title text-truncate">{{ row.doc.document_type?.TypeName ?? ('landing.doc_alt' | t) }}</h3>
             <p class="dt-card__meta mb-1">{{ row.doc.OwnerFirstName }} {{ row.doc.OwnerLastName }}</p>
-            <p class="dt-card__meta">Trouvé à {{ row.doc.Location }} · {{ row.doc.created_at | date: 'd MMM y' }}</p>
+            <p class="dt-card__meta">{{ 'myfinds.trouve_a' | t }} {{ row.doc.Location }} · {{ row.doc.created_at | date: 'd MMM y' }}</p>
           </div>
         </div>
         <div class="mt-2"><app-status-badge [status]="row.doc.lifecycle_status" /></div>
@@ -38,20 +38,20 @@
         @if (row.doc.custody) {
           <div class="dt-callout dt-callout--success">
             <i class="fas fa-landmark" aria-hidden="true"></i>
-            <div>Conservé par <b>{{ row.doc.custody.name }}</b>. Merci !</div>
+            <div>{{ 'myfinds.conserve_par' | t }} <b>{{ row.doc.custody.name }}</b>{{ 'myfinds.merci' | t }}</div>
           </div>
         } @else if (row.collection; as c) {
           <div class="dt-callout" [class.dt-callout--info]="c.status !== 'collected'" [class.dt-callout--success]="c.status === 'collected'">
             <i class="fas fa-truck" aria-hidden="true"></i>
             <div>
-              {{ collectionText(c) }}
+              {{ collectionText(c) | tfr }}
               @if (c.structure) {
                 <br /><b>{{ c.structure.name }}</b>
                 @if (c.structure.phone) { — <a [href]="'tel:' + c.structure.phone">{{ c.structure.phone }}</a> }
               }
               @if (c.scheduled_at) {
-                <br />Le {{ c.scheduled_at | date: 'EEEE d MMMM, HH:mm' }}
-                {{ c.method === 'agent_pickup' ? '— un agent viendra le chercher' : '— vous le déposez' }}
+                <br />{{ 'myfinds.le' | t }} {{ c.scheduled_at | date: 'EEEE d MMMM, HH:mm' }}
+                {{ c.method === 'agent_pickup' ? ('myfinds.un_agent_viendra_le_chercher' | t) : ('myfinds.vous_le_deposez' | t) }}
                 @if (c.meeting_place) { ({{ c.meeting_place }}) }
               }
             </div>

@@ -370,3 +370,7 @@
   .navbar { padding: 0 14px; }
   .navbar-logo img { height: 40px; }
 }
+
+/* Sélecteur de langue : dans l'en-tête sur ordinateur, en haut du menu sur téléphone */
+.nav-lang { display: inline-flex; margin-right: 4px; }
+.mobile-menu ul li.mobile-lang { padding: 4px 16px 8px; list-style: none; }

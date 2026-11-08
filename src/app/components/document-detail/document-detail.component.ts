@@ -1,3 +1,5 @@
+import { I18nService } from '../../core/i18n/i18n.service';
+import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { PublisherPipe } from '../../shared/pipes/publisher.pipe';
 import { RestitutionFlowService } from '../../shared/restitution/restitution-flow.service';
   import { AuthService } from './../services/auth.service';
@@ -58,13 +60,14 @@ import { RestitutionFlowService } from '../../shared/restitution/restitution-flo
 
   @Component({
     selector: 'app-document-detail',
-    imports: [PublisherPipe, NavbarComponent, FooterComponent, CommonModule, FormsModule],
+    imports: [TranslatePipe, PublisherPipe, NavbarComponent, FooterComponent, CommonModule, FormsModule],
     templateUrl: './document-detail.component.html',
     styleUrls: ['./document-detail.component.css'],
     changeDetection: ChangeDetectionStrategy.Eager,
     schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
   export class DocumentDetailComponent implements OnInit {
+  private readonly i18n = inject(I18nService);
     documentDetails: DocumentDetails | null = null; // Utiliser le type DocumentDetails
     commentaires: Commentaire[] = []; // Ajout pour stocker les commentaires
     newComment: string = ''; // Pour stocker le contenu du nouveau commentaire
@@ -137,8 +140,8 @@ import { RestitutionFlowService } from '../../shared/restitution/restitution-flo
             this.isLoading = false;
             Swal.fire({
               icon: 'success',
-              title: 'Commentaire ajouté',
-              text: 'Votre commentaire a été ajouté avec succès.',
+              title: this.i18n.t('detail.commentaire_ajoute'),
+              text: this.i18n.t('detail.votre_commentaire_a_ete_ajoute_avec'),
               timer: 2000,
               showConfirmButton: true
             });
@@ -148,8 +151,8 @@ import { RestitutionFlowService } from '../../shared/restitution/restitution-flo
             this.isLoading = false;
             Swal.fire({
               icon: 'error',
-              title: 'Erreur',
-              text: 'Une erreur est survenue lors de l\'ajout de votre commentaire.',
+              title: this.i18n.t('detail.erreur'),
+              text: this.i18n.t('detail.une_erreur_est_survenue_lors_de'),
               timer: 2000,
               showConfirmButton: false
             });
@@ -158,8 +161,8 @@ import { RestitutionFlowService } from '../../shared/restitution/restitution-flo
       } else {
         Swal.fire({
           icon: 'warning',
-          title: 'Non authentifié',
-          text: 'Vous devez être authentifié pour ajouter un commentaire.',
+          title: this.i18n.t('detail.non_authentifie'),
+          text: this.i18n.t('detail.vous_devez_etre_authentifie_pour_ajouter'),
           timer: 2000,
           showConfirmButton: true
         });
@@ -174,8 +177,8 @@ import { RestitutionFlowService } from '../../shared/restitution/restitution-flo
       if (this.isOwner) {
         Swal.fire({
           icon: 'error',
-          title: 'Action interdite',
-          text: 'Vous ne pouvez pas demander la restitution de votre propre document.',
+          title: this.i18n.t('detail.action_interdite'),
+          text: this.i18n.t('detail.vous_ne_pouvez_pas_demander_la'),
           timer: 2500,
           showConfirmButton: false
         });

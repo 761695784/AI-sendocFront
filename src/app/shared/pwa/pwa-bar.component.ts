@@ -1,3 +1,4 @@
+import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { PwaService } from './pwa.service';
 
@@ -7,28 +8,29 @@ import { PwaService } from './pwa.service';
  */
 @Component({
   selector: 'app-pwa-bar',
+  imports: [TranslatePipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div aria-live="polite" class="pwa">
       @if (!pwa.online()) {
         <div class="pwa__bar pwa__bar--offline" role="status">
           <i class="fas fa-wifi" aria-hidden="true"></i>
-          <span>Pas de connexion internet. Les pages déjà ouvertes restent consultables ; les enregistrements reprendront au retour du réseau.</span>
+          <span>{{ 'pwa.pas_de_connexion_internet_les_pages' | t }}</span>
         </div>
       }
       @if (pwa.updateReady()) {
         <div class="pwa__bar pwa__bar--update" role="status">
           <i class="fas fa-sync-alt" aria-hidden="true"></i>
-          <span>Une nouvelle version de DocTrack est prête.</span>
-          <button type="button" class="btn btn-sm btn-light" (click)="pwa.applyUpdate()">Mettre à jour</button>
+          <span>{{ 'pwa.une_nouvelle_version_de_doctrack_est' | t }}</span>
+          <button type="button" class="btn btn-sm btn-light" (click)="pwa.applyUpdate()">{{ 'pwa.mettre_a_jour' | t }}</button>
         </div>
       }
       @if (pwa.canInstall()) {
         <div class="pwa__bar pwa__bar--install">
           <i class="fas fa-mobile-alt" aria-hidden="true"></i>
-          <span>Installer DocTrack sur cet appareil : accès direct depuis l'écran d'accueil, même avec une connexion faible.</span>
-          <button type="button" class="btn btn-sm btn-light" (click)="pwa.install()">Installer</button>
-          <button type="button" class="btn btn-sm btn-link text-white" (click)="pwa.dismissInstall()" aria-label="Plus tard">Plus tard</button>
+          <span>{{ 'pwa.installer_doctrack_sur_cet_appareil_acce' | t }}</span>
+          <button type="button" class="btn btn-sm btn-light" (click)="pwa.install()">{{ 'pwa.installer' | t }}</button>
+          <button type="button" class="btn btn-sm btn-link text-white" (click)="pwa.dismissInstall()" [aria-label]="'pwa.plus_tard' | t">{{ 'pwa.plus_tard' | t }}</button>
         </div>
       }
     </div>

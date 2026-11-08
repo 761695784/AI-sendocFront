@@ -1,3 +1,4 @@
+import { translate } from '../i18n/i18n.service';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
@@ -94,9 +95,9 @@ export function saveBlob(blob: Blob, filename: string): void {
 }
 
 /** Message lisible d'une erreur HTTP de l'API (validation Laravel comprise). */
-export function apiErrorMessage(error: any, fallback = 'Une erreur est survenue, veuillez réessayer.'): string {
+export function apiErrorMessage(error: any, fallback = translate('api.generic_error')): string {
   if (error?.status === 0) {
-    return 'Impossible de joindre le serveur. Vérifiez votre connexion.';
+    return translate('api.unreachable');
   }
   const body = error?.error;
   if (error?.status === 429) {
@@ -105,7 +106,7 @@ export function apiErrorMessage(error: any, fallback = 'Une erreur est survenue,
       return body.message;
     }
     const retry = Number(error?.headers?.get?.('Retry-After') ?? body?.retry_after ?? 60);
-    return `Trop de tentatives. Réessayez dans ${retry >= 120 ? Math.ceil(retry / 60) + ' minutes' : retry + ' secondes'}.`;
+    return retry >= 120 ? translate('api.too_many_minutes', { n: Math.ceil(retry / 60) }) : translate('api.too_many_seconds', { n: retry });
   }
   if (body?.errors && typeof body.errors === 'object') {
     const first = Object.values(body.errors as Record<string, string[]>)[0];

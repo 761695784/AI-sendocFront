@@ -1,4 +1,6 @@
-import { Component, CUSTOM_ELEMENTS_SCHEMA, ChangeDetectionStrategy } from '@angular/core';
+import { I18nService } from '../../core/i18n/i18n.service';
+import { TranslatePipe } from '../../core/i18n/translate.pipe';
+import { Component, CUSTOM_ELEMENTS_SCHEMA, ChangeDetectionStrategy, inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { NavbarComponent } from '../navbar/navbar.component';
 import { AuthService } from '../services/auth.service';
@@ -8,13 +10,14 @@ import { Router } from '@angular/router';
 
 @Component({
     selector: 'app-reset-password',
-    imports: [NavbarComponent, ReactiveFormsModule],
+    imports: [TranslatePipe, NavbarComponent, ReactiveFormsModule],
     templateUrl: './reset-password.component.html',
     styleUrls: ['./reset-password.component.css'], // Correction: 'styleUrl' => 'styleUrls'
     changeDetection: ChangeDetectionStrategy.Eager,
     schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class ResetPasswordComponent {
+  private readonly i18n = inject(I18nService);
   resetPasswordForm: FormGroup; // FormGroup pour le formulaire
   isSubmitting: boolean = false; // Indicateur pour éviter des soumissions multiples
   isLoading: boolean = false; // Variable pour contrôler l'affichage du loader
@@ -49,8 +52,8 @@ export class ResetPasswordComponent {
         // Affichage d'une alerte SweetAlert en cas de succès
         Swal.fire({
           icon: 'success',
-          title: 'Succès !',
-          text: 'Un email de réinitialisation a été envoyé à votre adresse.',
+          title: this.i18n.t('reset.succes'),
+          text: this.i18n.t('reset.un_email_de_reinitialisation_a_ete'),
           timer: 2000,
           timerProgressBar: true
         });
@@ -63,8 +66,8 @@ export class ResetPasswordComponent {
         // Affichage d'une alerte SweetAlert en cas d'erreur
         Swal.fire({
           icon: 'error',
-          title: 'Erreur !',
-          text: error.error.message || 'Une erreur est survenue. Veuillez réessayer.',
+          title: this.i18n.t('reset.erreur'),
+          text: error.error.message || this.i18n.t('reset.une_erreur_est_survenue_veuillez_reessay'),
           timer: 2000,
           timerProgressBar: true
         });

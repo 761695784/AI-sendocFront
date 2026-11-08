@@ -1,3 +1,5 @@
+import { I18nService } from '../../../core/i18n/i18n.service';
+import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 import { ChangeDetectionStrategy, Component, OnInit, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { DatePipe } from '@angular/common';
@@ -23,12 +25,13 @@ const NAME_PATTERN = '[a-zA-Z ]*';
  */
 @Component({
   selector: 'app-declare-loss',
-  imports: [ReactiveFormsModule, RouterLink, DatePipe, NavbarComponent, FooterComponent],
+  imports: [TranslatePipe, ReactiveFormsModule, RouterLink, DatePipe, NavbarComponent, FooterComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './declare-loss.component.html',
   styleUrl: '../citizen-form.css',
 })
 export class DeclareLossComponent implements OnInit {
+  private readonly i18n = inject(I18nService);
   private readonly api = inject(CitizenApi);
   private readonly notify = inject(NotifyService);
   private readonly fb = inject(FormBuilder);
@@ -61,7 +64,7 @@ export class DeclareLossComponent implements OnInit {
   nameError(control: 'FirstNameInDoc' | 'LastNameInDoc', label: string): string | null {
     const c = this.form.controls[control];
     if (c.errors?.['pattern'] && (c.touched || c.dirty)) {
-      return 'Lettres sans accents et espaces uniquement, comme sur le document.';
+      return this.i18n.t('declare.lettres_sans_accents_et_espaces_uniqueme');
     }
     return this.fieldError(c, label);
   }
@@ -90,14 +93,14 @@ export class DeclareLossComponent implements OnInit {
         next: (res) => {
           this.sending.set(false);
           this.result.set(res);
-          this.notify.success('Déclaration enregistrée : votre récépissé est prêt.');
+          this.notify.success(this.i18n.t('declare.declaration_enregistree_votre_recepisse'));
           if (typeof window !== 'undefined') {
             window.scrollTo({ top: 0, behavior: 'smooth' });
           }
         },
         error: (e) => {
           this.sending.set(false);
-          void this.notify.error(e, 'Déclaration impossible');
+          void this.notify.error(e, this.i18n.t('declare.declaration_impossible'));
         },
       });
   }
@@ -115,7 +118,7 @@ export class DeclareLossComponent implements OnInit {
       },
       error: (e) => {
         this.opening.set(false);
-        void this.notify.error(e, 'Récépissé indisponible');
+        void this.notify.error(e, this.i18n.t('declare.recepisse_indisponible'));
       },
     });
   }

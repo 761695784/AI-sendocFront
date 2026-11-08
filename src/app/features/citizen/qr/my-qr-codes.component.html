@@ -1,11 +1,11 @@
 <div class="dt-toolbar qr-print-hide">
-  <h2>Mes QR codes</h2>
+  <h2>{{ 'space.mes_qr_codes' | t }}</h2>
   <div class="d-flex gap-2">
     @if (hasQr()) {
-      <button type="button" class="btn btn-outline-secondary" (click)="print()"><i class="fas fa-print me-1" aria-hidden="true"></i> Imprimer</button>
+      <button type="button" class="btn btn-outline-secondary" (click)="print()"><i class="fas fa-print me-1" aria-hidden="true"></i> {{ 'myqr.imprimer' | t }}</button>
     }
     @if (!showForm()) {
-      <button type="button" class="btn btn-dt" (click)="showForm.set(true)"><i class="fas fa-plus me-1" aria-hidden="true"></i> Nouveau QR code</button>
+      <button type="button" class="btn btn-dt" (click)="showForm.set(true)"><i class="fas fa-plus me-1" aria-hidden="true"></i> {{ 'myqr.nouveau_qr_code' | t }}</button>
     }
   </div>
 </div>
@@ -13,20 +13,19 @@
 <div class="dt-callout dt-callout--info mt-0 mb-3 qr-print-hide">
   <i class="fas fa-lightbulb" aria-hidden="true"></i>
   <div>
-    <strong>Comment ça marche ?</strong>
-    Imprimez le QR et collez-le au dos de la pochette de votre pièce. Si quelqu'un la trouve et scanne le QR, vous êtes prévenu
-    immédiatement par SMS et e-mail. Le QR ne contient aucune donnée personnelle. Le premier est gratuit.
+    <strong>{{ 'howto.title' | t }}</strong>
+    {{ 'myqr.imprimez_le_qr_et_collez_le' | t }}
   </div>
 </div>
 
 @if (showForm()) {
   <form class="dt-card dt-form qr-print-hide mb-3" [formGroup]="form" (ngSubmit)="create()">
-    <h3 class="dt-card__title mb-3">Créer un QR code</h3>
+    <h3 class="dt-card__title mb-3">{{ 'myqr.creer_un_qr_code' | t }}</h3>
     <div class="row g-3">
       <div class="col-md-4">
-        <label for="qr-type" class="dt-required">Document</label>
+        <label for="qr-type" class="dt-required">{{ 'landing.doc_alt' | t }}</label>
         <select id="qr-type" class="form-select" formControlName="document_type_id">
-          <option value="" disabled>Choisir…</option>
+          <option value="" disabled>{{ 'declare.choisir' | t }}</option>
           @for (t of types(); track t.id) {
             <option [value]="t.id">{{ t.TypeName }}</option>
           }
@@ -34,19 +33,19 @@
         @if (fieldError(form.controls.document_type_id, 'Le document'); as err) { <small class="dt-error">{{ err }}</small> }
       </div>
       <div class="col-md-4">
-        <label for="qr-label">Nom de l'étiquette</label>
-        <input id="qr-label" class="form-control" formControlName="label" placeholder="Ex. CNI de maman" />
+        <label for="qr-label">{{ 'myqr.nom_de_l_etiquette' | t }}</label>
+        <input id="qr-label" class="form-control" formControlName="label" [placeholder]="'myqr.ex_cni_de_maman' | t" />
       </div>
       <div class="col-md-4">
-        <label for="qr-number">Numéro de la pièce</label>
-        <input id="qr-number" class="form-control" formControlName="doc_number" placeholder="Facultatif" autocomplete="off" />
-        <small class="form-text">Seuls les 4 derniers chiffres sont affichés, pour vous repérer.</small>
+        <label for="qr-number">{{ 'publish.numero_de_la_piece' | t }}</label>
+        <input id="qr-number" class="form-control" formControlName="doc_number" [placeholder]="'declare.facultatif' | t" autocomplete="off" />
+        <small class="form-text">{{ 'myqr.seuls_les_4_derniers_chiffres_sont' | t }}</small>
       </div>
     </div>
     <div class="d-flex gap-2 mt-3">
-      <button type="submit" class="btn btn-dt" [disabled]="creating()">{{ creating() ? 'Création…' : 'Créer le QR code' }}</button>
+      <button type="submit" class="btn btn-dt" [disabled]="creating()">{{ creating() ? ('myqr.creation' | t) : ('myqr.creer_le_qr_code' | t) }}</button>
       @if (tags().length) {
-        <button type="button" class="btn btn-link" (click)="showForm.set(false)">Annuler</button>
+        <button type="button" class="btn btn-link" (click)="showForm.set(false)">{{ 'rf.cancel' | t }}</button>
       }
     </div>
   </form>
@@ -56,10 +55,10 @@
   <app-loading />
 } @else if (error()) {
   <app-error-state [message]="error()!">
-    <button type="button" class="btn btn-sm btn-outline-danger" (click)="load()">Réessayer</button>
+    <button type="button" class="btn btn-sm btn-outline-danger" (click)="load()">{{ 'mydecl.reessayer' | t }}</button>
   </app-error-state>
 } @else if (tags().length === 0 && !showForm()) {
-  <div class="dt-card"><app-empty-state icon="fa-qrcode" title="Aucun QR code" /></div>
+  <div class="dt-card"><app-empty-state icon="fa-qrcode" [title]="'myqr.aucun_qr_code' | t" /></div>
 } @else {
   <div class="dt-grid">
     @for (t of tags(); track t.uuid) {
@@ -69,36 +68,36 @@
             <h3 class="dt-card__title">{{ t.label || t.document_type || 'Document' }}</h3>
             <p class="dt-card__meta">
               {{ t.document_type }}
-              @if (t.doc_number_last4) { · n° ••••{{ t.doc_number_last4 }} }
+              @if (t.doc_number_last4) { {{ 'myqr.n' | t }}{{ t.doc_number_last4 }} }
             </p>
           </div>
           <app-status-badge [status]="t.status" />
         </div>
         <p class="dt-muted small mb-2 qr-print-hide">
           @if (t.scans_count > 0) {
-            Scanné {{ t.scans_count }} fois · dernier scan le {{ t.last_scanned_at | date: 'd MMM y, HH:mm' }}
+            {{ 'myqr.scanne' | t }} {{ t.scans_count }} {{ 'myqr.fois_dernier_scan_le' | t }} {{ t.last_scanned_at | date: 'd MMM y, HH:mm' }}
           } @else if (t.activated_at) {
-            Actif depuis le {{ t.activated_at | date: 'd MMM y' }} · jamais scanné
+            {{ 'myqr.actif_depuis_le' | t }} {{ t.activated_at | date: 'd MMM y' }} {{ 'myqr.jamais_scanne' | t }}
           }
         </p>
 
         @if (qr()[t.uuid]; as img) {
           <div class="qr-box">
-            <img [src]="img" alt="QR code DocTrack" />
-            <small><b>DocTrack</b> — Document trouvé ? Scannez-moi.<br />Le propriétaire sera prévenu.</small>
+            <img [src]="img" [alt]="'myqr.qr_code_doctrack' | t" />
+            <small><b>DocTrack</b> {{ 'myqr.document_trouve_scannez_moi' | t }}<br />{{ 'myqr.le_proprietaire_sera_prevenu' | t }}</small>
           </div>
         }
 
         @if (t.status === 'active') {
           <div class="d-flex flex-wrap gap-2 mt-2 qr-print-hide">
             <button type="button" class="btn btn-sm btn-dt" [disabled]="busy() === t.uuid" (click)="show(t)">
-              {{ qr()[t.uuid] ? 'Masquer' : 'Afficher le QR' }}
+              {{ qr()[t.uuid] ? ('myqr.masquer' | t) : ('myqr.afficher_le_qr' | t) }}
             </button>
-            <button type="button" class="btn btn-sm btn-outline-secondary" [disabled]="busy() === t.uuid" (click)="renew(t)">Renouveler</button>
-            <button type="button" class="btn btn-sm btn-outline-danger" [disabled]="busy() === t.uuid" (click)="revoke(t)">Désactiver</button>
+            <button type="button" class="btn btn-sm btn-outline-secondary" [disabled]="busy() === t.uuid" (click)="renew(t)">{{ 'myqr.renouveler' | t }}</button>
+            <button type="button" class="btn btn-sm btn-outline-danger" [disabled]="busy() === t.uuid" (click)="revoke(t)">{{ 'myqr.desactiver' | t }}</button>
           </div>
         } @else if (t.status === 'pending_payment') {
-          <p class="small mt-2 mb-0 qr-print-hide">En attente de paiement : voir l'onglet Paiements.</p>
+          <p class="small mt-2 mb-0 qr-print-hide">{{ 'myqr.en_attente_de_paiement_voir_l' | t }}</p>
         }
       </article>
     }

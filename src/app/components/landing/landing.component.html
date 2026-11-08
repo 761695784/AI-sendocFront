@@ -8,13 +8,13 @@
     <div class="hero-content">
       <div class="hero-badge">
         <i class="fas fa-shield-alt"></i>
-        Plateforme nationale — République du Sénégal
+        {{ 'landing.badge' | t }}
       </div>
-      <h1>Vous avez perdu un document important ?<br>
-        <span>Nous sommes là pour vous aider.</span>
+      <h1>{{ 'landing.title' | t }}<br>
+        <span>{{ 'landing.title_accent' | t }}</span>
       </h1>
-      <p>Publiez ou recherchez des documents perdus et retrouvés en toute simplicité.
-        <strong>DocTrack</strong>, votre solution rapide et sécurisée.
+      <p>{{ 'landing.lead' | t }}
+        <strong>DocTrack</strong>{{ 'landing.lead_end' | t }}
       </p>
 
       <!-- Barre de recherche -->
@@ -24,20 +24,20 @@
           <input type="text"
             [(ngModel)]="searchTerm"
             (input)="filterDocuments()"
-            placeholder="Recherchez un document trouvé (nom, type, lieu...)">
+            [placeholder]="'landing.search_placeholder' | t">
           </div>
           <button class="search-btn" (click)="filterDocuments()">
-            <i class="fas fa-search"></i> Rechercher
+            <i class="fas fa-search"></i> {{ 'landing.search' | t }}
           </button>
         </div>
 
         <!-- Boutons CTA -->
         <div class="hero-actions">
           <a href="/declarer" class="btn-hero-primary">
-            <i class="fas fa-file-alt"></i> Déclarer une perte
+            <i class="fas fa-file-alt"></i> {{ 'landing.cta_declare' | t }}
           </a>
           <a href="/publier" class="btn-hero-secondary">
-            <i class="fas fa-upload"></i> Publier un document
+            <i class="fas fa-upload"></i> {{ 'landing.cta_publish' | t }}
           </a>
         </div>
       </div>
@@ -49,14 +49,14 @@
         <div class="container">
           <div class="search-header">
             <i class="fas fa-search"></i>
-            <span>Résultats pour <strong>"{{ searchTerm }}"</strong></span>
+            <span>{{ 'landing.results_for' | t }} <strong>"{{ searchTerm }}"</strong></span>
           </div>
           @if (filteredDocuments.length === 0) {
             <div class="no-results">
               <div class="no-results-icon"><i class="fas fa-folder-open"></i></div>
-              <h3>Aucun document trouvé</h3>
-              <p>Essayez avec d'autres mots-clés ou
-                <a href="/declarer">déclarez une perte</a>.
+              <h3>{{ 'landing.no_results' | t }}</h3>
+              <p>{{ 'landing.no_results_hint' | t }}
+                <a href="/declarer">{{ 'landing.no_results_link' | t }}</a>.
               </p>
             </div>
           }
@@ -68,7 +68,7 @@
                   <div class="result-card-img">
                     @if (document.image_blurred || document.image) {
                       <img loading="lazy"
-                        [src]="document.image_blurred || document.image" alt="Document">
+                        [src]="document.image_blurred || document.image" [alt]="'landing.doc_alt' | t">
                     }
                     <!-- <div class="blur-overlay"></div> -->
                     <div class="result-type-badge">
@@ -76,7 +76,7 @@
                     </div>
                     <div class="result-status-badge"
                       [ngClass]="document.statut === 'récupéré' ? 'badge-green' : 'badge-orange'">
-                      {{ document.statut === 'récupéré' ? 'Récupéré' : 'En attente' }}
+                      {{ (document.statut === 'récupéré' ? 'landing.status_recovered' : 'landing.status_pending') | t }}
                     </div>
                   </div>
                   <div class="result-card-body">
@@ -87,16 +87,16 @@
                     </p>
                     <div class="result-meta">
                       <div class="result-meta-item">
-                        <span class="result-meta-label">Prénom</span>
+                        <span class="result-meta-label">{{ 'landing.first_name' | t }}</span>
                         <span class="result-meta-value">{{ document.OwnerFirstName }}</span>
                       </div>
                       <div class="result-meta-item">
-                        <span class="result-meta-label">Nom</span>
+                        <span class="result-meta-label">{{ 'landing.last_name' | t }}</span>
                         <span class="result-meta-value">{{ document.OwnerLastName }}</span>
                       </div>
                     </div>
                     <button class="btn-details" (click)="viewDetails(document.uuid)">
-                      <i class="fas fa-eye"></i> Voir les détails
+                      <i class="fas fa-eye"></i> {{ 'landing.view_details' | t }}
                     </button>
                   </div>
                 </div>
@@ -112,44 +112,44 @@
       <div class="container">
         <div class="section-header">
           <div class="section-badge">
-            <i class="fas fa-star"></i> Pourquoi DocTrack ?
+            <i class="fas fa-star"></i> {{ 'adv.badge' | t }}
           </div>
-          <h2>Bénéficiez des avantages de DocTrack</h2>
-          <p>Une plateforme simple, rapide et sécurisée pour gérer vos documents perdus</p>
+          <h2>{{ 'adv.title' | t }}</h2>
+          <p>{{ 'adv.subtitle' | t }}</p>
         </div>
 
         <div class="advantages-grid">
           <div class="advantage-card">
             <div class="advantage-img-wrap">
-              <img loading="lazy" src="assets/avantage1.webp" alt="Rechercher">
+              <img loading="lazy" src="assets/avantage1.webp" [alt]="'adv.search_title' | t">
             </div>
             <div class="advantage-num">01</div>
-            <h4>Rechercher</h4>
-            <p>Recherchez votre document perdu directement depuis la plateforme.</p>
+            <h4>{{ 'adv.search_title' | t }}</h4>
+            <p>{{ 'adv.search_text' | t }}</p>
           </div>
           <div class="advantage-card">
             <div class="advantage-img-wrap">
-              <img loading="lazy" src="assets/avantage2.webp" alt="Déclarer">
+              <img loading="lazy" src="assets/avantage2.webp" [alt]="'adv.declare_title' | t">
             </div>
             <div class="advantage-num">02</div>
-            <h4>Déclarer</h4>
-            <p>Déclarez la perte de votre document et obtenez un certificat officiel.</p>
+            <h4>{{ 'adv.declare_title' | t }}</h4>
+            <p>{{ 'adv.declare_text' | t }}</p>
           </div>
           <div class="advantage-card">
             <div class="advantage-img-wrap">
-              <img loading="lazy" src="assets/avantage3.webp" alt="Publier">
+              <img loading="lazy" src="assets/avantage3.webp" [alt]="'adv.publish_title' | t">
             </div>
             <div class="advantage-num">03</div>
-            <h4>Publier</h4>
-            <p>Publiez un document trouvé pour aider son propriétaire à le récupérer.</p>
+            <h4>{{ 'adv.publish_title' | t }}</h4>
+            <p>{{ 'adv.publish_text' | t }}</p>
           </div>
           <div class="advantage-card">
             <div class="advantage-img-wrap">
-              <img loading="lazy" src="assets/avantage4.webp" alt="Récupérer">
+              <img loading="lazy" src="assets/avantage4.webp" [alt]="'adv.recover_title' | t">
             </div>
             <div class="advantage-num">04</div>
-            <h4>Récupérer</h4>
-            <p>Récupérez votre document directement auprès du trouveur en toute sécurité.</p>
+            <h4>{{ 'adv.recover_title' | t }}</h4>
+            <p>{{ 'adv.recover_text' | t }}</p>
           </div>
         </div>
       </div>
@@ -160,38 +160,38 @@
       <div class="container">
         <div class="section-header light">
           <div class="section-badge dark">
-            <i class="fas fa-shield-alt" aria-hidden="true"></i> Nos engagements
+            <i class="fas fa-shield-alt" aria-hidden="true"></i> {{ 'commit.badge' | t }}
           </div>
-          <h2>Ce que DocTrack garantit</h2>
-          <p>Des règles appliquées à chaque document, de sa publication jusqu'à sa remise à son propriétaire.</p>
+          <h2>{{ 'commit.title' | t }}</h2>
+          <p>{{ 'commit.subtitle' | t }}</p>
         </div>
 
         <div class="commit-grid">
           <div class="commit-card">
             <div class="commit-icon"><i class="fas fa-id-card" aria-hidden="true"></i></div>
-            <h3>Identité vérifiée avant toute remise</h3>
-            <p>Un document n'est rendu qu'après contrôle de la pièce d'identité de son propriétaire, ou de la procuration de la personne qui le représente.</p>
+            <h3>{{ 'commit.identity_title' | t }}</h3>
+            <p>{{ 'commit.identity_text' | t }}</p>
           </div>
           <div class="commit-card">
             <div class="commit-icon"><i class="fas fa-eye-slash" aria-hidden="true"></i></div>
-            <h3>Données personnelles masquées</h3>
-            <p>Sur les publications, les numéros, les dates et la bande codée sont masqués, et la photo visible par le public est floutée.</p>
+            <h3>{{ 'commit.masked_title' | t }}</h3>
+            <p>{{ 'commit.masked_text' | t }}</p>
           </div>
           <div class="commit-card">
             <div class="commit-icon"><i class="fas fa-file-signature" aria-hidden="true"></i></div>
-            <h3>Décharge signée et vérifiable</h3>
-            <p>Chaque restitution donne lieu à une décharge signée, avec un code qui permet d'en vérifier l'authenticité en ligne.</p>
+            <h3>{{ 'commit.discharge_title' | t }}</h3>
+            <p>{{ 'commit.discharge_text' | t }}</p>
           </div>
           <div class="commit-card">
             <div class="commit-icon"><i class="fas fa-hand-holding-heart" aria-hidden="true"></i></div>
-            <h3>Gratuit pendant la phase pilote</h3>
-            <p>Déclarer une perte, publier un document trouvé ou le récupérer : aucune démarche n'est facturée pendant la phase pilote.</p>
+            <h3>{{ 'commit.free_title' | t }}</h3>
+            <p>{{ 'commit.free_text' | t }}</p>
           </div>
         </div>
 
         <div class="commit-foot">
           <a href="/verifier" class="commit-link">
-            <i class="fas fa-certificate" aria-hidden="true"></i> Vérifier un certificat ou une décharge
+            <i class="fas fa-certificate" aria-hidden="true"></i> {{ 'commit.verify_link' | t }}
           </a>
         </div>
       </div>
@@ -202,10 +202,10 @@
       <div class="container">
         <div class="section-header">
           <div class="section-badge">
-            <i class="fas fa-play-circle"></i> Tutoriels
+            <i class="fas fa-play-circle"></i> {{ 'howto.badge' | t }}
           </div>
-          <h2>Comment ça marche ?</h2>
-          <p>Découvrez en vidéo comment utiliser DocTrack étape par étape</p>
+          <h2>{{ 'howto.title' | t }}</h2>
+          <p>{{ 'howto.subtitle' | t }}</p>
         </div>
 
         <!-- Étape 1 -->
@@ -214,7 +214,7 @@
             <div class="video-wrap">
               <iframe
                 src="https://www.youtube-nocookie.com/embed/NfC2AA3PfIU?rel=0"
-                title="Tutoriel 1 — Déclarer une perte et publier un document trouvé"
+                [title]="'howto.video1_title' | t"
                 frameborder="0"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                 loading="lazy"
@@ -224,11 +224,11 @@
           </div>
           <div class="howto-text">
             <div aria-hidden="true" class="howto-num">01</div>
-            <h3>Déclarer une perte ou publier un document trouvé</h3>
+            <h3>{{ 'howto.step1_title' | t }}</h3>
             <div class="howto-divider"></div>
-            <p>Vous avez perdu un document ou vous en avez trouvé un ? Cette vidéo vous montre pas à pas comment déclarer une perte et obtenir votre récépissé, ou publier un document trouvé en toute sécurité.</p>
+            <p>{{ 'howto.step1_text' | t }}</p>
             <a href="/declarer" class="howto-btn">
-              <i class="fas fa-file-alt"></i> Faire une déclaration
+              <i class="fas fa-file-alt"></i> {{ 'howto.step1_btn' | t }}
             </a>
           </div>
         </div>
@@ -239,7 +239,7 @@
             <div class="video-wrap">
               <iframe
                 src="https://www.youtube-nocookie.com/embed/a2nNsHWoRz0?rel=0"
-                title="Tutoriel 2 — Rechercher et récupérer son document perdu"
+                [title]="'howto.video2_title' | t"
                 frameborder="0"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                 loading="lazy"
@@ -249,11 +249,11 @@
           </div>
           <div class="howto-text orange">
             <div aria-hidden="true" class="howto-num orange">02</div>
-            <h3>Rechercher et récupérer son document</h3>
+            <h3>{{ 'howto.step2_title' | t }}</h3>
             <div class="howto-divider orange"></div>
-            <p>Cette vidéo vous montre comment rechercher votre document, demander sa restitution, puis le récupérer directement auprès du trouveur ou au guichet de la structure qui le garde.</p>
+            <p>{{ 'howto.step2_text' | t }}</p>
             <a href="/liste" class="howto-btn orange">
-              <i class="fas fa-search"></i> Rechercher un document
+              <i class="fas fa-search"></i> {{ 'howto.step2_btn' | t }}
             </a>
           </div>
         </div>
@@ -266,17 +266,17 @@
       <div class="container">
         <div class="section-header">
           <div class="section-badge">
-            <i class="fas fa-map-marker-alt"></i> Géolocalisation
+            <i class="fas fa-map-marker-alt"></i> {{ 'map.badge' | t }}
           </div>
-          <h2>Publications par Localités</h2>
-          <p>Visualisez la répartition géographique des documents publiés sur DocTrack</p>
+          <h2>{{ 'map.title' | t }}</h2>
+          <p>{{ 'map.subtitle' | t }}</p>
         </div>
         <div class="map-wrap">
           <!-- Carte chargée seulement quand elle arrive à l'écran : la bibliothèque de cartes (lourde) ne ralentit plus l'ouverture du site -->
           @defer (on viewport) {
             <app-map></app-map>
           } @placeholder {
-            <div style="min-height: 320px; display: grid; place-items: center; color: #6b7684;">Chargement de la carte…</div>
+            <div style="min-height: 320px; display: grid; place-items: center; color: #6b7684;">{{ 'map.loading' | t }}</div>
           }
         </div>
       </div>
@@ -287,45 +287,45 @@
       <div class="container">
         <div class="section-header">
           <div class="section-badge">
-            <i class="fas fa-comment-dots" aria-hidden="true"></i> Témoignages
+            <i class="fas fa-comment-dots" aria-hidden="true"></i> {{ 'testi.badge' | t }}
           </div>
-          <h2>Votre expérience compte</h2>
-          <p>DocTrack démarre sa phase pilote. Les premiers témoignages seront publiés ici, uniquement avec l'accord des personnes concernées.</p>
+          <h2>{{ 'testi.title' | t }}</h2>
+          <p>{{ 'testi.subtitle' | t }}</p>
         </div>
 
         <div class="share-card">
           <div class="share-icon"><i class="fas fa-hands-helping" aria-hidden="true"></i></div>
           <div class="share-body">
-            <h3>Votre document a été retrouvé grâce à DocTrack ?</h3>
-            <p>Racontez-nous comment cela s'est passé. Si vous l'acceptez, nous publierons votre témoignage avec seulement votre prénom et votre ville.</p>
+            <h3>{{ 'testi.share_title' | t }}</h3>
+            <p>{{ 'testi.share_text' | t }}</p>
             <div class="share-actions">
               <a class="share-btn primary" href="mailto:sendoctrack@gmail.com?subject=T%C3%A9moignage%20DocTrack">
-                <i class="fas fa-envelope" aria-hidden="true"></i> Partager par e-mail
+                <i class="fas fa-envelope" aria-hidden="true"></i> {{ 'testi.share_email' | t }}
               </a>
               <a class="share-btn secondary" href="https://wa.me/221761695784" target="_blank" rel="noopener noreferrer">
-                <i class="fab fa-whatsapp" aria-hidden="true"></i> Partager sur WhatsApp
+                <i class="fab fa-whatsapp" aria-hidden="true"></i> {{ 'testi.share_whatsapp' | t }}
               </a>
             </div>
           </div>
         </div>
 
         <div class="faq">
-          <h3 class="faq-title">Questions fréquentes</h3>
+          <h3 class="faq-title">{{ 'faq.title' | t }}</h3>
           <details class="faq-item">
-            <summary>Est-ce payant ?</summary>
-            <p>Non. Pendant la phase pilote, aucune démarche n'est facturée.</p>
+            <summary>{{ 'faq.q1' | t }}</summary>
+            <p>{{ 'faq.a1' | t }}</p>
           </details>
           <details class="faq-item">
-            <summary>Comment prouver que le document m'appartient ?</summary>
-            <p>Lors de la remise, l'agent contrôle une pièce d'identité (ou la procuration de la personne qui vous représente), puis vous signez une décharge.</p>
+            <summary>{{ 'faq.q2' | t }}</summary>
+            <p>{{ 'faq.a2' | t }}</p>
           </details>
           <details class="faq-item">
-            <summary>Mes informations sont-elles visibles par tout le monde ?</summary>
-            <p>Non. Les numéros et la bande codée sont masqués sur les publications et la photo publique est floutée. Les informations complètes restent réservées à la structure qui détient le document.</p>
+            <summary>{{ 'faq.q3' | t }}</summary>
+            <p>{{ 'faq.a3' | t }}</p>
           </details>
           <details class="faq-item">
-            <summary>J'ai trouvé un document : que dois-je faire ?</summary>
-            <p>Publiez-le sur DocTrack en le photographiant : son propriétaire est prévenu s'il a déclaré la perte. <a href="/publier">Publier un document trouvé</a></p>
+            <summary>{{ 'faq.q4' | t }}</summary>
+            <p>{{ 'faq.a4' | t }} <a href="/publier">{{ 'faq.a4_link' | t }}</a></p>
           </details>
         </div>
       </div>
@@ -336,10 +336,10 @@
       <div class="container">
         <div class="section-header">
           <div class="section-badge">
-            <i class="fas fa-handshake"></i> Partenaires
+            <i class="fas fa-handshake"></i> {{ 'partners.badge' | t }}
           </div>
-          <h2>Nos Partenaires</h2>
-          <p>Ils nous font confiance et soutiennent la mission de DocTrack</p>
+          <h2>{{ 'partners.title' | t }}</h2>
+          <p>{{ 'partners.subtitle' | t }}</p>
         </div>
 
         <div class="partners-track">

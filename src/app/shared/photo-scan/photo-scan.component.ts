@@ -1,4 +1,6 @@
-import { ChangeDetectionStrategy, Component, OnDestroy, input, output, signal } from '@angular/core';
+import { I18nService } from '../../core/i18n/i18n.service';
+import { TranslatePipe, TranslateFrPipe } from '../../core/i18n/translate.pipe';
+import { ChangeDetectionStrategy, Component, OnDestroy, input, output, signal, inject } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { OcrScan } from '../../core/api/api.types';
@@ -20,6 +22,7 @@ export interface PhotoScanResult {
  */
 @Component({
   selector: 'app-photo-scan',
+  imports: [TranslatePipe, TranslateFrPipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     @if (!photoUrl()) {
@@ -27,16 +30,16 @@ export interface PhotoScanResult {
         <div class="col-sm-6">
           <label class="dt-drop w-100 h-100 m-0">
             <i class="fas fa-camera" aria-hidden="true"></i>
-            <strong>{{ takeLabel() }}</strong>
-            <small>Pièce à plat, bien éclairée</small>
+            <strong>{{ takeLabel() | tfr }}</strong>
+            <small>{{ 'scan.piece_a_plat_bien_eclairee' | t }}</small>
             <input type="file" accept="image/*" capture="environment" hidden (change)="onFile($event)" />
           </label>
         </div>
         <div class="col-sm-6">
           <label class="dt-drop w-100 h-100 m-0">
             <i class="fas fa-image" aria-hidden="true"></i>
-            <strong>Choisir une image</strong>
-            <small>JPG, PNG ou WEBP</small>
+            <strong>{{ 'publish.choisir_une_image' | t }}</strong>
+            <small>{{ 'publish.jpg_png_ou_webp' | t }}</small>
             <input type="file" accept="image/jpeg,image/png,image/webp" hidden (change)="onFile($event)" />
           </label>
         </div>
@@ -44,18 +47,18 @@ export interface PhotoScanResult {
     } @else {
       <div class="row g-3 align-items-start">
         <div class="col-md-5">
-          <img class="dt-photo" [src]="photoUrl()" alt="Photo de la pièce" />
-          <button type="button" class="btn btn-link btn-sm px-0" (click)="clear()"><i class="fas fa-redo me-1" aria-hidden="true"></i> Reprendre</button>
+          <img class="dt-photo" [src]="photoUrl()" [alt]="'scan.photo_de_la_piece' | t" />
+          <button type="button" class="btn btn-link btn-sm px-0" (click)="clear()"><i class="fas fa-redo me-1" aria-hidden="true"></i> {{ 'scan.reprendre' | t }}</button>
         </div>
         <div class="col-md-7">
           @switch (state()) {
             @case ('reading') {
-              <div class="d-flex align-items-center gap-2 py-3"><span class="spinner-border spinner-border-sm" aria-hidden="true"></span> Lecture de la pièce…</div>
+              <div class="d-flex align-items-center gap-2 py-3"><span class="spinner-border spinner-border-sm" aria-hidden="true"></span> {{ 'scan.lecture_de_la_piece' | t }}</div>
             }
             @case ('read') {
               <div class="dt-callout dt-callout--success mt-0">
                 <i class="fas fa-magic" aria-hidden="true"></i>
-                <div><strong>Pièce lue{{ score() ? ' (qualité ' + score() + '/100)' : '' }}</strong> Les champs ont été remplis : vérifiez-les.</div>
+                <div><strong>{{ 'scan.piece_lue' | t }}@if (score()) { {{ 'scan.quality' | t: { n: score() } }} }</strong> {{ 'scan.les_champs_ont_ete_remplis_verifiez' | t }}</div>
               </div>
               @for (c of checks(); track c.code) {
                 <div class="small mt-1" [class.text-success]="c.level === 'ok'" [class.text-warning-emphasis]="c.level === 'warning'">
@@ -76,6 +79,7 @@ export interface PhotoScanResult {
   `,
 })
 export class PhotoScanComponent implements OnDestroy {
+  private readonly i18n = inject(I18nService);
   /** Appel de lecture (CounterApi.scan ou CitizenApi.scan). */
   readonly scanner = input.required<(photo: Blob) => Observable<OcrScan>>();
   readonly takeLabel = input('Prendre une photo');
@@ -116,7 +120,7 @@ export class PhotoScanComponent implements OnDestroy {
       },
       error: (e: HttpErrorResponse) => {
         this.state.set(e.status === 422 ? 'failed' : 'manual');
-        this.message.set(apiErrorMessage(e, 'Lecture automatique indisponible : remplissez à la main.'));
+        this.message.set(apiErrorMessage(e, this.i18n.t('scan.lecture_automatique_indisponible_remplis')));
         this.result.emit({ photo, scan: null });
       },
     });

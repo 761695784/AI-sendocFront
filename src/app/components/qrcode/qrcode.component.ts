@@ -1,14 +1,16 @@
+import { I18nService } from '../../core/i18n/i18n.service';
+import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { assetUrl } from './../services/imageUrl';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from './../services/auth.service';
-import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit, ChangeDetectionStrategy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import Swal from 'sweetalert2';
 
 
 @Component({
-    imports: [CommonModule, FormsModule],
+    imports: [TranslatePipe, CommonModule, FormsModule],
     selector: 'app-qrcode',
     templateUrl: './qrcode.component.html',
     styleUrl: './qrcode.component.css',
@@ -17,6 +19,7 @@ import Swal from 'sweetalert2';
 })
 
 export class QrcodeComponent implements OnInit {
+  private readonly i18n = inject(I18nService);
   qrCodeUrl: string | null = null;
   user: any;
   isLoading: boolean = false;
@@ -42,14 +45,14 @@ export class QrcodeComponent implements OnInit {
   renewQRCode() {
     this.isLoading = true;
     Swal.fire({
-      title: 'Confirmer le renouvellement',
-      text: "Voulez-vous vraiment générer un nouveau QR code ? Vous aller devoir l'imprimer à nouveau et coller sur vos documents.",
+      title: this.i18n.t('profile.confirmer_le_renouvellement'),
+      text: this.i18n.t('qrcode.voulez_vous_vraiment_generer_un_nouveau'),
       icon: 'warning',
       showCancelButton: true,
       confirmButtonColor: '#F6A500',
       cancelButtonColor: '#31287C',
-      confirmButtonText: 'Oui, renouveller',
-      cancelButtonText: 'Annuler'
+      confirmButtonText: this.i18n.t('qrcode.oui_renouveller'),
+      cancelButtonText: this.i18n.t('rf.cancel')
     }).then((result) => {
       if (result.isConfirmed) {
         this.handleRenewal();
@@ -73,8 +76,8 @@ export class QrcodeComponent implements OnInit {
     
     Swal.fire({
       icon: 'success',
-      title: 'Succès !',
-      text: 'QR code renouvelé avec succès',
+      title: this.i18n.t('reset.succes'),
+      text: this.i18n.t('qrcode.qr_code_renouvele_avec_succes'),
       timer: 3000
     });
   }
@@ -85,8 +88,8 @@ export class QrcodeComponent implements OnInit {
     
     Swal.fire({
       icon: 'error',
-      title: 'Erreur',
-      text: error.error?.message || 'Échec du renouvellement du QR code'
+      title: this.i18n.t('detail.erreur'),
+      text: error.error?.message || this.i18n.t('qrcode.echec_du_renouvellement_du_qr_code')
     });
   }
 

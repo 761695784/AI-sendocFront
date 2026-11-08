@@ -1,4 +1,6 @@
-import { Component, CUSTOM_ELEMENTS_SCHEMA, ChangeDetectionStrategy } from '@angular/core';
+import { I18nService } from '../../core/i18n/i18n.service';
+import { TranslatePipe } from '../../core/i18n/translate.pipe';
+import { Component, CUSTOM_ELEMENTS_SCHEMA, ChangeDetectionStrategy, inject } from '@angular/core';
 import { NavbarComponent } from "../navbar/navbar.component";
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { AuthService } from '../services/auth.service';
@@ -18,13 +20,14 @@ export interface User {
 
 @Component({
     selector: 'app-register',
-    imports: [NavbarComponent, ReactiveFormsModule, CommonModule],
+    imports: [TranslatePipe, NavbarComponent, ReactiveFormsModule, CommonModule],
     templateUrl: './register.component.html',
     styleUrls: ['./register.component.css'],
     changeDetection: ChangeDetectionStrategy.Eager,
     schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class RegisterComponent {
+  private readonly i18n = inject(I18nService);
   registerForm: FormGroup;
   isLoading: boolean = false; // Variable pour contrôler l'affichage du loader
   showPassword = false;
@@ -79,12 +82,12 @@ export class RegisterComponent {
   //       },
   //       error: (error) => {
   //         this.isLoading = false; // Fin du chargement
-  //         let errorMessage = 'Erreur lors de l\'inscription.';
+  //         let errorMessage = this.i18n.t('register.erreur_lors_de_l_inscription');
   //         if (error.error?.errors) {
   //           errorMessage += ' Détails : ' + JSON.stringify(error.error.errors);
   //         }
   //         Swal.fire({
-  //           title: 'Erreur!',
+  //           title: this.i18n.t('register.erreur'),
   //           text: errorMessage,
   //           icon: 'error',
   //           confirmButtonText: 'OK'
@@ -111,16 +114,16 @@ onSubmit(): void {
         // ✅ Attendre une petite seconde (important dans certains cas de latence backend)
         setTimeout(() => {
           Swal.fire({
-            title: 'Vérification de l\'email',
-            text: 'Veuillez entrer le code que vous avez reçu par mail.',
+            title: this.i18n.t('login.verification_de_l_email'),
+            text: this.i18n.t('register.veuillez_entrer_le_code_que_vous'),
             input: 'text',
-            inputLabel: 'Code de vérification',
+            inputLabel: this.i18n.t('verify.code_de_verification'),
             inputPlaceholder: 'Ex: 123456',
             showCancelButton: true,
-            confirmButtonText: 'Vérifier',
-            cancelButtonText: 'Annuler',
+            confirmButtonText: this.i18n.t('verify.verifier'),
+            cancelButtonText: this.i18n.t('login.annuler'),
             inputValidator: (value) => {
-              if (!value) return 'Le code est requis !';
+              if (!value) return this.i18n.t('login.le_code_est_requis');
               return null;
             }
           }).then((result) => {
@@ -133,8 +136,8 @@ onSubmit(): void {
 
                   Swal.fire({
                     icon: 'success',
-                    title: 'Inscription terminée',
-                    text: 'Votre compte est vérifié et vous êtes connecté.',
+                    title: this.i18n.t('register.inscription_terminee'),
+                    text: this.i18n.t('register.votre_compte_est_verifie_et_vous'),
                     timer: 2000
                   }).then(() => {
                     this.router.navigate(['/accueil']);
@@ -143,8 +146,8 @@ onSubmit(): void {
                 error: (err) => {
                   Swal.fire({
                     icon: 'error',
-                    title: 'Code invalide',
-                    text: 'Le code de vérification est incorrect.',
+                    title: this.i18n.t('login.code_invalide'),
+                    text: this.i18n.t('login.le_code_de_verification_est_incorrect'),
                     timer: 2000
                   });
                 }
@@ -158,12 +161,12 @@ onSubmit(): void {
 
       error: (error) => {
         this.isLoading = false;
-        let errorMessage = 'Erreur lors de l\'inscription.';
+        let errorMessage = this.i18n.t('register.erreur_lors_de_l_inscription');
         if (error.error?.errors) {
           errorMessage += ' Détails : ' + JSON.stringify(error.error.errors);
         }
         Swal.fire({
-          title: 'Erreur!',
+          title: this.i18n.t('register.erreur'),
           text: errorMessage,
           icon: 'error',
           confirmButtonText: 'OK'
@@ -179,15 +182,15 @@ onSubmit(): void {
   public getErrorMessage(controlName: string): string {
     const control = this.registerForm.get(controlName);
     if (control?.hasError('required')) {
-      return 'Ce champ est requis.';
+      return this.i18n.t('register.ce_champ_est_requis');
     } else if (control?.hasError('minlength')) {
-      return 'Ce champ contenir au moins ' + control.errors?.['minlength'].requiredLength + ' caractères.';
+      return this.i18n.t('register.min_length', { n: control.errors?.['minlength'].requiredLength });
     } else if (control?.hasError('maxlength')) {
-      return ' Ce champ ne peut pas dépasser ' + control.errors?.['maxlength'].requiredLength + ' caractères.';
+      return this.i18n.t('register.max_length', { n: control.errors?.['maxlength'].requiredLength });
     } else if (control?.hasError('pattern')) {
-      return 'Format invalide.';
+      return this.i18n.t('register.format_invalide');
     } else if (control?.hasError('email')) {
-      return 'L\'email doit être valide.';
+      return this.i18n.t('register.l_email_doit_etre_valide');
     }
     return '';
   }

@@ -1,3 +1,4 @@
+import { I18nService } from '../../core/i18n/i18n.service';
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
@@ -17,6 +18,7 @@ import { LoginResponse } from '../../core/session/session.models';
   providedIn: 'root',
 })
 export class AuthService {
+  private readonly i18n = inject(I18nService);
   private readonly http = inject(HttpClient);
   public readonly router = inject(Router);
   private readonly session = inject(SessionStore);
@@ -46,7 +48,7 @@ export class AuthService {
   }
 
   getUserName(): string {
-    return (this.session.user()?.FirstName as string | undefined) || 'Utilisateur';
+    return (this.session.user()?.FirstName as string | undefined) || this.i18n.t('auth.utilisateur');
   }
 
   logout(): void {

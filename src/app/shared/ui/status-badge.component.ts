@@ -1,4 +1,5 @@
-import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
+import { I18nService } from '../../core/i18n/i18n.service';
 
 type Tone = 'neutral' | 'info' | 'success' | 'warning' | 'danger' | 'primary';
 
@@ -83,10 +84,12 @@ export function statusLabel(status: string | null | undefined): string {
   `,
 })
 export class StatusBadgeComponent {
+  private readonly i18n = inject(I18nService);
   readonly status = input<string | null | undefined>(null);
   readonly label = input<string | null>(null);
   readonly toneOverride = input<Tone | null>(null, { alias: 'tone' });
 
-  readonly text = computed(() => this.label() ?? statusLabel(this.status()));
+  /** Libellé dans la langue du site (les libellés français ci-dessus sont traduits dans les dictionnaires). */
+  readonly text = computed(() => this.i18n.fromFr(this.label() ?? statusLabel(this.status())));
   readonly tone = computed<Tone>(() => this.toneOverride() ?? STATUS_LABELS[this.status() ?? '']?.[1] ?? 'neutral');
 }

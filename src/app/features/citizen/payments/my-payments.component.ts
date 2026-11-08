@@ -1,3 +1,5 @@
+import { I18nService } from '../../../core/i18n/i18n.service';
+import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 import { ChangeDetectionStrategy, Component, OnInit, inject, signal } from '@angular/core';
 import { DatePipe, DecimalPipe } from '@angular/common';
 import { CitizenApi } from '../../../core/api/citizen.api';
@@ -13,28 +15,28 @@ import { EmptyStateComponent, ErrorStateComponent, LoadingComponent } from '../.
  */
 @Component({
   selector: 'app-my-payments',
-  imports: [DatePipe, DecimalPipe, StatusBadgeComponent, LoadingComponent, EmptyStateComponent, ErrorStateComponent],
+  imports: [TranslatePipe, DatePipe, DecimalPipe, StatusBadgeComponent, LoadingComponent, EmptyStateComponent, ErrorStateComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <div class="dt-toolbar"><h2>Mes paiements</h2></div>
+    <div class="dt-toolbar"><h2>{{ 'mypay.mes_paiements' | t }}</h2></div>
 
     @if (loading()) {
       <app-loading />
     } @else if (error()) {
       <app-error-state [message]="error()!">
-        <button type="button" class="btn btn-sm btn-outline-danger" (click)="load()">Réessayer</button>
+        <button type="button" class="btn btn-sm btn-outline-danger" (click)="load()">{{ 'mydecl.reessayer' | t }}</button>
       </app-error-state>
     } @else if (charges().length === 0) {
       <div class="dt-card">
-        <app-empty-state icon="fa-wallet" title="Aucun frais"
-          text="Les démarches payantes (certificat de perte au guichet, renouvellement de QR code) apparaîtront ici." />
+        <app-empty-state icon="fa-wallet" [title]="'mypay.aucun_frais' | t"
+          [text]="'mypay.les_demarches_payantes_certificat_de_per' | t" />
       </div>
     } @else {
       <div class="dt-card p-0 overflow-hidden">
         <div class="table-responsive">
           <table class="table align-middle mb-0">
             <thead class="table-light">
-              <tr><th>Démarche</th><th>Référence</th><th class="text-end">Montant</th><th>Statut</th><th></th></tr>
+              <tr><th>{{ 'mypay.demarche' | t }}</th><th>{{ 'rf.reference' | t }}</th><th class="text-end">{{ 'mypay.montant' | t }}</th><th>{{ 'mypay.statut' | t }}</th><th></th></tr>
             </thead>
             <tbody>
               @for (c of charges(); track c.uuid) {
@@ -55,7 +57,7 @@ import { EmptyStateComponent, ErrorStateComponent, LoadingComponent } from '../.
                   <td class="text-end">
                     @if (c.status === 'pending') {
                       <button type="button" class="btn btn-sm btn-dt-gold text-nowrap" [disabled]="busy() === c.uuid" (click)="pay(c)">
-                        {{ busy() === c.uuid ? 'Ouverture…' : 'Payer avec Wave' }}
+                        {{ busy() === c.uuid ? ('mypay.ouverture' | t) : ('mypay.payer_avec_wave' | t) }}
                       </button>
                     }
                   </td>
@@ -65,11 +67,12 @@ import { EmptyStateComponent, ErrorStateComponent, LoadingComponent } from '../.
           </table>
         </div>
       </div>
-      <p class="dt-muted small mt-2">Le paiement est confirmé par Wave directement à DocTrack ; le reçu vous est envoyé par SMS.</p>
+      <p class="dt-muted small mt-2">{{ 'mypay.le_paiement_est_confirme_par_wave' | t }}</p>
     }
   `,
 })
 export class MyPaymentsComponent implements OnInit {
+  private readonly i18n = inject(I18nService);
   private readonly api = inject(CitizenApi);
   private readonly notify = inject(NotifyService);
 
@@ -91,7 +94,7 @@ export class MyPaymentsComponent implements OnInit {
         this.loading.set(false);
       },
       error: (e) => {
-        this.error.set(apiErrorMessage(e, 'Impossible de charger vos paiements.'));
+        this.error.set(apiErrorMessage(e, this.i18n.t('mypay.impossible_de_charger_vos_paiements')));
         this.loading.set(false);
       },
     });
@@ -106,7 +109,7 @@ export class MyPaymentsComponent implements OnInit {
       },
       error: (e) => {
         this.busy.set(null);
-        void this.notify.error(e, 'Paiement indisponible');
+        void this.notify.error(e, this.i18n.t('mypay.paiement_indisponible'));
       },
     });
   }

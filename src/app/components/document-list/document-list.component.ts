@@ -1,3 +1,4 @@
+import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { PublisherPipe } from '../../shared/pipes/publisher.pipe';
 import { Router } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -41,7 +42,7 @@ export interface Document {
 
 @Component({
     selector: 'app-document-list',
-    imports: [PublisherPipe, NavbarComponent, FooterComponent, CommonModule, FormsModule],
+    imports: [TranslatePipe, PublisherPipe, NavbarComponent, FooterComponent, CommonModule, FormsModule],
     templateUrl: './document-list.component.html',
     changeDetection: ChangeDetectionStrategy.Eager,
     styleUrls: ['./document-list.component.css']

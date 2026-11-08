@@ -1,4 +1,6 @@
-import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { I18nService } from '../../core/i18n/i18n.service';
+import { TranslatePipe } from '../../core/i18n/translate.pipe';
+import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit, ChangeDetectionStrategy, inject } from '@angular/core';
 import { SessionStore } from '../../core/session/session.store';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { AuthService } from '../services/auth.service';
@@ -11,13 +13,14 @@ import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
     selector: 'app-login',
-    imports: [NavbarComponent, ReactiveFormsModule, CommonModule],
+    imports: [TranslatePipe, NavbarComponent, ReactiveFormsModule, CommonModule],
     templateUrl: './login.component.html',
     styleUrls: ['./login.component.css'],
     changeDetection: ChangeDetectionStrategy.Eager,
     schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class LoginComponent implements OnInit {
+  private readonly i18n = inject(I18nService);
   loginForm: FormGroup;
   isLoading: boolean = false; // Variable pour contrôler l'affichage du loader
   isLocked: boolean = false; // Indique si l'utilisateur est bloqué
@@ -49,8 +52,8 @@ export class LoginComponent implements OnInit {
     if (this.route.snapshot.queryParamMap.get('expired')) {
       Swal.fire({
         icon: 'info',
-        title: 'Session expirée',
-        text: 'Pour votre sécurité, veuillez vous reconnecter.',
+        title: this.i18n.t('login.session_expiree'),
+        text: this.i18n.t('login.pour_votre_securite_veuillez_vous_reconn'),
         timer: 4000,
       });
     }
@@ -79,8 +82,8 @@ export class LoginComponent implements OnInit {
       (response: any) => {
         this.isLoading = false;
         Swal.fire({
-          title: 'Connexion réussie',
-          text: 'Bienvenue !',
+          title: this.i18n.t('login.connexion_reussie'),
+          text: this.i18n.t('login.bienvenue'),
           icon: 'success',
           timer: 2000,
         }).then(() => {
@@ -100,8 +103,8 @@ export class LoginComponent implements OnInit {
           if (this.lockoutTimeRemaining > 0) {
             this.startCountdown();
             Swal.fire({
-              title: 'Trop de tentatives',
-              text: `Veuillez attendre ${this.lockoutTimeRemaining} secondes avant de réessayer.`,
+              title: this.i18n.t('login.trop_de_tentatives'),
+              text: this.i18n.t('login.wait_seconds', { s: this.lockoutTimeRemaining }),
               icon: 'warning',
               timer: 3000,
             });
@@ -111,16 +114,16 @@ export class LoginComponent implements OnInit {
         // Email non vérifié : demander code + vérifier puis connecter
         else if (error.status === 403 && error.error?.message?.includes('Email non vérifié')) {
           Swal.fire({
-            title: 'Vérification de l\'email',
-            text: 'Veuillez entrer le code reçu par mail pour activer votre compte.',
+            title: this.i18n.t('login.verification_de_l_email'),
+            text: this.i18n.t('login.veuillez_entrer_le_code_recu_par'),
             input: 'text',
-            inputLabel: 'Code de vérification',
+            inputLabel: this.i18n.t('verify.code_de_verification'),
             inputPlaceholder: 'Ex: 123456',
             showCancelButton: true,
-            confirmButtonText: 'Vérifier',
-            cancelButtonText: 'Annuler',
+            confirmButtonText: this.i18n.t('verify.verifier'),
+            cancelButtonText: this.i18n.t('login.annuler'),
             inputValidator: (value) => {
-              if (!value) return 'Le code est requis !';
+              if (!value) return this.i18n.t('login.le_code_est_requis');
               return null;
             }
           }).then((result) => {
@@ -134,16 +137,16 @@ export class LoginComponent implements OnInit {
 
                   Swal.fire({
                     icon: 'success',
-                    title: 'Email vérifié',
-                    text: 'Connexion automatique réussie.',
+                    title: this.i18n.t('login.email_verifie'),
+                    text: this.i18n.t('login.connexion_automatique_reussie'),
                     timer: 2000
                   }).then(() => this.goHome());
                 },
                 error: (err) => {
                   Swal.fire({
                     icon: 'error',
-                    title: 'Code invalide',
-                    text: 'Le code de vérification est incorrect.',
+                    title: this.i18n.t('login.code_invalide'),
+                    text: this.i18n.t('login.le_code_de_verification_est_incorrect'),
                     timer: 2000
                   });
                 }
@@ -155,8 +158,8 @@ export class LoginComponent implements OnInit {
         // Autres erreurs
         else {
           Swal.fire({
-            title: 'Échec de la connexion',
-            text: error.error?.message || 'Email ou mot de passe incorrect.',
+            title: this.i18n.t('login.echec_de_la_connexion'),
+            text: error.error?.message || this.i18n.t('login.email_ou_mot_de_passe_incorrect'),
             icon: 'error',
             timer: 2000,
           });
@@ -165,15 +168,15 @@ export class LoginComponent implements OnInit {
     );
   } else if (this.isLocked) {
     Swal.fire({
-      title: 'Compte bloqué',
-      text: `Veuillez attendre ${this.lockoutTimeRemaining} secondes avant de réessayer.`,
+      title: this.i18n.t('login.compte_bloque'),
+      text: this.i18n.t('login.wait_seconds', { s: this.lockoutTimeRemaining }),
       icon: 'warning',
       timer: 2000,
     });
   } else {
     Swal.fire({
-      title: 'Erreur',
-      text: 'Veuillez remplir tous les champs obligatoires.',
+      title: this.i18n.t('detail.erreur'),
+      text: this.i18n.t('login.veuillez_remplir_tous_les_champs_obligat'),
       icon: 'error',
       timer: 2000,
     });

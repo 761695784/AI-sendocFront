@@ -2,7 +2,7 @@
   <nav class="navbar">
 
     <!-- Logo -->
-    <a class="navbar-logo" routerLink="/" aria-label="DocTrack — accueil">
+    <a class="navbar-logo" routerLink="/" [attr.aria-label]="'nav.home_aria' | t">
       <img src="/assets/transparent/logo-doctrack.png" alt="DocTrack" width="600" height="180">
     </a>
 
@@ -10,27 +10,28 @@
     <ul class="navbar-links">
       <li>
         <a routerLink="/accueil" routerLinkActive="active"
-        [routerLinkActiveOptions]="{exact:true}">Accueil</a>
+        [routerLinkActiveOptions]="{exact:true}">{{ 'nav.home' | t }}</a>
       </li>
       <li>
-        <a routerLink="/liste" routerLinkActive="active">Publications</a>
+        <a routerLink="/liste" routerLinkActive="active">{{ 'nav.publications' | t }}</a>
       </li>
       <li>
-        <a routerLink="/lost" routerLinkActive="active">Déclaration de perte</a>
+        <a routerLink="/lost" routerLinkActive="active">{{ 'nav.declaration' | t }}</a>
       </li>
       <li>
-        <a routerLink="/apropos" routerLinkActive="active">À propos</a>
+        <a routerLink="/apropos" routerLinkActive="active">{{ 'nav.about' | t }}</a>
       </li>
       <li>
         <!-- Mis en valeur : vérification publique d'un certificat de perte, d'un récépissé ou d'une décharge -->
-        <a routerLink="/verifier" routerLinkActive="active" class="nav-verify" title="Vérifier l'authenticité d'un certificat, d'un récépissé ou d'une décharge">
-          <i class="fas fa-shield-alt" aria-hidden="true"></i> Vérifier un document
+        <a routerLink="/verifier" routerLinkActive="active" class="nav-verify" [title]="'nav.verify_title' | t">
+          <i class="fas fa-shield-alt" aria-hidden="true"></i> {{ 'nav.verify' | t }}
         </a>
       </li>
     </ul>
 
     <!-- Auth zone -->
     <div class="navbar-auth">
+      <app-language-switcher class="nav-lang" />
       @if (authService.isAuthenticated()) {
         <div class="user-dropdown">
           <button type="button" class="user-btn" (click)="toggleUserDropdown()" [attr.aria-expanded]="userDropdownOpen">
@@ -50,37 +51,37 @@
                 </div>
               </div>
               <a class="up-item" routerLink="/mon-espace" (click)="userDropdownOpen = false">
-                <i class="fas fa-th-large"></i> Mon espace
+                <i class="fas fa-th-large"></i> {{ 'nav.my_space' | t }}
               </a>
               @if (session.isSuperAdmin()) {
                 <a class="up-item" routerLink="/admin" (click)="userDropdownOpen = false">
-                  <i class="fas fa-user-shield"></i> Administration
+                  <i class="fas fa-user-shield"></i> {{ 'nav.admin' | t }}
                 </a>
               }
               @if (session.isStaff()) {
                 <a class="up-item" routerLink="/espace" (click)="userDropdownOpen = false">
-                  <i class="fas fa-building"></i> Espace structure
+                  <i class="fas fa-building"></i> {{ 'nav.structure_space' | t }}
                 </a>
               }
               <a class="up-item" (click)="goToChangePassword()">
-                <i class="fas fa-user-edit"></i> Modifier mon profil
+                <i class="fas fa-user-edit"></i> {{ 'nav.edit_profile' | t }}
               </a>
               <a class="up-item danger" (click)="logout()">
-                <i class="fas fa-sign-out-alt"></i> Déconnexion
+                <i class="fas fa-sign-out-alt"></i> {{ 'nav.logout' | t }}
               </a>
             </div>
           }
         </div>
       } @else {
         <a routerLink="/connexion" class="connexion-btn">
-          <i class="fas fa-sign-in-alt" aria-hidden="true"></i> Connexion
+          <i class="fas fa-sign-in-alt" aria-hidden="true"></i> {{ 'nav.login' | t }}
         </a>
       }
     </div>
 
     <!-- Burger mobile -->
     <button type="button" class="burger" (click)="toggleMenu()" [class.open]="menuOpen"
-      aria-label="Menu" aria-controls="menu-mobile" [attr.aria-expanded]="menuOpen">
+      [attr.aria-label]="'nav.menu' | t" aria-controls="menu-mobile" [attr.aria-expanded]="menuOpen">
       <span></span><span></span><span></span>
     </button>
 
@@ -89,55 +90,56 @@
   <!-- Mobile menu -->
   <div class="mobile-menu" id="menu-mobile" [class.show]="menuOpen">
     <ul>
+      <li class="mobile-lang"><app-language-switcher [block]="true" /></li>
       <li>
         <a routerLink="/accueil" routerLinkActive="active"
-        (click)="menuOpen=false">Accueil</a>
+        (click)="menuOpen=false">{{ 'nav.home' | t }}</a>
       </li>
       <li>
         <a routerLink="/liste" routerLinkActive="active"
-        (click)="menuOpen=false">Publications</a>
+        (click)="menuOpen=false">{{ 'nav.publications' | t }}</a>
       </li>
       <li>
         <a routerLink="/lost" routerLinkActive="active"
-        (click)="menuOpen=false">Déclaration de perte</a>
+        (click)="menuOpen=false">{{ 'nav.declaration' | t }}</a>
       </li>
       <li>
         <a routerLink="/apropos" routerLinkActive="active"
-        (click)="menuOpen=false">À propos</a>
+        (click)="menuOpen=false">{{ 'nav.about' | t }}</a>
       </li>
       <li>
         <a routerLink="/verifier" routerLinkActive="active" class="mobile-verify"
-        (click)="menuOpen=false"><i class="fas fa-shield-alt" aria-hidden="true"></i> Vérifier un document</a>
+        (click)="menuOpen=false"><i class="fas fa-shield-alt" aria-hidden="true"></i> {{ 'nav.verify' | t }}</a>
       </li>
       @if (authService.isAuthenticated()) {
         <li>
-          <a routerLink="/mon-espace" (click)="menuOpen=false">Mon espace</a>
+          <a routerLink="/mon-espace" (click)="menuOpen=false">{{ 'nav.my_space' | t }}</a>
         </li>
       }
       @if (session.isSuperAdmin()) {
         <li>
-          <a routerLink="/admin" (click)="menuOpen=false">Administration</a>
+          <a routerLink="/admin" (click)="menuOpen=false">{{ 'nav.admin' | t }}</a>
         </li>
       }
       @if (session.isStaff()) {
         <li>
-          <a routerLink="/espace" (click)="menuOpen=false">Espace structure</a>
+          <a routerLink="/espace" (click)="menuOpen=false">{{ 'nav.structure_space' | t }}</a>
         </li>
       }
       @if (authService.isAuthenticated()) {
         <li>
-          <a (click)="goToChangePassword(); menuOpen=false">Mon profil</a>
+          <a (click)="goToChangePassword(); menuOpen=false">{{ 'nav.profile' | t }}</a>
         </li>
       }
       @if (authService.isAuthenticated()) {
         <li>
-          <a (click)="logout(); menuOpen=false" class="mobile-logout">Déconnexion</a>
+          <a (click)="logout(); menuOpen=false" class="mobile-logout">{{ 'nav.logout' | t }}</a>
         </li>
       }
       @if (!authService.isAuthenticated()) {
         <li>
           <a routerLink="/connexion" class="mobile-connexion"
-          (click)="menuOpen=false"><i class="fas fa-sign-in-alt" aria-hidden="true"></i>Connexion</a>
+          (click)="menuOpen=false"><i class="fas fa-sign-in-alt" aria-hidden="true"></i>{{ 'nav.login' | t }}</a>
         </li>
       }
     </ul>
