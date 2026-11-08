@@ -69,7 +69,13 @@ const HIDDEN_PREFIXES = ['/espace', '/admin'];
                   @case ('links') {
                     <div class="aw-links">
                       @for (link of card.data['links']; track link.url) {
-                        <a [routerLink]="link.url" (click)="onNavigate()" class="aw-link"><i class="fas fa-arrow-right" aria-hidden="true"></i> {{ link.label }}</a>
+                        @if (isExternal(link.url)) {
+                          <a [href]="link.url" target="_blank" rel="noopener noreferrer" class="aw-link">
+                            <i [class]="link.url.startsWith('mailto:') ? 'fas fa-envelope' : 'fab fa-whatsapp'" aria-hidden="true"></i> {{ link.label }}
+                          </a>
+                        } @else {
+                          <a [routerLink]="link.url" (click)="onNavigate()" class="aw-link"><i class="fas fa-arrow-right" aria-hidden="true"></i> {{ link.label }}</a>
+                        }
                       }
                     </div>
                   }
@@ -272,6 +278,11 @@ export class AssistantWidgetComponent {
     } finally {
       this.sending.set(false);
     }
+  }
+
+  /** Lien WhatsApp ou e-mail du service technique (ouvert hors du site). */
+  isExternal(url: string): boolean {
+    return /^(https:|mailto:)/.test(url);
   }
 
   /** Position du téléphone ou de l'ordinateur (arrondie à ~100 m), ou null si refusée ou indisponible. */
