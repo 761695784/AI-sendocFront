@@ -2,10 +2,11 @@ import { Component, ChangeDetectionStrategy, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { PwaBarComponent } from './shared/pwa/pwa-bar.component';
 import { SeoService } from './core/seo/seo.service';
+import { AssistantWidgetComponent } from './shared/assistant/assistant-widget.component';
 
 @Component({
     selector: 'app-root',
-    imports: [RouterOutlet, PwaBarComponent],
+    imports: [RouterOutlet, PwaBarComponent, AssistantWidgetComponent],
     templateUrl: './app.component.html',
     changeDetection: ChangeDetectionStrategy.Eager,
     styleUrl: './app.component.css'
