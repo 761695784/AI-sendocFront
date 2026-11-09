@@ -64,6 +64,12 @@ export const routes: Routes = [
     loadComponent: () => import('./features/public/tag-found/tag-found.component').then(m => m.TagFoundComponent)
   },
   {
+    path: 'temoigner',
+    title: 'Partager mon témoignage — DocTrack',
+    data: { seo: { description: 'Votre document a été retrouvé ou vous en avez rendu un grâce à DocTrack ? Racontez votre expérience : elle sera publiée avec votre accord, avec seulement votre prénom et votre ville.' } },
+    loadComponent: () => import('./features/public/testimonial/testimonial-form.component').then(m => m.TestimonialFormComponent)
+  },
+  {
     path: 'verifier',
     title: 'Vérifier un certificat de perte ou un récépissé — DocTrack',
     data: { seo: { description: 'Vérifiez en quelques secondes l’authenticité d’un récépissé, d’un certificat de perte ou d’une décharge DocTrack grâce à son code ou à son QR code.' } },

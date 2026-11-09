@@ -32,6 +32,7 @@ export const ADMIN_ROUTES: Routes = [
       { path: 'membres', data: { icon: 'fa-users' }, title: 'Membres — DocTrack', loadComponent: () => import('../staff/members/members.component').then((m) => m.StaffMembersComponent) },
       { path: 'types-structure', data: { icon: 'fa-tags' }, title: 'Types de structure — DocTrack', loadComponent: () => import('./organization-types/organization-types.component').then((m) => m.AdminOrganizationTypesComponent) },
       { path: 'facturation', data: { icon: 'fa-coins' }, title: 'Tarifs et reversements — DocTrack', loadComponent: () => import('./billing/billing.component').then((m) => m.AdminBillingComponent) },
+      { path: 'temoignages', data: { icon: 'fa-comment-dots' }, title: 'Témoignages — DocTrack', loadComponent: () => import('./testimonials/testimonials.component').then((m) => m.AdminTestimonialsComponent) },
       { path: 'voix-assistant', data: { icon: 'fa-volume-up' }, title: "Voix de l'assistant — DocTrack", loadComponent: () => import('./assistant-voices/assistant-voices.component').then((m) => m.AdminAssistantVoicesComponent) },
 
       // ── Écrans historiques (API V1), mêmes adresses qu'avant ──

@@ -45,6 +45,7 @@ export const ADMIN_MENU: AdminMenuSection[] = [
   {
     title: 'Contenus et comptes',
     items: [
+      { path: 'temoignages', label: 'Témoignages', icon: 'fa-comment-dots' },
       { path: 'adminpub', label: 'Publications', icon: 'fa-newspaper', legacy: true },
       { path: 'admindec', label: 'Déclarations en ligne', icon: 'fa-file-alt', legacy: true },
       { path: 'admincertif', label: 'Certificats', icon: 'fa-certificate', legacy: true },

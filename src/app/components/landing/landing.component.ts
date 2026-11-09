@@ -6,13 +6,14 @@ import { NavbarComponent } from '../navbar/navbar.component';
 import { FooterComponent } from '../footer/footer.component';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
+import { TestimonialsWallComponent } from '../../shared/testimonials/testimonials-wall.component';
 import { MapComponent } from '../map/map.component';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 
 @Component({
     selector: 'app-landing',
-    imports: [PublisherPipe, NavbarComponent, FooterComponent, FormsModule, CommonModule, MapComponent, TranslatePipe],
+    imports: [PublisherPipe, NavbarComponent, FooterComponent, FormsModule, CommonModule, MapComponent, TranslatePipe, RouterLink, TestimonialsWallComponent],
     templateUrl: './landing.component.html',
     changeDetection: ChangeDetectionStrategy.Eager,
     styleUrls: ['./landing.component.css']

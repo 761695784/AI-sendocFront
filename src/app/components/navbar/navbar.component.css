@@ -286,7 +286,12 @@
 
 .mobile-menu.show {
   display: block;
-  max-height: 400px;
+  /* Toute la hauteur sous la barre : avec le sélecteur de langue et les liens du compte,
+     400px coupait le bas du menu (« Déconnexion » invisible). Défilement si l'écran est petit. */
+  max-height: calc(100vh - 64px);
+  max-height: calc(100dvh - 64px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
   padding: 8px 0 16px;
 }
 

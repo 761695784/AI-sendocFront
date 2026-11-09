@@ -293,14 +293,17 @@
           <p>{{ 'testi.subtitle' | t }}</p>
         </div>
 
+        <!-- Témoignages validés par l'équipe DocTrack (rien n'apparaît tant qu'aucun n'est publié) -->
+        <app-testimonials-wall />
+
         <div class="share-card">
           <div class="share-icon"><i class="fas fa-hands-helping" aria-hidden="true"></i></div>
           <div class="share-body">
             <h3>{{ 'testi.share_title' | t }}</h3>
             <p>{{ 'testi.share_text' | t }}</p>
             <div class="share-actions">
-              <a class="share-btn primary" href="mailto:sendoctrack@gmail.com?subject=T%C3%A9moignage%20DocTrack">
-                <i class="fas fa-envelope" aria-hidden="true"></i> {{ 'testi.share_email' | t }}
+              <a class="share-btn primary" routerLink="/temoigner">
+                <i class="fas fa-pen" aria-hidden="true"></i> {{ 'testi.share_form' | t }}
               </a>
               <a class="share-btn secondary" href="https://wa.me/221761695784" target="_blank" rel="noopener noreferrer">
                 <i class="fab fa-whatsapp" aria-hidden="true"></i> {{ 'testi.share_whatsapp' | t }}
