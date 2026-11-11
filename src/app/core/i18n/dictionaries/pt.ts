@@ -25,7 +25,7 @@ export const PT: Dictionary = {
   'nav.role_admin': 'Administrador DocTrack',
   'nav.role_member': 'Membro DocTrack',
 
-  'landing.badge': 'Plataforma nacional — República do Senegal',
+  'landing.badge': 'Solução GovTech: Gestão de documentos perdidos e encontrados',
   'landing.title': 'Perdeu um documento importante?',
   'landing.title_accent': 'Estamos aqui para ajudar.',
   'landing.lead': 'Publique ou pesquise documentos perdidos e encontrados com toda a simplicidade.',

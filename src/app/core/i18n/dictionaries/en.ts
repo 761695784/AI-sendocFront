@@ -22,7 +22,7 @@ export const EN: Dictionary = {
   'nav.role_admin': 'DocTrack administrator',
   'nav.role_member': 'DocTrack member',
 
-  'landing.badge': 'National platform — Republic of Senegal',
+  'landing.badge': 'GovTech Solution: Lost and Found Document Management',
   'landing.title': 'Have you lost an important document?',
   'landing.title_accent': 'We are here to help.',
   'landing.lead': 'Post or search for lost and found documents with ease.',

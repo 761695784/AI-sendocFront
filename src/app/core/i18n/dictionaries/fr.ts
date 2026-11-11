@@ -27,7 +27,7 @@ export const FR = {
   'nav.role_member': 'Membre DocTrack',
 
   // Accueil — en-tête
-  'landing.badge': 'Plateforme nationale — République du Sénégal',
+  'landing.badge': 'Solution GovTech : Gestion des documents perdus et retrouvés au Sénégal',
   'landing.title': 'Vous avez perdu un document important ?',
   'landing.title_accent': 'Nous sommes là pour vous aider.',
   'landing.lead': 'Publiez ou recherchez des documents perdus et retrouvés en toute simplicité.',
