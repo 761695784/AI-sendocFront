@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { Component, ChangeDetectionStrategy, Input } from '@angular/core';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 
 @Component({
@@ -9,5 +9,5 @@ import { TranslatePipe } from '../../core/i18n/translate.pipe';
     styleUrl: './footer.component.css'
 })
 export class FooterComponent {
-
+  @Input() institutionalNote = false;
 }

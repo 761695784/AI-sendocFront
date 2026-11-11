@@ -6,7 +6,8 @@
     <!-- Logo + Brand -->
     <div class="footer-brand">
       <a href="/accueil" class="brand-link" [attr.aria-label]="'footer.home_aria' | t">
-        <img src="/assets/brand/logo-doctrack-fond-sombre.png" alt="DocTrack" class="footer-logo" width="600" height="180" loading="lazy">
+        <img src="/assets/brand/logo-doctrack-fond-sombre.png" alt="DocTrack" class="footer-logo" width="600"
+          height="180" loading="lazy">
         <span class="brand-sub">{{ 'footer.country' | t }}</span>
       </a>
       <p class="brand-desc">
@@ -53,16 +54,13 @@
 
       <!-- Réseaux sociaux -->
       <div class="social-icons">
-        <a href="#" class="social-btn facebook"
-           aria-label="Facebook" target="_blank">
+        <a href="#" class="social-btn facebook" aria-label="Facebook" target="_blank">
           <i class="fab fa-facebook-f"></i>
         </a>
-        <a href="#" class="social-btn twitter"
-           aria-label="Twitter" target="_blank">
+        <a href="#" class="social-btn twitter" aria-label="Twitter" target="_blank">
           <i class="fab fa-twitter"></i>
         </a>
-        <a href="#" class="social-btn linkedin"
-           aria-label="LinkedIn" target="_blank">
+        <a href="#" class="social-btn linkedin" aria-label="LinkedIn" target="_blank">
           <i class="fab fa-linkedin-in"></i>
         </a>
       </div>
@@ -78,7 +76,10 @@
   <!-- Bottom -->
   <div class="footer-bottom">
     <p>&copy; 2024 {{ 'footer.rights' | t }}</p>
-    <p>{{ 'footer.credits' | t }} <strong>Majeli Connect</strong></p>
+    @if (institutionalNote) {
+    <p class="footer-institutional-note"><i class="fas fa-shield-alt" aria-hidden="true"></i> {{
+      'footer.institutional_note' | t }}</p>
+    }
   </div>
 
 </footer>

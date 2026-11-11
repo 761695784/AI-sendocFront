@@ -24,6 +24,20 @@ export const routes: Routes = [
   { path: 'reset', title: 'Mot de passe oublié — DocTrack', loadComponent: () => import('./components/reset-password/reset-password.component').then(m => m.ResetPasswordComponent) },
   { path: 'newpass', title: 'Nouveau mot de passe — DocTrack', loadComponent: () => import('./components/newpass/newpass.component').then(m => m.NewpassComponent) },
   { path: 'private-policy', title: 'Politique de confidentialité — DocTrack', data: { seo: { description: 'Comment DocTrack protège vos données personnelles : informations collectées, utilisation, conservation et exercice de vos droits.' } }, loadComponent: () => import('./components/private-policy/private-policy.component').then(m => m.PrivatePolicyComponent) },
+  // Page institutionnelle B2G — Programme pilote (non indexée : noindex, nofollow)
+  {
+    path: 'pilot',
+    title: 'Programme Pilote Institutionnel — DocTrack',
+    data: {
+      seo: {
+        description: 'DocTrack aide les structures de sécurité et administrations à centraliser les déclarations de perte, rapprocher les documents retrouvés et tracer leur restitution.',
+        index: false,
+        follow: false,
+        robots: 'noindex, nofollow',
+      }
+    },
+    loadComponent: () => import('./features/pilot/pilot.component').then(m => m.PilotComponent)
+  },
   // Anciens QR codes imprimés (V1) : conservés pour que les codes déjà distribués fonctionnent toujours.
   { path: 'found-qr', title: 'Document trouvé — DocTrack', loadComponent: () => import('./components/found-qr/found-qr.component').then(m => m.FoundQrComponent) },
 

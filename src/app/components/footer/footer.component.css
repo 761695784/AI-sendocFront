@@ -250,6 +250,20 @@
   font-weight: 700;
 }
 
+.footer-institutional-note {
+  margin-top: 10px;
+  font-size: 11.5px;
+  color: #F6A500;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(246,165,0,0.12);
+  border: 1px solid rgba(246,165,0,0.25);
+  padding: 4px 12px;
+  border-radius: 999px;
+  letter-spacing: 0.3px;
+}
+
 /* Focus clavier visible sur fond sombre */
 .footer a:focus-visible {
   outline: 3px solid #F6A500;

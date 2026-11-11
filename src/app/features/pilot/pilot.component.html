@@ -1,0 +1,908 @@
+<app-navbar></app-navbar>
+
+<main class="pilot-page">
+
+  <!-- ══════════════════════════════════════════════════════════════
+       1. HERO SECTION
+       ══════════════════════════════════════════════════════════════ -->
+  <section class="pilot-hero" aria-labelledby="hero-title">
+    <div class="hero-bg" aria-hidden="true"></div>
+    <div class="hero-pattern" aria-hidden="true"></div>
+
+    <div class="container hero-container">
+      <div class="hero-content">
+
+        <!-- Badge GovTech -->
+        <div class="gov-badge">
+          <i class="fas fa-shield-alt" aria-hidden="true"></i>
+          <span>{{ 'pilot.hero_badge' | t }}</span>
+        </div>
+
+        <!-- Titre principal -->
+        <h1 id="hero-title" class="hero-title">
+          {{ 'pilot.hero_title' | t }}
+        </h1>
+
+        <!-- Sous-titre -->
+        <p class="hero-subtitle">
+          {{ 'pilot.hero_subtitle' | t }}
+        </p>
+
+        <!-- CTA Hero -->
+        <div class="hero-actions">
+          <button type="button" class="btn-gov-primary" (click)="openDemoModal()">
+            <i class="fas fa-calendar-check" aria-hidden="true"></i>
+            <span>{{ 'pilot.hero_cta_demo' | t }}</span>
+          </button>
+          <button type="button" class="btn-gov-secondary" (click)="scrollTo('pilote')">
+            <i class="fas fa-arrow-down" aria-hidden="true"></i>
+            <span>{{ 'pilot.hero_cta_pilot' | t }}</span>
+          </button>
+        </div>
+
+        <!-- Mini-statuts de réassurance -->
+        <div class="hero-pills">
+          <div class="hero-pill">
+            <i class="fas fa-lock" aria-hidden="true"></i>
+            <span>{{ 'pilot.hero_stat_secure' | t }}</span>
+          </div>
+          <div class="hero-pill">
+            <i class="fas fa-user-check" aria-hidden="true"></i>
+            <span>{{ 'pilot.hero_stat_decision' | t }}</span>
+          </div>
+          <div class="hero-pill">
+            <i class="fas fa-history" aria-hidden="true"></i>
+            <span>{{ 'pilot.hero_stat_audit' | t }}</span>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Visuel Mockup Hero -->
+      <div class="hero-visual" aria-hidden="true">
+        <div class="visual-window">
+          <div class="window-bar">
+            <div class="window-dots">
+              <span></span><span></span><span></span>
+            </div>
+            <div class="window-badge">
+              <i class="fas fa-shield-alt"></i> {{ 'pilot.hero_badge_guichet' | t }}
+            </div>
+          </div>
+          <div class="window-body">
+            <img src="/assets/declarepub.webp" alt="Interface DocTrack" class="mockup-img" loading="eager" width="948" height="533">
+            <div class="mockup-overlay">
+              <div class="mockup-chip top-chip">
+                <i class="fas fa-check-circle"></i>
+                <div>
+                  <strong>{{ 'pilot.hero_mockup_title' | t }}</strong>
+                  <small>{{ 'pilot.hero_mockup_tag1' | t }}</small>
+                </div>
+              </div>
+              <div class="mockup-chip bottom-chip">
+                <i class="fas fa-user-shield"></i>
+                <div>
+                  <strong>{{ 'pilot.hero_mockup_tag2' | t }}</strong>
+                  <small>{{ 'pilot.hero_stat_decision_sub' | t }}</small>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ══════════════════════════════════════════════════════════════
+       2. LE PROBLÈME
+       ══════════════════════════════════════════════════════════════ -->
+  <section id="probleme" class="pilot-section bg-light" aria-labelledby="problem-title">
+    <div class="container">
+
+      <div class="section-intro">
+        <div class="section-badge">
+          <i class="fas fa-exclamation-triangle" aria-hidden="true"></i>
+          <span>{{ 'pilot.problem_badge' | t }}</span>
+        </div>
+        <h2 id="problem-title" class="section-title">
+          {{ 'pilot.problem_title' | t }}
+        </h2>
+        <p class="section-lead">
+          {{ 'pilot.problem_lead' | t }}
+        </p>
+      </div>
+
+      <div class="problem-grid">
+        <article class="problem-card">
+          <div class="problem-icon">
+            <i class="fas fa-network-wired" aria-hidden="true"></i>
+          </div>
+          <h3>{{ 'pilot.problem_card1_title' | t }}</h3>
+          <p>{{ 'pilot.problem_card1_desc' | t }}</p>
+        </article>
+
+        <article class="problem-card">
+          <div class="problem-icon">
+            <i class="fas fa-book-open" aria-hidden="true"></i>
+          </div>
+          <h3>{{ 'pilot.problem_card2_title' | t }}</h3>
+          <p>{{ 'pilot.problem_card2_desc' | t }}</p>
+        </article>
+
+        <article class="problem-card">
+          <div class="problem-icon">
+            <i class="fas fa-map-marked-alt" aria-hidden="true"></i>
+          </div>
+          <h3>{{ 'pilot.problem_card3_title' | t }}</h3>
+          <p>{{ 'pilot.problem_card3_desc' | t }}</p>
+        </article>
+
+        <article class="problem-card">
+          <div class="problem-icon">
+            <i class="fas fa-receipt" aria-hidden="true"></i>
+          </div>
+          <h3>{{ 'pilot.problem_card4_title' | t }}</h3>
+          <p>{{ 'pilot.problem_card4_desc' | t }}</p>
+        </article>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ══════════════════════════════════════════════════════════════
+       3. COMMENT DOCTRACK FONCTIONNE (WORKFLOW)
+       ══════════════════════════════════════════════════════════════ -->
+  <section id="fonctionnement" class="pilot-section bg-white" aria-labelledby="how-title">
+    <div class="container">
+
+      <div class="section-intro">
+        <div class="section-badge">
+          <i class="fas fa-cogs" aria-hidden="true"></i>
+          <span>{{ 'pilot.how_badge' | t }}</span>
+        </div>
+        <h2 id="how-title" class="section-title">
+          {{ 'pilot.how_title' | t }}
+        </h2>
+      </div>
+
+      <!-- Mise en évidence forte -->
+      <div class="workflow-highlight" role="note">
+        <div class="highlight-icon">
+          <i class="fas fa-balance-scale" aria-hidden="true"></i>
+        </div>
+        <p class="highlight-text">
+          {{ 'pilot.how_highlight' | t }}
+        </p>
+      </div>
+
+      <!-- Grille des 6 étapes -->
+      <div class="workflow-grid">
+
+        <div class="workflow-card">
+          <div class="step-header">
+            <span class="step-num">{{ 'pilot.step1_num' | t }}</span>
+            <div class="step-icon"><i class="fas fa-file-alt" aria-hidden="true"></i></div>
+          </div>
+          <h3>{{ 'pilot.step1_title' | t }}</h3>
+          <p>{{ 'pilot.step1_desc' | t }}</p>
+        </div>
+
+        <div class="workflow-card">
+          <div class="step-header">
+            <span class="step-num">{{ 'pilot.step2_num' | t }}</span>
+            <div class="step-icon"><i class="fas fa-id-card" aria-hidden="true"></i></div>
+          </div>
+          <h3>{{ 'pilot.step2_title' | t }}</h3>
+          <p>{{ 'pilot.step2_desc' | t }}</p>
+        </div>
+
+        <div class="workflow-card">
+          <div class="step-header">
+            <span class="step-num">{{ 'pilot.step3_num' | t }}</span>
+            <div class="step-icon"><i class="fas fa-search-plus" aria-hidden="true"></i></div>
+          </div>
+          <h3>{{ 'pilot.step3_title' | t }}</h3>
+          <p>{{ 'pilot.step3_desc' | t }}</p>
+        </div>
+
+        <div class="workflow-card highlight-step">
+          <div class="step-header">
+            <span class="step-num">{{ 'pilot.step4_num' | t }}</span>
+            <div class="step-icon"><i class="fas fa-user-shield" aria-hidden="true"></i></div>
+          </div>
+          <h3>{{ 'pilot.step4_title' | t }}</h3>
+          <p>{{ 'pilot.step4_desc' | t }}</p>
+          <span class="step-badge"><i class="fas fa-lock"></i> Décision souveraine</span>
+        </div>
+
+        <div class="workflow-card">
+          <div class="step-header">
+            <span class="step-num">{{ 'pilot.step5_num' | t }}</span>
+            <div class="step-icon"><i class="fas fa-bell" aria-hidden="true"></i></div>
+          </div>
+          <h3>{{ 'pilot.step5_title' | t }}</h3>
+          <p>{{ 'pilot.step5_desc' | t }}</p>
+        </div>
+
+        <div class="workflow-card">
+          <div class="step-header">
+            <span class="step-num">{{ 'pilot.step6_num' | t }}</span>
+            <div class="step-icon"><i class="fas fa-handshake" aria-hidden="true"></i></div>
+          </div>
+          <h3>{{ 'pilot.step6_title' | t }}</h3>
+          <p>{{ 'pilot.step6_desc' | t }}</p>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ══════════════════════════════════════════════════════════════
+       4. BÉNÉFICES POUR LES STRUCTURES
+       ══════════════════════════════════════════════════════════════ -->
+  <section id="benefices" class="pilot-section bg-light" aria-labelledby="benefits-title">
+    <div class="container">
+
+      <div class="section-intro">
+        <div class="section-badge">
+          <i class="fas fa-building" aria-hidden="true"></i>
+          <span>{{ 'pilot.benefits_badge' | t }}</span>
+        </div>
+        <h2 id="benefits-title" class="section-title">
+          {{ 'pilot.benefits_title' | t }}
+        </h2>
+        <p class="section-lead">
+          {{ 'pilot.benefits_subtitle' | t }}
+        </p>
+      </div>
+
+      <div class="benefits-grid">
+
+        <article class="benefit-card">
+          <div class="benefit-icon"><i class="fas fa-archive" aria-hidden="true"></i></div>
+          <div class="benefit-body">
+            <h3>{{ 'pilot.benefit1_title' | t }}</h3>
+            <p>{{ 'pilot.benefit1_desc' | t }}</p>
+          </div>
+        </article>
+
+        <article class="benefit-card">
+          <div class="benefit-icon"><i class="fas fa-stopwatch" aria-hidden="true"></i></div>
+          <div class="benefit-body">
+            <h3>{{ 'pilot.benefit2_title' | t }}</h3>
+            <p>{{ 'pilot.benefit2_desc' | t }}</p>
+          </div>
+        </article>
+
+        <article class="benefit-card">
+          <div class="benefit-icon"><i class="fas fa-bolt" aria-hidden="true"></i></div>
+          <div class="benefit-body">
+            <h3>{{ 'pilot.benefit3_title' | t }}</h3>
+            <p>{{ 'pilot.benefit3_desc' | t }}</p>
+          </div>
+        </article>
+
+        <article class="benefit-card">
+          <div class="benefit-icon"><i class="fas fa-history" aria-hidden="true"></i></div>
+          <div class="benefit-body">
+            <h3>{{ 'pilot.benefit4_title' | t }}</h3>
+            <p>{{ 'pilot.benefit4_desc' | t }}</p>
+          </div>
+        </article>
+
+        <article class="benefit-card">
+          <div class="benefit-icon"><i class="fas fa-user-lock" aria-hidden="true"></i></div>
+          <div class="benefit-body">
+            <h3>{{ 'pilot.benefit5_title' | t }}</h3>
+            <p>{{ 'pilot.benefit5_desc' | t }}</p>
+          </div>
+        </article>
+
+        <article class="benefit-card">
+          <div class="benefit-icon"><i class="fas fa-chart-pie" aria-hidden="true"></i></div>
+          <div class="benefit-body">
+            <h3>{{ 'pilot.benefit6_title' | t }}</h3>
+            <p>{{ 'pilot.benefit6_desc' | t }}</p>
+          </div>
+        </article>
+
+        <article class="benefit-card">
+          <div class="benefit-icon"><i class="fas fa-boxes" aria-hidden="true"></i></div>
+          <div class="benefit-body">
+            <h3>{{ 'pilot.benefit7_title' | t }}</h3>
+            <p>{{ 'pilot.benefit7_desc' | t }}</p>
+          </div>
+        </article>
+
+        <article class="benefit-card">
+          <div class="benefit-icon"><i class="fas fa-tachometer-alt" aria-hidden="true"></i></div>
+          <div class="benefit-body">
+            <h3>{{ 'pilot.benefit8_title' | t }}</h3>
+            <p>{{ 'pilot.benefit8_desc' | t }}</p>
+          </div>
+        </article>
+
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ══════════════════════════════════════════════════════════════
+       5. SÉCURITÉ & PROTECTION DES DONNÉES
+       ══════════════════════════════════════════════════════════════ -->
+  <section id="securite" class="pilot-section bg-dark text-white" aria-labelledby="sec-title">
+    <div class="container">
+
+      <div class="section-intro light">
+        <div class="section-badge dark">
+          <i class="fas fa-shield-alt" aria-hidden="true"></i>
+          <span>{{ 'pilot.security_badge' | t }}</span>
+        </div>
+        <h2 id="sec-title" class="section-title text-white">
+          {{ 'pilot.security_title' | t }}
+        </h2>
+        <p class="section-lead light-text">
+          {{ 'pilot.security_lead' | t }}
+        </p>
+      </div>
+
+      <div class="security-grid">
+
+        <div class="security-card">
+          <div class="sec-icon"><i class="fas fa-id-badge" aria-hidden="true"></i></div>
+          <div class="sec-body">
+            <h3>{{ 'pilot.sec_point1_title' | t }}</h3>
+            <p>{{ 'pilot.sec_point1_desc' | t }}</p>
+          </div>
+        </div>
+
+        <div class="security-card">
+          <div class="sec-icon"><i class="fas fa-key" aria-hidden="true"></i></div>
+          <div class="sec-body">
+            <h3>{{ 'pilot.sec_point2_title' | t }}</h3>
+            <p>{{ 'pilot.sec_point2_desc' | t }}</p>
+          </div>
+        </div>
+
+        <div class="security-card">
+          <div class="sec-icon"><i class="fas fa-eye-slash" aria-hidden="true"></i></div>
+          <div class="sec-body">
+            <h3>{{ 'pilot.sec_point3_title' | t }}</h3>
+            <p>{{ 'pilot.sec_point3_desc' | t }}</p>
+          </div>
+        </div>
+
+        <div class="security-card">
+          <div class="sec-icon"><i class="fas fa-clipboard-list" aria-hidden="true"></i></div>
+          <div class="sec-body">
+            <h3>{{ 'pilot.sec_point4_title' | t }}</h3>
+            <p>{{ 'pilot.sec_point4_desc' | t }}</p>
+          </div>
+        </div>
+
+        <div class="security-card">
+          <div class="sec-icon"><i class="fas fa-check-double" aria-hidden="true"></i></div>
+          <div class="sec-body">
+            <h3>{{ 'pilot.sec_point5_title' | t }}</h3>
+            <p>{{ 'pilot.sec_point5_desc' | t }}</p>
+          </div>
+        </div>
+
+        <div class="security-card">
+          <div class="sec-icon"><i class="fas fa-stamp" aria-hidden="true"></i></div>
+          <div class="sec-body">
+            <h3>{{ 'pilot.sec_point6_title' | t }}</h3>
+            <p>{{ 'pilot.sec_point6_desc' | t }}</p>
+          </div>
+        </div>
+
+        <div class="security-card highlight-sec">
+          <div class="sec-icon"><i class="fas fa-user-shield" aria-hidden="true"></i></div>
+          <div class="sec-body">
+            <h3>{{ 'pilot.sec_point7_title' | t }}</h3>
+            <p>{{ 'pilot.sec_point7_desc' | t }}</p>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ══════════════════════════════════════════════════════════════
+       6. LE PILOTE INSTITUTIONNEL
+       ══════════════════════════════════════════════════════════════ -->
+  <section id="pilote" class="pilot-section bg-light" aria-labelledby="pilot-title">
+    <div class="container">
+
+      <div class="pilot-spotlight">
+
+        <div class="section-intro">
+          <div class="section-badge">
+            <i class="fas fa-flask" aria-hidden="true"></i>
+            <span>{{ 'pilot.pilot_badge' | t }}</span>
+          </div>
+          <h2 id="pilot-title" class="section-title">
+            {{ 'pilot.pilot_title' | t }}
+          </h2>
+          <p class="section-lead">
+            {{ 'pilot.pilot_lead' | t }}
+          </p>
+        </div>
+
+        <!-- 3 paramètres fondamentaux -->
+        <div class="pilot-params-grid">
+          <div class="param-box">
+            <div class="param-icon"><i class="fas fa-hourglass-half" aria-hidden="true"></i></div>
+            <span class="param-label">{{ 'pilot.param_duration_label' | t }}</span>
+            <strong class="param-value">{{ 'pilot.param_duration_val' | t }}</strong>
+          </div>
+
+          <div class="param-box">
+            <div class="param-icon"><i class="fas fa-landmark" aria-hidden="true"></i></div>
+            <span class="param-label">{{ 'pilot.param_structure_label' | t }}</span>
+            <strong class="param-value">{{ 'pilot.param_structure_val' | t }}</strong>
+          </div>
+
+          <div class="param-box">
+            <div class="param-icon"><i class="fas fa-users-cog" aria-hidden="true"></i></div>
+            <span class="param-label">{{ 'pilot.param_users_label' | t }}</span>
+            <strong class="param-value">{{ 'pilot.param_users_val' | t }}</strong>
+          </div>
+        </div>
+
+        <!-- Indicateurs de mesure -->
+        <div class="pilot-measures-wrap">
+          <h3 class="measures-title">
+            <i class="fas fa-clipboard-check text-gold" aria-hidden="true"></i>
+            <span>{{ 'pilot.measures_title' | t }}</span>
+          </h3>
+
+          <ul class="measures-list">
+            <li>
+              <i class="fas fa-check" aria-hidden="true"></i>
+              <span>{{ 'pilot.m1' | t }}</span>
+            </li>
+            <li>
+              <i class="fas fa-check" aria-hidden="true"></i>
+              <span>{{ 'pilot.m2' | t }}</span>
+            </li>
+            <li>
+              <i class="fas fa-check" aria-hidden="true"></i>
+              <span>{{ 'pilot.m3' | t }}</span>
+            </li>
+            <li>
+              <i class="fas fa-check" aria-hidden="true"></i>
+              <span>{{ 'pilot.m4' | t }}</span>
+            </li>
+            <li>
+              <i class="fas fa-check" aria-hidden="true"></i>
+              <span>{{ 'pilot.m5' | t }}</span>
+            </li>
+            <li>
+              <i class="fas fa-check" aria-hidden="true"></i>
+              <span>{{ 'pilot.m6' | t }}</span>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Bouton CTA du Pilote -->
+        <div class="pilot-cta-wrap">
+          <button type="button" class="btn-gov-primary" (click)="openDemoModal()">
+            <i class="fas fa-comments" aria-hidden="true"></i>
+            <span>{{ 'pilot.cta_pilot_btn' | t }}</span>
+          </button>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ══════════════════════════════════════════════════════════════
+       7. ÉTAT ACTUEL DU PRODUIT (MVP vs AMÉLIORATIONS)
+       ══════════════════════════════════════════════════════════════ -->
+  <section id="etat-produit" class="pilot-section bg-white" aria-labelledby="status-title">
+    <div class="container">
+
+      <div class="section-intro">
+        <div class="section-badge">
+          <i class="fas fa-clipboard-list" aria-hidden="true"></i>
+          <span>{{ 'pilot.status_badge' | t }}</span>
+        </div>
+        <h2 id="status-title" class="section-title">
+          {{ 'pilot.status_title' | t }}
+        </h2>
+        <p class="section-lead">
+          {{ 'pilot.status_lead' | t }}
+        </p>
+      </div>
+
+      <div class="status-comparison-grid">
+
+        <!-- Colonne 1 : Disponible dans le MVP -->
+        <div class="status-card mvp-card">
+          <div class="status-card-header">
+            <div>
+              <h3>{{ 'pilot.mvp_col_title' | t }}</h3>
+              <p class="status-sub">Fonctionnalités validées et opérationnelles sur la plateforme</p>
+            </div>
+            <span class="status-tag tag-green">
+              <i class="fas fa-check-circle" aria-hidden="true"></i>
+              {{ 'pilot.mvp_col_badge' | t }}
+            </span>
+          </div>
+
+          <ul class="feature-checklist">
+            <li>
+              <i class="fas fa-check-circle" aria-hidden="true"></i>
+              <span>{{ 'pilot.mvp_item1' | t }}</span>
+            </li>
+            <li>
+              <i class="fas fa-check-circle" aria-hidden="true"></i>
+              <span>{{ 'pilot.mvp_item2' | t }}</span>
+            </li>
+            <li>
+              <i class="fas fa-check-circle" aria-hidden="true"></i>
+              <span>{{ 'pilot.mvp_item3' | t }}</span>
+            </li>
+            <li>
+              <i class="fas fa-check-circle" aria-hidden="true"></i>
+              <span>{{ 'pilot.mvp_item4' | t }}</span>
+            </li>
+            <li>
+              <i class="fas fa-check-circle" aria-hidden="true"></i>
+              <span>{{ 'pilot.mvp_item5' | t }}</span>
+            </li>
+            <li>
+              <i class="fas fa-check-circle" aria-hidden="true"></i>
+              <span>{{ 'pilot.mvp_item6' | t }}</span>
+            </li>
+            <li>
+              <i class="fas fa-check-circle" aria-hidden="true"></i>
+              <span>{{ 'pilot.mvp_item7' | t }}</span>
+            </li>
+            <li>
+              <i class="fas fa-check-circle" aria-hidden="true"></i>
+              <span>{{ 'pilot.mvp_item8' | t }}</span>
+            </li>
+            <li>
+              <i class="fas fa-check-circle" aria-hidden="true"></i>
+              <span>{{ 'pilot.mvp_item9' | t }}</span>
+            </li>
+            <li>
+              <i class="fas fa-check-circle" aria-hidden="true"></i>
+              <span>{{ 'pilot.mvp_item10' | t }}</span>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Colonne 2 : En cours d'amélioration -->
+        <div class="status-card wip-card">
+          <div class="status-card-header">
+            <div>
+              <h3>{{ 'pilot.wip_col_title' | t }}</h3>
+              <p class="status-sub">Travaux de recherche, d'extension et d'intégration future</p>
+            </div>
+            <span class="status-tag tag-amber">
+              <i class="fas fa-sync-alt fa-spin" aria-hidden="true"></i>
+              {{ 'pilot.wip_col_badge' | t }}
+            </span>
+          </div>
+
+          <ul class="feature-checklist wip-list">
+            <li>
+              <i class="fas fa-file-invoice" aria-hidden="true"></i>
+              <div>
+                <strong>OCR automatisé avancé</strong>
+                <p>{{ 'pilot.wip_item1' | t }}</p>
+              </div>
+            </li>
+            <li>
+              <i class="fas fa-brain" aria-hidden="true"></i>
+              <div>
+                <strong>Matching IA prédictif</strong>
+                <p>{{ 'pilot.wip_item2' | t }}</p>
+              </div>
+            </li>
+            <li>
+              <i class="fas fa-microphone-alt" aria-hidden="true"></i>
+              <div>
+                <strong>Assistant vocal Wolof / Français</strong>
+                <p>{{ 'pilot.wip_item3' | t }}</p>
+              </div>
+            </li>
+            <li>
+              <i class="fas fa-landmark" aria-hidden="true"></i>
+              <div>
+                <strong>Interconnexions directes</strong>
+                <p>{{ 'pilot.wip_item4' | t }}</p>
+              </div>
+            </li>
+          </ul>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ══════════════════════════════════════════════════════════════
+       8. POURQUOI DOCTRACK ?
+       ══════════════════════════════════════════════════════════════ -->
+  <section id="pourquoi" class="pilot-section bg-light" aria-labelledby="why-title">
+    <div class="container">
+
+      <div class="section-intro">
+        <div class="section-badge">
+          <i class="fas fa-star" aria-hidden="true"></i>
+          <span>{{ 'pilot.why_badge' | t }}</span>
+        </div>
+        <h2 id="why-title" class="section-title">
+          {{ 'pilot.why_title' | t }}
+        </h2>
+        <div class="why-highlight-banner">
+          <p>{{ 'pilot.why_highlight' | t }}</p>
+        </div>
+      </div>
+
+      <div class="why-pillars-grid">
+
+        <article class="pillar-card">
+          <div class="pillar-num">01</div>
+          <div class="pillar-icon"><i class="fas fa-map-pin" aria-hidden="true"></i></div>
+          <h3>{{ 'pilot.why_point1_title' | t }}</h3>
+          <p>{{ 'pilot.why_point1_desc' | t }}</p>
+        </article>
+
+        <article class="pillar-card">
+          <div class="pillar-num">02</div>
+          <div class="pillar-icon"><i class="fas fa-landmark" aria-hidden="true"></i></div>
+          <h3>{{ 'pilot.why_point2_title' | t }}</h3>
+          <p>{{ 'pilot.why_point2_desc' | t }}</p>
+        </article>
+
+        <article class="pillar-card">
+          <div class="pillar-num">03</div>
+          <div class="pillar-icon"><i class="fas fa-shield-alt" aria-hidden="true"></i></div>
+          <h3>{{ 'pilot.why_point3_title' | t }}</h3>
+          <p>{{ 'pilot.why_point3_desc' | t }}</p>
+        </article>
+
+        <article class="pillar-card">
+          <div class="pillar-num">04</div>
+          <div class="pillar-icon"><i class="fas fa-layer-group" aria-hidden="true"></i></div>
+          <h3>{{ 'pilot.why_point4_title' | t }}</h3>
+          <p>{{ 'pilot.why_point4_desc' | t }}</p>
+        </article>
+
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ══════════════════════════════════════════════════════════════
+       9. ÉQUIPE
+       ══════════════════════════════════════════════════════════════ -->
+  <section id="equipe" class="pilot-section bg-white" aria-labelledby="team-title">
+    <div class="container">
+
+      <div class="section-intro">
+        <div class="section-badge">
+          <i class="fas fa-users" aria-hidden="true"></i>
+          <span>{{ 'pilot.team_badge' | t }}</span>
+        </div>
+        <h2 id="team-title" class="section-title">
+          {{ 'pilot.team_title' | t }}
+        </h2>
+        <p class="section-lead">
+          {{ 'pilot.team_lead' | t }}
+        </p>
+      </div>
+
+      <div class="team-grid">
+
+        <!-- Malang MARNA -->
+        <article class="team-card">
+          <div class="team-photo-wrap">
+            <img src="/assets/fondateur-malang-marna.webp" alt="Malang MARNA" class="team-photo" width="400" height="400" loading="lazy">
+          </div>
+          <div class="team-info">
+            <h3 class="team-name">{{ 'pilot.member1_name' | t }}</h3>
+            <p class="team-role">{{ 'pilot.member1_role' | t }}</p>
+          </div>
+        </article>
+
+        <!-- Elisabeth Leye -->
+        <article class="team-card">
+          <div class="team-photo-wrap">
+            <img src="/assets/elisabeth-leye.jpg" alt="Elisabeth Leye" class="team-photo" width="400" height="400" loading="lazy">
+          </div>
+          <div class="team-info">
+            <h3 class="team-name">{{ 'pilot.member2_name' | t }}</h3>
+            <p class="team-role">{{ 'pilot.member2_role' | t }}</p>
+          </div>
+        </article>
+
+        <!-- Mouhamed El Bachir Lo -->
+        <article class="team-card">
+          <div class="team-photo-wrap">
+            <img src="/assets/mouhamed-el-bachir-lo.jpg" alt="Mouhamed El Bachir Lo" class="team-photo" width="400" height="400" loading="lazy">
+          </div>
+          <div class="team-info">
+            <h3 class="team-name">{{ 'pilot.member3_name' | t }}</h3>
+            <p class="team-role">{{ 'pilot.member3_role' | t }}</p>
+          </div>
+        </article>
+
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ══════════════════════════════════════════════════════════════
+       10. CTA FINAL
+       ══════════════════════════════════════════════════════════════ -->
+  <section id="cta-final" class="pilot-section bg-cta text-white" aria-labelledby="cta-title">
+    <div class="container">
+
+      <div class="final-cta-card">
+        <div class="section-badge dark">
+          <i class="fas fa-handshake" aria-hidden="true"></i>
+          <span>{{ 'pilot.final_badge' | t }}</span>
+        </div>
+
+        <h2 id="cta-title" class="final-title">
+          {{ 'pilot.final_title' | t }}
+        </h2>
+
+        <p class="final-text">
+          {{ 'pilot.final_text' | t }}
+        </p>
+
+        <div class="final-actions">
+          <button type="button" class="btn-gov-primary" (click)="openDemoModal()">
+            <i class="fas fa-calendar-check" aria-hidden="true"></i>
+            <span>{{ 'pilot.final_cta_primary' | t }}</span>
+          </button>
+          <a routerLink="/accueil" class="btn-gov-secondary">
+            <i class="fas fa-external-link-alt" aria-hidden="true"></i>
+            <span>{{ 'pilot.final_cta_secondary' | t }}</span>
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+</main>
+
+
+<!-- ══════════════════════════════════════════════════════════════
+     MODAL DE CONTACT / DEMANDE DE DÉMONSTRATION
+     ══════════════════════════════════════════════════════════════ -->
+@if (isModalOpen()) {
+  <div class="modal-overlay" (click)="closeDemoModal()" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="modal-container" (click)="$event.stopPropagation()">
+
+      <!-- Bouton fermer -->
+      <button type="button" class="modal-close" (click)="closeDemoModal()" [attr.aria-label]="'pilot.modal_close' | t">
+        <i class="fas fa-times" aria-hidden="true"></i>
+      </button>
+
+      <!-- En-tête modal -->
+      <div class="modal-header">
+        <div class="section-badge">
+          <i class="fas fa-shield-alt" aria-hidden="true"></i>
+          <span>{{ 'pilot.modal_badge' | t }}</span>
+        </div>
+        <h2 id="modal-title" class="modal-title">
+          {{ 'pilot.modal_title' | t }}
+        </h2>
+        <p class="modal-subtitle">
+          {{ 'pilot.modal_subtitle' | t }}
+        </p>
+      </div>
+
+      <!-- Canaux directs de contact -->
+      <div class="modal-channels">
+        <a [href]="whatsappUrl" target="_blank" rel="noopener noreferrer" class="channel-btn whatsapp">
+          <i class="fab fa-whatsapp" aria-hidden="true"></i>
+          <div>
+            <strong>{{ 'pilot.modal_whatsapp' | t }}</strong>
+            <small>{{ officialPhone }}</small>
+          </div>
+        </a>
+
+        <a [href]="'tel:' + officialPhone" class="channel-btn phone">
+          <i class="fas fa-phone-alt" aria-hidden="true"></i>
+          <div>
+            <strong>{{ 'pilot.modal_phone_btn' | t }}</strong>
+            <small>{{ officialPhone }}</small>
+          </div>
+        </a>
+
+        <a [href]="emailMailtoUrl" class="channel-btn email">
+          <i class="fas fa-envelope" aria-hidden="true"></i>
+          <div>
+            <strong>{{ 'pilot.modal_email_btn' | t }}</strong>
+            <small>{{ officialEmail }}</small>
+          </div>
+        </a>
+      </div>
+
+      <div class="modal-divider">
+        <span>{{ 'pilot.modal_or_form' | t }}</span>
+      </div>
+
+      <!-- Formulaire rapide -->
+      @if (!formSubmitted()) {
+        <form class="modal-form" (ngSubmit)="submitForm()">
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="m-name">{{ 'pilot.modal_name' | t }} *</label>
+              <input id="m-name" type="text" [(ngModel)]="contactForm.name" name="name" required placeholder="Ex. Capitaine Diop">
+            </div>
+
+            <div class="form-group">
+              <label for="m-structure">{{ 'pilot.modal_structure' | t }} *</label>
+              <input id="m-structure" type="text" [(ngModel)]="contactForm.structure" name="structure" required [placeholder]="'pilot.modal_structure_ph' | t">
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="m-role">{{ 'pilot.modal_role' | t }}</label>
+              <input id="m-role" type="text" [(ngModel)]="contactForm.role" name="role" [placeholder]="'pilot.modal_role_ph' | t">
+            </div>
+
+            <div class="form-group">
+              <label for="m-contact">{{ 'pilot.modal_contact' | t }} *</label>
+              <input id="m-contact" type="text" [(ngModel)]="contactForm.contact" name="contact" required placeholder="+221 7X XXX XX XX ou email">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="m-msg">{{ 'pilot.modal_message' | t }}</label>
+            <textarea id="m-msg" [(ngModel)]="contactForm.message" name="message" rows="3" placeholder="Précisez votre unité ou vos attentes (nombre d'agents, date souhaitée...)"></textarea>
+          </div>
+
+          <div class="modal-actions">
+            <button type="submit" class="btn-gov-primary w-full" [disabled]="!contactForm.name || !contactForm.structure || !contactForm.contact">
+              <i class="fas fa-paper-plane" aria-hidden="true"></i>
+              <span>{{ 'pilot.modal_submit' | t }}</span>
+            </button>
+          </div>
+
+        </form>
+      } @else {
+        <div class="modal-success-box">
+          <i class="fas fa-check-circle" aria-hidden="true"></i>
+          <h3>{{ 'pilot.modal_submit_success' | t }}</h3>
+          <button type="button" class="btn-gov-secondary mt-3" (click)="closeDemoModal()">
+            {{ 'pilot.modal_close' | t }}
+          </button>
+        </div>
+      }
+
+    </div>
+  </div>
+}
+
+<!-- ══════════════════════════════════════════════════════════════
+     11. FOOTER (avec mention de validation institutionnelle)
+     ══════════════════════════════════════════════════════════════ -->
+<app-footer [institutionalNote]="true"></app-footer>
+

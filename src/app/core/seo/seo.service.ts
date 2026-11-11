@@ -18,6 +18,10 @@ export interface SeoData {
   image?: string;
   /** false : page accessible mais non indexée (connexion, mot de passe…). */
   index?: boolean;
+  /** false : demander aux robots de ne pas suivre les liens. */
+  follow?: boolean;
+  /** Valeur personnalisée pour la balise <meta name="robots"> (ex. « noindex, nofollow »). */
+  robots?: string;
 }
 
 export const SITE_NAME = 'DocTrack';
@@ -63,7 +67,12 @@ export class SeoService {
     const image = base + (seo?.image ?? DEFAULT_IMAGE);
     const indexable = !!seo && seo.index !== false;
 
-    this.meta.updateTag({ name: 'robots', content: indexable ? 'index, follow, max-image-preview:large' : 'noindex, follow' });
+    const robotsContent = seo?.robots ?? (
+      indexable
+        ? 'index, follow, max-image-preview:large'
+        : (seo?.follow === false ? 'noindex, nofollow' : 'noindex, follow')
+    );
+    this.meta.updateTag({ name: 'robots', content: robotsContent });
     this.setCanonical(indexable ? url : null);
 
     if (!seo) {
