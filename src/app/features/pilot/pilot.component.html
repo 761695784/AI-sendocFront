@@ -1,4 +1,4 @@
-<app-navbar></app-navbar>
+<app-pilot-navbar (sectionRequested)="scrollTo($event)" (demoRequested)="openDemoModal()" />
 
 <main class="pilot-page">
 
@@ -155,7 +155,7 @@
   <!-- ══════════════════════════════════════════════════════════════
        3. COMMENT DOCTRACK FONCTIONNE (WORKFLOW)
        ══════════════════════════════════════════════════════════════ -->
-  <section id="fonctionnement" class="pilot-section bg-white" aria-labelledby="how-title">
+  <section id="fonctionnement" tabindex="-1" class="pilot-section bg-white" aria-labelledby="how-title">
     <div class="container">
 
       <div class="section-intro">
@@ -245,7 +245,7 @@
   <!-- ══════════════════════════════════════════════════════════════
        4. BÉNÉFICES POUR LES STRUCTURES
        ══════════════════════════════════════════════════════════════ -->
-  <section id="benefices" class="pilot-section bg-light" aria-labelledby="benefits-title">
+  <section id="benefices" tabindex="-1" class="pilot-section bg-light" aria-labelledby="benefits-title">
     <div class="container">
 
       <div class="section-intro">
@@ -336,7 +336,7 @@
   <!-- ══════════════════════════════════════════════════════════════
        5. SÉCURITÉ & PROTECTION DES DONNÉES
        ══════════════════════════════════════════════════════════════ -->
-  <section id="securite" class="pilot-section bg-dark text-white" aria-labelledby="sec-title">
+  <section id="securite" tabindex="-1" class="pilot-section bg-dark text-white" aria-labelledby="sec-title">
     <div class="container">
 
       <div class="section-intro light">
@@ -419,7 +419,7 @@
   <!-- ══════════════════════════════════════════════════════════════
        6. LE PILOTE INSTITUTIONNEL
        ══════════════════════════════════════════════════════════════ -->
-  <section id="pilote" class="pilot-section bg-light" aria-labelledby="pilot-title">
+  <section id="pilote" tabindex="-1" class="pilot-section bg-light" aria-labelledby="pilot-title">
     <div class="container">
 
       <div class="pilot-spotlight">
@@ -510,7 +510,7 @@
   <!-- ══════════════════════════════════════════════════════════════
        7. ÉTAT ACTUEL DU PRODUIT (MVP vs AMÉLIORATIONS)
        ══════════════════════════════════════════════════════════════ -->
-  <section id="etat-produit" class="pilot-section bg-white" aria-labelledby="status-title">
+  <section id="mvp" tabindex="-1" class="pilot-section bg-white" aria-labelledby="status-title">
     <div class="container">
 
       <div class="section-intro">
@@ -694,7 +694,7 @@
   <!-- ══════════════════════════════════════════════════════════════
        9. ÉQUIPE
        ══════════════════════════════════════════════════════════════ -->
-  <section id="equipe" class="pilot-section bg-white" aria-labelledby="team-title">
+  <section id="equipe" tabindex="-1" class="pilot-section bg-white" aria-labelledby="team-title">
     <div class="container">
 
       <div class="section-intro">
@@ -754,7 +754,7 @@
   <!-- ══════════════════════════════════════════════════════════════
        10. CTA FINAL
        ══════════════════════════════════════════════════════════════ -->
-  <section id="cta-final" class="pilot-section bg-cta text-white" aria-labelledby="cta-title">
+  <section id="contact" tabindex="-1" class="pilot-section bg-cta text-white" aria-labelledby="cta-title">
     <div class="container">
 
       <div class="final-cta-card">
@@ -776,10 +776,10 @@
             <i class="fas fa-calendar-check" aria-hidden="true"></i>
             <span>{{ 'pilot.final_cta_primary' | t }}</span>
           </button>
-          <a routerLink="/accueil" class="btn-gov-secondary">
-            <i class="fas fa-external-link-alt" aria-hidden="true"></i>
+          <button type="button" class="btn-gov-secondary" (click)="scrollTo('fonctionnement')">
+            <i class="fas fa-list-ol" aria-hidden="true"></i>
             <span>{{ 'pilot.final_cta_secondary' | t }}</span>
-          </a>
+          </button>
         </div>
       </div>
 
@@ -802,7 +802,7 @@
       </button>
 
       <!-- En-tête modal -->
-      <div class="modal-header">
+      <div class="pilot-dialog-header">
         <div class="section-badge">
           <i class="fas fa-shield-alt" aria-hidden="true"></i>
           <span>{{ 'pilot.modal_badge' | t }}</span>
@@ -904,5 +904,5 @@
 <!-- ══════════════════════════════════════════════════════════════
      11. FOOTER (avec mention de validation institutionnelle)
      ══════════════════════════════════════════════════════════════ -->
-<app-footer [institutionalNote]="true"></app-footer>
+<app-pilot-footer [email]="officialEmail" [phone]="officialPhone" [whatsappUrl]="whatsappUrl" />
 

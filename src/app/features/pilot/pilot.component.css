@@ -5,6 +5,7 @@
 
 :host {
   display: block;
+  --pilot-header-height: 64px;
   font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
   color: #1c2430;
   background: #f4f3fb;
@@ -12,8 +13,11 @@
 
 .pilot-page {
   min-height: 100vh;
-  padding-top: 64px; /* Hauteur de la navbar fixe */
   overflow-x: hidden;
+}
+
+.pilot-section[id] {
+  scroll-margin-top: calc(var(--pilot-header-height) + 12px);
 }
 
 .container {
@@ -1137,6 +1141,7 @@
    MODAL DE CONTACT & DÉMONSTRATION
    ══════════════════════════════════════════════════════════════ */
 .modal-overlay {
+  --dialog-gutter: 16px;
   position: fixed;
   inset: 0;
   background: rgba(10, 8, 40, 0.78);
@@ -1145,8 +1150,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 16px;
-  overflow-y: auto;
+  padding: var(--dialog-gutter);
   animation: fadeIn 0.25s ease forwards;
   box-sizing: border-box;
 }
@@ -1156,8 +1160,11 @@
   border-radius: 18px;
   max-width: 600px;
   width: 100%;
-  max-height: 90vh;
+  min-width: 0;
+  max-height: calc(100vh - 2 * var(--dialog-gutter));
+  max-height: calc(100dvh - 2 * var(--dialog-gutter));
   overflow-y: auto;
+  overscroll-behavior-y: contain;
   padding: 30px 24px;
   position: relative;
   box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
@@ -1189,10 +1196,19 @@
   color: #ffffff;
 }
 
-.modal-header {
+.pilot-dialog-header {
   margin-bottom: 22px;
-  padding-right: 40px;
-  box-sizing: border-box;
+}
+
+.pilot-dialog-header .section-badge {
+  max-width: calc(100% - 42px);
+}
+
+.pilot-dialog-header .section-badge,
+.modal-title,
+.modal-subtitle,
+.channel-btn {
+  overflow-wrap: anywhere;
 }
 
 .modal-title {
@@ -1212,7 +1228,7 @@
 
 .modal-channels {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 160px), 1fr));
   gap: 10px;
   margin-bottom: 20px;
 }
@@ -1265,6 +1281,10 @@
   font-size: 16px;
 }
 
+.channel-btn > div {
+  min-width: 0;
+}
+
 .channel-btn strong {
   display: block;
   font-size: 12px;
@@ -1309,7 +1329,7 @@
 
 .form-row {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 12px;
 }
 
@@ -1470,7 +1490,6 @@
 
   .modal-container {
     padding: 24px 16px;
-    max-width: 95%;
   }
 
   .modal-channels {
@@ -1480,6 +1499,15 @@
 }
 
 @media (max-width: 480px) {
+  .modal-overlay {
+    --dialog-gutter: 12px;
+  }
+
+  .form-group input,
+  .form-group textarea {
+    font-size: 16px;
+  }
+
   .container {
     padding: 0 12px;
   }

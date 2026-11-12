@@ -1,9 +1,10 @@
-import { Component, ChangeDetectionStrategy, HostListener, signal, inject } from '@angular/core';
-import { CommonModule, ViewportScroller } from '@angular/common';
+import { Component, ChangeDetectionStrategy, DestroyRef, ElementRef, HostListener, afterNextRender, signal, inject } from '@angular/core';
+import { CommonModule, DOCUMENT } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { RouterLink } from '@angular/router';
-import { NavbarComponent } from '../../components/navbar/navbar.component';
-import { FooterComponent } from '../../components/footer/footer.component';
+import { ActivatedRoute, Router, Scroll } from '@angular/router';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { PilotNavbarComponent } from './pilot-navbar.component';
+import { PilotFooterComponent } from './pilot-footer.component';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 
 @Component({
@@ -12,17 +13,39 @@ import { TranslatePipe } from '../../core/i18n/translate.pipe';
   imports: [
     CommonModule,
     FormsModule,
-    RouterLink,
-    NavbarComponent,
-    FooterComponent,
+    PilotNavbarComponent,
+    PilotFooterComponent,
     TranslatePipe
   ],
+  host: { id: 'pilot-top', tabindex: '-1' },
   templateUrl: './pilot.component.html',
   styleUrls: ['./pilot.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class PilotComponent {
-  private readonly scroller = inject(ViewportScroller);
+  private readonly document = inject(DOCUMENT);
+  private readonly host = inject<ElementRef<HTMLElement>>(ElementRef).nativeElement;
+
+  constructor() {
+    const destroyRef = inject(DestroyRef);
+    const router = inject(Router);
+    const fragment = inject(ActivatedRoute).snapshot.fragment;
+    router.events.pipe(takeUntilDestroyed()).subscribe(event => {
+      if (event instanceof Scroll && event.anchor && !event.position) {
+        const anchor = event.anchor;
+        // Le défilement du routeur ignore scroll-margin-top.
+        queueMicrotask(() => this.scrollTo(anchor, 'instant'));
+      }
+    });
+    if (fragment) {
+      afterNextRender(() => {
+        // La position des sections dépend des polices chargées au premier rendu.
+        void this.document.fonts.ready.then(() => {
+          if (!destroyRef.destroyed) this.scrollTo(fragment, 'instant');
+        });
+      });
+    }
+  }
 
   // Modal contact / démo state
   readonly isModalOpen = signal(false);
@@ -52,13 +75,12 @@ export class PilotComponent {
   readonly emailMailtoUrl = `mailto:${this.officialEmail}?subject=${encodeURIComponent('[DocTrack Pilote] Demande de démonstration')}`;
 
   /** Défilement fluide vers une section */
-  scrollTo(id: string): void {
-    const el = document.getElementById(id);
-    if (el) {
-      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    } else {
-      this.scroller.scrollToAnchor(id);
-    }
+  scrollTo(id: string, behavior: ScrollBehavior = 'smooth'): void {
+    const target = this.document.getElementById(id);
+    if (!target || !this.host.contains(target)) return;
+    const reducedMotion = this.document.defaultView?.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    target.focus({ preventScroll: true });
+    target.scrollIntoView({ behavior: reducedMotion ? 'instant' : behavior, block: 'start' });
   }
 
   /** Ouverture du modal de démonstration / pilote */

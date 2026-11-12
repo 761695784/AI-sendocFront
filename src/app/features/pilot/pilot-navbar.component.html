@@ -1,0 +1,25 @@
+<header class="pilot-header">
+  <nav class="pilot-nav" [attr.aria-label]="'pilot.nav_label' | t">
+    <a class="pilot-logo" href="/pilot#pilot-top" (click)="navigate($event, 'pilot-top')"
+      [attr.aria-label]="'pilot.nav_top' | t">
+      <img src="/assets/transparent/logo-doctrack.png" alt="DocTrack" width="600" height="180">
+    </a>
+
+    <button type="button" class="pilot-menu-toggle" (click)="menuOpen.set(!menuOpen())"
+      [attr.aria-label]="'nav.menu' | t" aria-controls="pilot-menu" [attr.aria-expanded]="menuOpen()">
+      <i class="fas" [class.fa-bars]="!menuOpen()" [class.fa-times]="menuOpen()" aria-hidden="true"></i>
+    </button>
+
+    <div id="pilot-menu" class="pilot-menu" [class.is-open]="menuOpen()">
+      <ul class="pilot-links">
+        @for (section of sections; track section.id) {
+          <li>
+            <a [href]="'/pilot#' + section.id" (click)="navigate($event, section.id)">{{ section.label | t }}</a>
+          </li>
+        }
+      </ul>
+      <app-language-switcher />
+      <button type="button" class="pilot-demo" (click)="requestDemo()">{{ 'pilot.final_cta_primary' | t }}</button>
+    </div>
+  </nav>
+</header>

@@ -1,0 +1,21 @@
+<footer class="pilot-footer">
+  <div class="footer-grid">
+    <div>
+      <img src="/assets/brand/logo-doctrack-fond-sombre.png" alt="DocTrack" width="600" height="180" loading="lazy">
+      <p>{{ 'pilot.footer_description' | t }}</p>
+    </div>
+    <div>
+      <h2>{{ 'pilot.footer_status' | t }}</h2>
+      <p>{{ 'pilot.footer_status_description' | t }}</p>
+    </div>
+    <div>
+      <h2>{{ 'footer.contact' | t }}</h2>
+      <ul>
+        <li><a [href]="'mailto:' + email()"><i class="fas fa-envelope" aria-hidden="true"></i> {{ email() }}</a></li>
+        <li><a [href]="'tel:' + phone().split(' ').join('')"><i class="fas fa-phone" aria-hidden="true"></i> {{ phone() }}</a></li>
+        <li><a [href]="whatsappUrl()" target="_blank" rel="noopener noreferrer"><i class="fab fa-whatsapp" aria-hidden="true"></i> WhatsApp</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">{{ 'pilot.footer_rights' | t }}</div>
+</footer>
